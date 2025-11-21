@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: crm-api
+  profiles:
+    default: dev
+  datasource:
+    url: ${CRM_DB_URL:jdbc:postgresql://localhost:5432/crm_dev}
+    username: ${CRM_DB_USERNAME:crm_app}
+    password: ${CRM_DB_PASSWORD:crm_app_password}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+server:
+  port: ${SERVER_PORT:8080}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+crm:
+  cors:
+    allowed-origin: ${CRM_CORS_ALLOWED_ORIGIN:http://localhost:4200}
