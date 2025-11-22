@@ -1,0 +1,13 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: ${CRM_DB_URL:jdbc:postgresql://localhost:5432/crm_dev}
+    username: ${CRM_DB_USERNAME:crm_app}
+    password: ${CRM_DB_PASSWORD:crm_app_password}
+  jpa:
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
