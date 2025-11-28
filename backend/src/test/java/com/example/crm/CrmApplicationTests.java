@@ -1,0 +1,14 @@
+package com.example.crm;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+
+@ActiveProfiles("test")
+@SpringBootTest
+class CrmApplicationTests {
+
+    @Test
+    void contextLoads() {
+    }
+}
