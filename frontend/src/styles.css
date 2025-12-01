@@ -1,0 +1,73 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f5f7fb;
+  color: #172033;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+.page-header {
+  margin-bottom: 1rem;
+}
+
+.page-header p {
+  color: #5f6b7a;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  margin: 0 0 0.25rem;
+  text-transform: uppercase;
+}
+
+.page-header h1 {
+  font-size: 1.75rem;
+  margin: 0;
+}
+
+.form-panel {
+  width: min(420px, 100%);
+  display: grid;
+  gap: 1rem;
+  background: #ffffff;
+  border: 1px solid #dfe5ef;
+  border-radius: 8px;
+  padding: 1.25rem;
+}
+
+label {
+  display: grid;
+  gap: 0.35rem;
+  font-weight: 700;
+}
+
+input {
+  border: 1px solid #bdc8d8;
+  border-radius: 6px;
+  padding: 0.65rem 0.75rem;
+}
+
+button {
+  border: 0;
+  border-radius: 6px;
+  background: #1f6feb;
+  color: #ffffff;
+  cursor: pointer;
+  font-weight: 700;
+  padding: 0.7rem 1rem;
+}
+
+.table-shell {
+  overflow-x: auto;
+}
+
+.error-message {
+  color: #b42318;
+}

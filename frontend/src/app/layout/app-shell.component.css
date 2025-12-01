@@ -1,0 +1,94 @@
+.app-shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  background: #f5f7fb;
+  color: #172033;
+}
+
+.sidebar {
+  background: #102033;
+  color: #ffffff;
+  padding: 1.25rem;
+}
+
+.brand {
+  color: #ffffff;
+  display: block;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  text-decoration: none;
+}
+
+nav {
+  display: grid;
+  gap: 0.35rem;
+}
+
+nav a {
+  border-radius: 6px;
+  color: #d8e4f3;
+  padding: 0.7rem 0.75rem;
+  text-decoration: none;
+}
+
+nav a.active,
+nav a:hover {
+  background: #1f6feb;
+  color: #ffffff;
+}
+
+.workspace {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar {
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0 1.5rem;
+  background: #ffffff;
+  border-bottom: 1px solid #dfe5ef;
+}
+
+.topbar span {
+  display: block;
+  color: #5f6b7a;
+  font-size: 0.9rem;
+  margin-top: 0.15rem;
+}
+
+.login-link {
+  color: #1f6feb;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.content {
+  width: min(1180px, 100%);
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+@media (max-width: 780px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    padding: 1rem;
+  }
+
+  nav {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  }
+
+  .content {
+    padding: 1rem;
+  }
+}
