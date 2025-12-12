@@ -1,0 +1,30 @@
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Java and Spring Boot
+backend/target/
+*.class
+
+# Angular and Node
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+frontend/coverage/
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# IDE and OS files
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+
+# Local database files
+*.db
+*.sqlite
