@@ -1,6 +1,8 @@
-import { NgFor } from '@angular/common';
+import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+
+import { AuthService } from '../core/auth/auth.service';
 
 interface NavItem {
   label: string;
@@ -10,7 +12,7 @@ interface NavItem {
 @Component({
   selector: 'app-shell',
   standalone: true,
-  imports: [NgFor, RouterLink, RouterLinkActive],
+  imports: [AsyncPipe, NgFor, NgIf, RouterLink, RouterLinkActive],
   templateUrl: './app-shell.component.html',
   styleUrls: ['./app-shell.component.css']
 })
@@ -24,4 +26,12 @@ export class AppShellComponent {
     { label: 'Activities', route: '/activities' },
     { label: 'Status', route: '/status' }
   ];
+  readonly currentUser$ = this.authService.currentUser$;
+
+  constructor(private readonly authService: AuthService, private readonly router: Router) {}
+
+  logout(): void {
+    this.authService.logout();
+    void this.router.navigateByUrl('/login');
+  }
 }
