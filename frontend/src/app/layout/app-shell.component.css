@@ -92,3 +92,15 @@ nav a:hover {
     padding: 1rem;
   }
 }
+
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: #5f6b7a;
+  font-size: 0.9rem;
+}
+
+.user-menu button {
+  padding: 0.5rem 0.75rem;
+}
