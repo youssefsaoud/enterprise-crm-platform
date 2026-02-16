@@ -12,9 +12,17 @@
     <header class="topbar">
       <div>
         <strong>Sales CRM</strong>
-        <span>Month 1 foundation</span>
+        <span>Month 2 authentication foundation</span>
       </div>
-      <a class="login-link" routerLink="/login">Login</a>
+      <ng-container *ngIf="currentUser$ | async as user; else anonymous">
+        <div class="user-menu">
+          <span>{{ user.fullName }} · {{ user.role }}</span>
+          <button type="button" (click)="logout()">Logout</button>
+        </div>
+      </ng-container>
+      <ng-template #anonymous>
+        <a class="login-link" routerLink="/login">Login</a>
+      </ng-template>
     </header>
     <main class="content">
       <ng-content></ng-content>
