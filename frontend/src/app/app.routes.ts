@@ -2,7 +2,11 @@ import { Routes } from '@angular/router';
 
 import { ActivitiesPageComponent } from './features/activities/activities-page.component';
 import { CompaniesPageComponent } from './features/companies/companies-page.component';
+import { CompanyDetailPageComponent } from './features/companies/company-detail-page.component';
+import { CompanyFormPageComponent } from './features/companies/company-form-page.component';
 import { ContactsPageComponent } from './features/contacts/contacts-page.component';
+import { ContactDetailPageComponent } from './features/contacts/contact-detail-page.component';
+import { ContactFormPageComponent } from './features/contacts/contact-form-page.component';
 import { DashboardPageComponent } from './features/dashboard/dashboard-page.component';
 import { LeadsPageComponent } from './features/leads/leads-page.component';
 import { LoginPageComponent } from './features/auth/login-page.component';
@@ -14,7 +18,13 @@ export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
   { path: 'dashboard', component: DashboardPageComponent, title: 'Dashboard', canActivate: [authGuard] },
   { path: 'companies', component: CompaniesPageComponent, title: 'Companies', canActivate: [authGuard] },
+  { path: 'companies/new', component: CompanyFormPageComponent, title: 'New Company', canActivate: [authGuard] },
+  { path: 'companies/:id', component: CompanyDetailPageComponent, title: 'Company Detail', canActivate: [authGuard] },
+  { path: 'companies/:id/edit', component: CompanyFormPageComponent, title: 'Edit Company', canActivate: [authGuard] },
   { path: 'contacts', component: ContactsPageComponent, title: 'Contacts', canActivate: [authGuard] },
+  { path: 'contacts/new', component: ContactFormPageComponent, title: 'New Contact', canActivate: [authGuard] },
+  { path: 'contacts/:id', component: ContactDetailPageComponent, title: 'Contact Detail', canActivate: [authGuard] },
+  { path: 'contacts/:id/edit', component: ContactFormPageComponent, title: 'Edit Contact', canActivate: [authGuard] },
   { path: 'leads', component: LeadsPageComponent, title: 'Leads', canActivate: [authGuard] },
   { path: 'opportunities', component: OpportunitiesPageComponent, title: 'Opportunities', canActivate: [authGuard] },
   { path: 'activities', component: ActivitiesPageComponent, title: 'Activities', canActivate: [authGuard] },
