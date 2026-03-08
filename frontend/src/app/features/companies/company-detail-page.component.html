@@ -1,0 +1,43 @@
+<section class="page-header entity-header">
+  <div>
+    <p>Company record</p>
+    <h1>{{ company?.name || 'Company' }}</h1>
+  </div>
+  <a routerLink="/companies">Back to companies</a>
+</section>
+
+<p *ngIf="loading" class="muted">Loading company...</p>
+<p *ngIf="error" class="error-message">{{ error }}</p>
+
+<section *ngIf="company as item" class="detail-layout">
+  <div class="detail-panel">
+    <dl>
+      <div><dt>Industry</dt><dd>{{ item.industry || '-' }}</dd></div>
+      <div><dt>Email</dt><dd>{{ item.email || '-' }}</dd></div>
+      <div><dt>Phone</dt><dd>{{ item.phone || '-' }}</dd></div>
+      <div><dt>Website</dt><dd>{{ item.website || '-' }}</dd></div>
+      <div><dt>Address</dt><dd>{{ item.address || '-' }}</dd></div>
+    </dl>
+  </div>
+
+  <aside class="actions" *ngIf="currentUser$ | async as user">
+    <a *ngIf="canManage(user.role)" [routerLink]="['/companies', item.id, 'edit']">Edit company</a>
+    <a [routerLink]="['/contacts']" [queryParams]="{ companyId: item.id }">View contacts</a>
+    <button *ngIf="canDelete(user.role)" type="button" class="danger" (click)="deleteCompany()">Delete</button>
+  </aside>
+
+<section *ngIf="company" class="related-panel">
+  <div class="related-header">
+    <h2>Related contacts</h2>
+    <a [routerLink]="['/contacts/new']" [queryParams]="{ companyId: company.id }">Add contact</a>
+  </div>
+  <ul *ngIf="contacts.length > 0; else noContacts">
+    <li *ngFor="let contact of contacts">
+      <a [routerLink]="['/contacts', contact.id]">{{ contact.firstName }} {{ contact.lastName }}</a>
+      <span>{{ contact.email || contact.jobTitle || 'No details' }}</span>
+    </li>
+  </ul>
+  <ng-template #noContacts>
+    <p class="muted">No contacts are linked to this company yet.</p>
+  </ng-template>
+</section>
