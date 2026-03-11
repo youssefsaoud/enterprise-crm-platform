@@ -1,5 +1,59 @@
-<section class="page-header">
-  <p>CRM module</p>
-  <h1>Contacts</h1>
+<section class="page-header entity-header">
+  <div>
+    <p>CRM module</p>
+    <h1>Contacts</h1>
+  </div>
+  <a class="primary-link" routerLink="/contacts/new">New contact</a>
 </section>
-<app-empty-state title="No contacts data yet" message="Contacts will be linked to companies with validated email and phone details."></app-empty-state>
+
+<section class="toolbar" aria-label="Contact filters">
+  <label>
+    Search
+    <input type="search" [formControl]="searchControl" placeholder="Name or email contains..." />
+  </label>
+  <label>
+    Company ID
+    <input type="search" [formControl]="companyIdControl" placeholder="Filter by company UUID" />
+  </label>
+</section>
+
+<p *ngIf="error" class="error-message">{{ error }}</p>
+<p *ngIf="loading" class="muted">Loading contacts...</p>
+
+<div class="table-shell" *ngIf="!loading && contacts.length > 0; else emptyState">
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Company</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Job title</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let contact of contacts">
+        <td><a [routerLink]="['/contacts', contact.id]">{{ contact.firstName }} {{ contact.lastName }}</a></td>
+        <td><a [routerLink]="['/companies', contact.companyId]">{{ contact.companyName }}</a></td>
+        <td>{{ contact.email || '-' }}</td>
+        <td>{{ contact.phone || '-' }}</td>
+        <td>{{ contact.jobTitle || '-' }}</td>
+        <td><a [routerLink]="['/contacts', contact.id]">Open</a></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<ng-template #emptyState>
+  <section *ngIf="!loading" class="empty-panel">
+    <h2>No contacts found</h2>
+    <p>Adjust search filters or create a contact linked to a company.</p>
+  </section>
+</ng-template>
+
+<footer class="pager" *ngIf="totalElements > 0">
+  <button type="button" (click)="previousPage()" [disabled]="page === 0">Previous</button>
+  <span>Page {{ page + 1 }} of {{ totalPages || 1 }} · {{ totalElements }} contacts</span>
+  <button type="button" (click)="nextPage()" [disabled]="page + 1 >= totalPages">Next</button>
+</footer>
