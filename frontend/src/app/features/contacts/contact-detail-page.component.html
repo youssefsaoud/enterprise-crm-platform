@@ -1,0 +1,27 @@
+<section class="page-header entity-header">
+  <div>
+    <p>Contact record</p>
+    <h1>{{ contact ? contact.firstName + ' ' + contact.lastName : 'Contact' }}</h1>
+  </div>
+  <a routerLink="/contacts">Back to contacts</a>
+</section>
+
+<p *ngIf="loading" class="muted">Loading contact...</p>
+<p *ngIf="error" class="error-message">{{ error }}</p>
+
+<section *ngIf="contact as item" class="detail-layout">
+  <div class="detail-panel">
+    <dl>
+      <div><dt>Company</dt><dd><a [routerLink]="['/companies', item.companyId]">{{ item.companyName }}</a></dd></div>
+      <div><dt>Email</dt><dd>{{ item.email || '-' }}</dd></div>
+      <div><dt>Phone</dt><dd>{{ item.phone || '-' }}</dd></div>
+      <div><dt>Job title</dt><dd>{{ item.jobTitle || '-' }}</dd></div>
+    </dl>
+  </div>
+
+  <aside class="actions" *ngIf="currentUser$ | async as user">
+    <a [routerLink]="['/contacts', item.id, 'edit']">Edit contact</a>
+    <a [routerLink]="['/companies', item.companyId]">Open company</a>
+    <button *ngIf="canDelete(user.role)" type="button" class="danger" (click)="deleteContact()">Delete</button>
+  </aside>
+</section>
