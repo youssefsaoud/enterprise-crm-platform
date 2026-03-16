@@ -1,0 +1,48 @@
+<section class="page-header">
+  <p>Contact record</p>
+  <h1>{{ contactId ? 'Edit contact' : 'New contact' }}</h1>
+</section>
+
+<p *ngIf="loading" class="muted">Loading contact...</p>
+<p *ngIf="error" class="error-message">{{ error }}</p>
+
+<form class="entity-form" [formGroup]="form" (ngSubmit)="save()" *ngIf="!loading">
+  <label>
+    Company
+    <select formControlName="companyId" required>
+      <option value="">Select company</option>
+      <option *ngFor="let company of companies" [value]="company.id">{{ company.name }}</option>
+    </select>
+    <small *ngIf="form.controls.companyId.touched && form.controls.companyId.invalid">Company is required.</small>
+  </label>
+  <label>
+    First name
+    <input formControlName="firstName" maxlength="80" required />
+    <small *ngIf="form.controls.firstName.touched && form.controls.firstName.invalid">First name is required.</small>
+  </label>
+  <label>
+    Last name
+    <input formControlName="lastName" maxlength="80" required />
+    <small *ngIf="form.controls.lastName.touched && form.controls.lastName.invalid">Last name is required.</small>
+  </label>
+  <label>
+    Email
+    <input type="email" formControlName="email" maxlength="180" />
+    <small *ngIf="form.controls.email.touched && form.controls.email.invalid">Enter a valid email address.</small>
+  </label>
+  <label>
+    Phone
+    <input formControlName="phone" maxlength="60" />
+  </label>
+  <label>
+    Job title
+    <input formControlName="jobTitle" maxlength="120" />
+  </label>
+
+  <div class="form-actions">
+    <button type="submit" [disabled]="saving">{{ saving ? 'Saving...' : 'Save contact' }}</button>
+    <a routerLink="/contacts">Cancel</a>
+  </div>
+</form>
+
+
