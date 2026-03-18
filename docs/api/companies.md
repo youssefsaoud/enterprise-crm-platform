@@ -24,3 +24,11 @@ All endpoints require a Bearer JWT except the existing health and login endpoint
 ## Search Query Parameters
 
 | Name | Description |
+| --- | --- |
+| `search` | Case-insensitive partial match against company name. |
+| `industry` | Case-insensitive exact industry filter. |
+| `page` | Zero-based page number. |
+| `size` | Page size. |
+| `sort` | Spring Data sort expression such as `name,asc`. |
+
+## Create Or Update Body
