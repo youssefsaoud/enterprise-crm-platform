@@ -32,3 +32,12 @@ All endpoints require a Bearer JWT except the existing health and login endpoint
 | `sort` | Spring Data sort expression such as `name,asc`. |
 
 ## Create Or Update Body
+
+```json
+{
+  "name": "Northwind Traders",
+  "industry": "Wholesale",
+  "website": "https://northwind.example",
+  "phone": "+1 555 0100",
+  "email": "hello@northwind.example",
+  "address": "12 Market Street"
