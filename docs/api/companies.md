@@ -41,3 +41,11 @@ All endpoints require a Bearer JWT except the existing health and login endpoint
   "phone": "+1 555 0100",
   "email": "hello@northwind.example",
   "address": "12 Market Street"
+}
+```
+
+`name` is required and trimmed. `email` must be valid when present. `website` must start with `http://` or `https://`.
+
+## Deletion Policy
+
+Company deletion is rejected with `409 Conflict` when active contacts are attached. Month 3 intentionally avoids silent cascade deletion from the API.
