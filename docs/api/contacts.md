@@ -32,3 +32,12 @@ Backend method security enforces these rules. Angular hides destructive actions 
 | `sort` | Spring Data sort expression such as `lastName,asc`. |
 
 ## Create Or Update Body
+
+```json
+{
+  "companyId": "0a8f1e6f-95c1-46a1-95a8-c0a93176839d",
+  "firstName": "Amina",
+  "lastName": "Bennis",
+  "email": "amina@example.com",
+  "phone": "+212 600 000000",
+  "jobTitle": "Operations Manager"
