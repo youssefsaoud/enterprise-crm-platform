@@ -24,3 +24,11 @@ Backend method security enforces these rules. Angular hides destructive actions 
 ## Search Query Parameters
 
 | Name | Description |
+| --- | --- |
+| `search` | Case-insensitive partial match against first name, last name, or email. |
+| `companyId` | Restrict results to one company UUID. |
+| `page` | Zero-based page number. |
+| `size` | Page size. |
+| `sort` | Spring Data sort expression such as `lastName,asc`. |
+
+## Create Or Update Body
