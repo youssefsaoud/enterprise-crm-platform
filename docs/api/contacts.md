@@ -15,3 +15,12 @@ Backend method security enforces these rules. Angular hides destructive actions 
 | Method | Path | Purpose |
 | --- | --- | --- |
 | `POST` | `/api/v1/contacts` | Create a contact linked to an existing company. |
+| `GET` | `/api/v1/contacts` | Search contacts with optional company filtering. |
+| `GET` | `/api/v1/contacts/{id}` | View contact detail. |
+| `PUT` | `/api/v1/contacts/{id}` | Update contact and optionally move it to another company. |
+| `DELETE` | `/api/v1/contacts/{id}` | Delete a contact when the role allows it. |
+| `GET` | `/api/v1/companies/{companyId}/contacts` | List contacts for one company. |
+
+## Search Query Parameters
+
+| Name | Description |
