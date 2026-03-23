@@ -41,3 +41,11 @@ Backend method security enforces these rules. Angular hides destructive actions 
   "email": "amina@example.com",
   "phone": "+212 600 000000",
   "jobTitle": "Operations Manager"
+}
+```
+
+`companyId`, `firstName`, and `lastName` are required. `email` must be valid when present. Duplicate names are allowed; Month 3 does not enforce global contact email uniqueness.
+
+## Relationship Rules
+
+A contact must reference an existing active company. The response includes `companyId` and `companyName` so Angular can navigate between contact and company views without exposing JPA entities directly.
