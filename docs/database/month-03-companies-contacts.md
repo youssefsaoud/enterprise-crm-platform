@@ -32,3 +32,14 @@ companies
 - created_at timestamptz
 - updated_at timestamptz
 - deleted_at timestamptz
+
+contacts
+- id uuid pk
+- company_id uuid fk companies(id) restrict delete
+- first_name varchar(80) not null
+- last_name varchar(80) not null
+- email varchar(180)
+- phone varchar(60)
+- job_title varchar(120)
+- created_at timestamptz
+- updated_at timestamptz
