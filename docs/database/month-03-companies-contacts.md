@@ -43,3 +43,14 @@ contacts
 - job_title varchar(120)
 - created_at timestamptz
 - updated_at timestamptz
+- deleted_at timestamptz
+```
+
+## Search Indexes
+
+The API supports case-insensitive search through lower-case expression indexes:
+
+- `idx_companies_name_lower`
+- `idx_companies_industry_lower`
+- `idx_contacts_name_lower`
+- `idx_contacts_email_lower`
