@@ -21,3 +21,14 @@ A contact must always belong to one company. Company deletion is rejected by the
 
 ```text
 companies
+- id uuid pk
+- name varchar(180) not null
+- industry varchar(120)
+- website varchar(255)
+- phone varchar(60)
+- email varchar(180)
+- address varchar(255)
+- owner_id uuid fk app_users(id)
+- created_at timestamptz
+- updated_at timestamptz
+- deleted_at timestamptz
