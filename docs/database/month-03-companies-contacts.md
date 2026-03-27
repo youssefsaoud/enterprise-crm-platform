@@ -10,3 +10,14 @@ Month 3 builds on the Month 2 schema without editing the applied `V2__month_02_c
 - Adds indexes for company name, company industry, contact name, and contact email search.
 
 ## Relationship Policy
+
+```text
+companies 1 ── * contacts
+```
+
+A contact must always belong to one company. Company deletion is rejected by the API while active contacts are attached, matching the Month 3 MVP policy.
+
+## Current ERD Slice
+
+```text
+companies
