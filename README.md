@@ -29,3 +29,34 @@ docs/      Product, architecture, timeline, and release documentation
 ## Environment
 
 Copy `.env.example` into your local shell or environment manager and provide local values only. Do not commit secrets.
+
+```text
+CRM_DB_URL=jdbc:postgresql://localhost:5432/crm_dev
+CRM_DB_USERNAME=crm_app
+CRM_DB_PASSWORD=replace-with-local-password
+CRM_CORS_ALLOWED_ORIGIN=http://localhost:4200
+NG_APP_API_BASE_URL=http://localhost:8080/api/v1
+```
+
+## Database Setup
+
+Create a local PostgreSQL database and application user before running the backend.
+
+```sql
+CREATE DATABASE crm_dev;
+CREATE USER crm_app WITH PASSWORD 'replace-with-local-password';
+GRANT ALL PRIVILEGES ON DATABASE crm_dev TO crm_app;
+```
+
+Flyway applies `backend/src/main/resources/db/migration/V1__initial_setup.sql` when the backend starts with a configured datasource.
+
+## Backend Commands
+
+```powershell
+cd backend
+mvn test
+mvn spring-boot:run
+```
+
+The public health endpoint is:
+
