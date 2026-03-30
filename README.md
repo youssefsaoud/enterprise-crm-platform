@@ -60,3 +60,34 @@ mvn spring-boot:run
 
 The public health endpoint is:
 
+```text
+GET http://localhost:8080/api/v1/health
+```
+
+Expected response:
+
+```json
+{"status":"UP","service":"crm-api"}
+```
+
+## Frontend Commands
+
+```powershell
+cd frontend
+pnpm install
+pnpm run build
+pnpm exec ng test --browsers=ChromeHeadless --watch=false
+pnpm start
+```
+
+The Angular app runs at `http://localhost:4200` and proxies `/api` requests to `http://localhost:8080` during development.
+
+## Month 1 Scope
+
+Month 1 establishes requirements, architecture, backend foundation, frontend foundation, and integration documentation. It intentionally does not implement JWT authentication, role-based authorization, or business CRUD endpoints.
+
+## Month 2 Authentication Setup
+
+Month 2 adds Flyway schema migration `V2__month_02_core_schema.sql`, JPA mappings, Spring Security, JWT login, admin provisioning, and Angular protected navigation.
+
+Required local authentication variables:
