@@ -91,3 +91,34 @@ Month 1 establishes requirements, architecture, backend foundation, frontend fou
 Month 2 adds Flyway schema migration `V2__month_02_core_schema.sql`, JPA mappings, Spring Security, JWT login, admin provisioning, and Angular protected navigation.
 
 Required local authentication variables:
+
+```text
+CRM_JWT_SECRET=replace-with-at-least-32-random-characters
+CRM_JWT_ISSUER=crm-api
+CRM_JWT_EXPIRES_IN_SECONDS=3600
+CRM_BOOTSTRAP_ADMIN_ENABLED=true
+CRM_BOOTSTRAP_ADMIN_EMAIL=admin@example.com
+CRM_BOOTSTRAP_ADMIN_PASSWORD=replace-with-local-password
+```
+
+Use `CRM_BOOTSTRAP_ADMIN_ENABLED=true` only in local development to create the first admin account. Disable it after provisioning.
+
+Authentication endpoints:
+
+```text
+POST /api/v1/auth/login
+GET  /api/v1/auth/me
+POST /api/v1/admin/users   ADMIN only
+```
+
+The Angular app stores the access token in memory and clears it on logout or browser refresh.
+
+## Month 3 Companies And Contacts
+
+Month 3 adds secured company and contact management across the Spring Boot API and Angular app.
+
+Company endpoints:
+
+```text
+GET    /api/v1/companies
+POST   /api/v1/companies
