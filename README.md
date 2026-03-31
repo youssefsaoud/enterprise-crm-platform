@@ -122,3 +122,31 @@ Company endpoints:
 ```text
 GET    /api/v1/companies
 POST   /api/v1/companies
+GET    /api/v1/companies/{id}
+PUT    /api/v1/companies/{id}
+DELETE /api/v1/companies/{id}
+GET    /api/v1/companies/{id}/contacts
+```
+
+Contact endpoints:
+
+```text
+GET    /api/v1/contacts
+POST   /api/v1/contacts
+GET    /api/v1/contacts/{id}
+PUT    /api/v1/contacts/{id}
+DELETE /api/v1/contacts/{id}
+```
+
+Angular routes:
+
+```text
+/companies
+/companies/new
+/companies/:id
+/companies/:id/edit
+/contacts
+/contacts/new
+/contacts/:id
+/contacts/:id/edit
+```
