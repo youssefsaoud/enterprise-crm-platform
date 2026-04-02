@@ -24,3 +24,9 @@ Month 3 delivers the first business CRUD module for the CRM MVP. The work is org
 | Delete contacts | Yes | Yes | No |
 
 ## Verification Note
+
+Per project workflow instructions for this phase, tests, builds, and smoke checks were not run while implementing Month 3.
+
+## Release
+
+Recommended milestone tag: `v0.3.0`.
