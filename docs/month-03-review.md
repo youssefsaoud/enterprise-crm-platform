@@ -18,3 +18,9 @@ Month 3 delivers the first business CRUD module for the CRM MVP. The work is org
 | Action | Admin | Manager | Sales Representative |
 | --- | --- | --- | --- |
 | View/search companies and contacts | Yes | Yes | Yes |
+| Create/update companies | Yes | Yes | No |
+| Delete companies | Yes | No | No |
+| Create/update contacts | Yes | Yes | Yes |
+| Delete contacts | Yes | Yes | No |
+
+## Verification Note
