@@ -11,3 +11,10 @@ Month 3 delivers the first business CRUD module for the CRM MVP. The work is org
 - Built Angular company list, detail, create, and edit workflows.
 - Built Angular contact list, detail, create, and edit workflows.
 - Linked company and contact navigation, including related contacts on company detail.
+- Updated README, API docs, and database notes.
+
+## Access Rules Implemented
+
+| Action | Admin | Manager | Sales Representative |
+| --- | --- | --- | --- |
+| View/search companies and contacts | Yes | Yes | Yes |
