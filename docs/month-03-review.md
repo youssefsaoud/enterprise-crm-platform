@@ -5,3 +5,9 @@ Month 3 delivers the first business CRUD module for the CRM MVP. The work is org
 ## Completed Scope
 
 - Added Flyway migration `V3__month_03_company_contact_management.sql` for company/contact refinements, indexes, and delete behavior.
+- Implemented secured company CRUD API with validation, pagination, search, industry filtering, and delete conflict handling.
+- Implemented secured contact CRUD API with required company association, search, company filtering, and company-scoped listing.
+- Added consistent API error responses for validation, not found, conflict, and forbidden cases.
+- Built Angular company list, detail, create, and edit workflows.
+- Built Angular contact list, detail, create, and edit workflows.
+- Linked company and contact navigation, including related contacts on company detail.
