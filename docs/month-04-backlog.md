@@ -25,3 +25,9 @@ Month 4 should build on the authenticated CRM foundation and the Month 3 company
 - Add filters for status, assigned user, company, and search text.
 - Add assignment controls for admin/manager roles.
 - Keep sales representative views focused on assigned leads.
+
+## Documentation Work
+
+- Document lead API examples.
+- Update ERD/schema notes for any migration refinements.
+- Update the role-permission matrix with lead ownership rules.
