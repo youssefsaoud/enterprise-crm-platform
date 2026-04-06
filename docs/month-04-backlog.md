@@ -18,3 +18,10 @@ Month 4 should build on the authenticated CRM foundation and the Month 3 company
 - Add REST endpoints under `/api/v1/leads`.
 - Enforce role rules in backend method security.
 - Prevent invalid lead status transitions where the product policy requires it.
+
+## Frontend Work
+
+- Replace the current lead placeholder with real Angular screens.
+- Add filters for status, assigned user, company, and search text.
+- Add assignment controls for admin/manager roles.
+- Keep sales representative views focused on assigned leads.
