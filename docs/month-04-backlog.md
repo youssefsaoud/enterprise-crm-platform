@@ -12,3 +12,9 @@ Month 4 should build on the authenticated CRM foundation and the Month 3 company
 - Show related company and contact context on lead pages.
 
 ## Backend Work
+
+- Refine the existing `Lead` JPA model as needed without editing applied migrations.
+- Add request/response DTOs and a `LeadService` boundary.
+- Add REST endpoints under `/api/v1/leads`.
+- Enforce role rules in backend method security.
+- Prevent invalid lead status transitions where the product policy requires it.
