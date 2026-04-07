@@ -13,3 +13,10 @@ This document records the project Month 3 development timeline for the Companies
 | 2023-10-06 | Company list and search screen. |
 | 2023-10-09 | Company detail and form workflows. |
 | 2023-10-10 | Angular contact API client. |
+| 2023-10-11 | Contact list and search screen. |
+| 2023-10-12 | Contact detail and form workflows. |
+| 2023-10-13 | Month 3 shell update. |
+| 2023-10-14 | Related contacts on company detail. |
+| 2023-10-16 | Backend read transaction polish. |
+| 2023-10-17 | Forbidden API error handling. |
+| 2023-10-18 | Angular API error display. |
