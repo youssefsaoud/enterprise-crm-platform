@@ -20,3 +20,10 @@ This document records the project Month 3 development timeline for the Companies
 | 2023-10-16 | Backend read transaction polish. |
 | 2023-10-17 | Forbidden API error handling. |
 | 2023-10-18 | Angular API error display. |
+| 2023-10-19 | Inline form validation feedback. |
+| 2023-10-20 | Company website validation. |
+| 2023-10-23 | Company API documentation. |
+| 2023-10-24 | Contact API documentation. |
+| 2023-10-25 | Database and ERD documentation. |
+| 2023-10-26 | README Month 3 update. |
+| 2023-10-27 | Month 3 review. |
