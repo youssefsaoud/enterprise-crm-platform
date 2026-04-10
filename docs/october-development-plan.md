@@ -27,3 +27,9 @@ This document records the project Month 3 development timeline for the Companies
 | 2023-10-25 | Database and ERD documentation. |
 | 2023-10-26 | README Month 3 update. |
 | 2023-10-27 | Month 3 review. |
+| 2023-10-28 | Month 4 backlog. |
+| 2023-10-30 | October development plan. |
+| 2023-10-31 | Month 3 milestone release notes. |
+
+## Note
+
