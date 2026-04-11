@@ -10,3 +10,9 @@
 - Angular contact list, detail, create, and edit workflows.
 - Company-to-contact navigation and related contact preview.
 - API, database, README, and milestone documentation.
+
+## Not Included
+
+- Month 4 lead workflows.
+- Opportunity pipeline management.
+- Interaction logging.
