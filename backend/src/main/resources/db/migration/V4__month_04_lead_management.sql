@@ -14,3 +14,11 @@ ALTER TABLE leads
     ALTER COLUMN last_name DROP DEFAULT;
 
 ALTER TABLE leads
+    DROP CONSTRAINT IF EXISTS ck_leads_status,
+    ADD CONSTRAINT ck_leads_status CHECK (status IN ('NEW', 'CONTACTED', 'QUALIFIED', 'UNQUALIFIED'));
+
+ALTER TABLE leads
+    ADD CONSTRAINT ck_leads_source CHECK (source IN ('WEBSITE', 'REFERRAL', 'EMAIL', 'EVENT', 'OTHER'));
+
+CREATE TABLE lead_events (
+    id UUID PRIMARY KEY,
