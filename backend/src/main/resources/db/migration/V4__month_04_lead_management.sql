@@ -22,3 +22,18 @@ ALTER TABLE leads
 
 CREATE TABLE lead_events (
     id UUID PRIMARY KEY,
+    lead_id UUID NOT NULL REFERENCES leads(id) ON DELETE CASCADE,
+    event_type VARCHAR(32) NOT NULL,
+    old_value VARCHAR(255),
+    new_value VARCHAR(255),
+    performed_by_user_id UUID NOT NULL REFERENCES app_users(id) ON DELETE RESTRICT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT ck_lead_events_type CHECK (event_type IN ('CREATED', 'UPDATED', 'ASSIGNED', 'UNASSIGNED', 'STATUS_CHANGED', 'DELETED'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_leads_assigned_status ON leads(assigned_to_id, status);
+CREATE INDEX IF NOT EXISTS idx_leads_created_at ON leads(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_leads_company_id ON leads(company_id);
+CREATE INDEX IF NOT EXISTS idx_leads_created_by_id ON leads(created_by_id);
+CREATE INDEX IF NOT EXISTS idx_leads_name_email_lower ON leads(LOWER(first_name), LOWER(last_name), LOWER(email));
+CREATE INDEX IF NOT EXISTS idx_lead_events_lead_created ON lead_events(lead_id, created_at DESC);
