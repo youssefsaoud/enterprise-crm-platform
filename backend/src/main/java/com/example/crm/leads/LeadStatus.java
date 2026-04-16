@@ -4,5 +4,5 @@ public enum LeadStatus {
     NEW,
     CONTACTED,
     QUALIFIED,
-    DISQUALIFIED
+    UNQUALIFIED
 }
