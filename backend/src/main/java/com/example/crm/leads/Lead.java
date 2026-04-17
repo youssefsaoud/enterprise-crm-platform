@@ -28,3 +28,32 @@ public class Lead extends AuditSupport {
     @Column(nullable = false, length = 80)
     private String lastName;
 
+    @Column(length = 180)
+    private String email;
+
+    @Column(length = 60)
+    private String phone;
+
+    @Column(length = 180)
+    private String companyName;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "company_id")
+    private Company company;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "assigned_to_id")
+    private User assignedTo;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "created_by_id")
+    private User createdBy;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 32)
+    private LeadSource source;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 32)
+    private LeadStatus status = LeadStatus.NEW;
+
