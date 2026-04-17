@@ -87,3 +87,32 @@ public class Lead extends AuditSupport {
     public String getFirstName() { return firstName; }
     public void setFirstName(String firstName) { this.firstName = firstName; refreshSummary(); }
     public String getLastName() { return lastName; }
+    public void setLastName(String lastName) { this.lastName = lastName; refreshSummary(); }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
+    public String getCompanyName() { return companyName; }
+    public void setCompanyName(String companyName) { this.companyName = companyName; }
+    public Company getCompany() { return company; }
+    public void setCompany(Company company) { this.company = company; }
+    public User getAssignedTo() { return assignedTo; }
+    public void setAssignedTo(User assignedTo) { this.assignedTo = assignedTo; }
+    public User getCreatedBy() { return createdBy; }
+    public LeadSource getSource() { return source; }
+    public void setSource(LeadSource source) { this.source = source; }
+    public LeadStatus getStatus() { return status; }
+    public void setStatus(LeadStatus status) { this.status = status; }
+    public String getSummary() { return summary; }
+    public OffsetDateTime getAssignedAt() { return assignedAt; }
+    public void setAssignedAt(OffsetDateTime assignedAt) { this.assignedAt = assignedAt; }
+    public OffsetDateTime getDeletedAt() { return deletedAt; }
+    public void setDeletedAt(OffsetDateTime deletedAt) { this.deletedAt = deletedAt; }
+    public long getVersion() { return version; }
+
+    private void refreshSummary() {
+        if (firstName != null && lastName != null) {
+            summary = firstName + " " + lastName;
+        }
+    }
+}
