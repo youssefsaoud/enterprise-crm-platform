@@ -57,3 +57,33 @@ public class Lead extends AuditSupport {
     @Column(nullable = false, length = 32)
     private LeadStatus status = LeadStatus.NEW;
 
+    @Column(nullable = false, length = 255)
+    private String summary;
+
+    private OffsetDateTime assignedAt;
+    private OffsetDateTime deletedAt;
+
+    @Version
+    private long version;
+
+    protected Lead() {}
+
+    public Lead(String firstName, String lastName, LeadSource source, User createdBy) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.source = source;
+        this.createdBy = createdBy;
+        this.summary = firstName + " " + lastName;
+    }
+
+    @Override
+    protected void assignIdIfNecessary() {
+        if (id == null) {
+            id = newId();
+        }
+    }
+
+    public UUID getId() { return id; }
+    public String getFirstName() { return firstName; }
+    public void setFirstName(String firstName) { this.firstName = firstName; refreshSummary(); }
+    public String getLastName() { return lastName; }
