@@ -46,3 +46,26 @@ public class LeadEvent {
     public LeadEvent(Lead lead, LeadEventType eventType, String oldValue, String newValue, User performedBy) {
         this.lead = lead;
         this.eventType = eventType;
+        this.oldValue = oldValue;
+        this.newValue = newValue;
+        this.performedBy = performedBy;
+    }
+
+    @PrePersist
+    void onCreate() {
+        if (id == null) {
+            id = UUID.randomUUID();
+        }
+        if (createdAt == null) {
+            createdAt = OffsetDateTime.now();
+        }
+    }
+
+    public UUID getId() { return id; }
+    public Lead getLead() { return lead; }
+    public LeadEventType getEventType() { return eventType; }
+    public String getOldValue() { return oldValue; }
+    public String getNewValue() { return newValue; }
+    public User getPerformedBy() { return performedBy; }
+    public OffsetDateTime getCreatedAt() { return createdAt; }
+}
