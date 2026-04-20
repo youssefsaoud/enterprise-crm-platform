@@ -22,3 +22,27 @@ public class LeadEvent {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "lead_id")
+    private Lead lead;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 32)
+    private LeadEventType eventType;
+
+    @Column(length = 255)
+    private String oldValue;
+
+    @Column(length = 255)
+    private String newValue;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "performed_by_user_id")
+    private User performedBy;
+
+    @Column(nullable = false)
+    private OffsetDateTime createdAt;
+
+    protected LeadEvent() {}
+
+    public LeadEvent(Lead lead, LeadEventType eventType, String oldValue, String newValue, User performedBy) {
+        this.lead = lead;
+        this.eventType = eventType;
