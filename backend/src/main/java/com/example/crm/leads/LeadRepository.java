@@ -40,3 +40,16 @@ public interface LeadRepository extends JpaRepository<Lead, UUID> {
             or lower(l.lastName) like lower(concat('%', :keyword, '%'))
             or lower(l.email) like lower(concat('%', :keyword, '%'))
             or lower(l.companyName) like lower(concat('%', :keyword, '%'))
+          )
+        """)
+    Page<Lead> searchVisible(
+        @Param("userId") UUID userId,
+        @Param("canSeeAll") boolean canSeeAll,
+        @Param("status") LeadStatus status,
+        @Param("source") LeadSource source,
+        @Param("assigneeId") UUID assigneeId,
+        @Param("companyId") UUID companyId,
+        @Param("keyword") String keyword,
+        Pageable pageable
+    );
+}
