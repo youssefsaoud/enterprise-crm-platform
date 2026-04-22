@@ -12,3 +12,17 @@ public interface LeadRepository extends JpaRepository<Lead, UUID> {
     @EntityGraph(attributePaths = {"company", "assignedTo", "createdBy"})
     @Query("""
         select l from Lead l
+        where l.deletedAt is null
+          and (:canSeeAll = true or l.assignedTo.id = :userId or l.createdBy.id = :userId)
+          and (:status is null or l.status = :status)
+          and (:source is null or l.source = :source)
+          and (:assigneeId is null or l.assignedTo.id = :assigneeId)
+          and (:companyId is null or l.company.id = :companyId)
+          and (
+            :keyword is null
+            or lower(l.firstName) like lower(concat('%', :keyword, '%'))
+            or lower(l.lastName) like lower(concat('%', :keyword, '%'))
+            or lower(l.email) like lower(concat('%', :keyword, '%'))
+            or lower(l.companyName) like lower(concat('%', :keyword, '%'))
+          )
+        """,
