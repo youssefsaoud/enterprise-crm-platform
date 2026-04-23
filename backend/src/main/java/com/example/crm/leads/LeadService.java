@@ -68,3 +68,38 @@ public class LeadService {
     @Transactional
     public LeadResponse create(LeadCreateRequest request, CrmUserPrincipal principal) {
         User creator = currentUser(principal);
+        Lead lead = new Lead(cleanRequired(request.firstName()), cleanRequired(request.lastName()), request.source(), creator);
+        apply(lead, request.email(), request.phone(), request.companyName(), request.companyId());
+        Lead saved = leadRepository.save(lead);
+        record(saved, LeadEventType.CREATED, null, saved.getStatus().name(), creator);
+        return LeadResponse.from(saved);
+    }
+
+    @Transactional
+    public LeadResponse update(UUID id, LeadUpdateRequest request, CrmUserPrincipal principal) {
+        Lead lead = findActive(id);
+        assertEditable(lead, principal);
+        lead.setFirstName(cleanRequired(request.firstName()));
+        lead.setLastName(cleanRequired(request.lastName()));
+        lead.setSource(request.source());
+        apply(lead, request.email(), request.phone(), request.companyName(), request.companyId());
+        record(lead, LeadEventType.UPDATED, null, lead.getSummary(), currentUser(principal));
+        return LeadResponse.from(lead);
+    }
+
+    @Transactional
+    public void delete(UUID id, CrmUserPrincipal principal) {
+        requireRole(principal, Role.ADMIN);
+        Lead lead = findActive(id);
+        lead.setDeletedAt(OffsetDateTime.now());
+        record(lead, LeadEventType.DELETED, null, "deleted", currentUser(principal));
+    }
+
+    @Transactional
+    public LeadResponse assign(UUID id, LeadAssignmentRequest request, CrmUserPrincipal principal) {
+        requireManager(principal);
+        Lead lead = findActive(id);
+        User actor = currentUser(principal);
+        User previous = lead.getAssignedTo();
+        if (request.assigneeUserId() == null) {
+            lead.setAssignedTo(null);
