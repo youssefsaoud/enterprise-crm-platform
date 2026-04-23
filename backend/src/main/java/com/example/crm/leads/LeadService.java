@@ -33,3 +33,38 @@ public class LeadService {
         this.leadRepository = leadRepository;
         this.leadEventRepository = leadEventRepository;
         this.companyRepository = companyRepository;
+        this.userRepository = userRepository;
+    }
+
+    @Transactional(readOnly = true)
+    public Page<LeadResponse> search(
+        CrmUserPrincipal principal,
+        LeadStatus status,
+        LeadSource source,
+        UUID assigneeId,
+        UUID companyId,
+        String keyword,
+        Pageable pageable
+    ) {
+        return leadRepository.searchVisible(
+            principal.id(),
+            canSeeAll(principal),
+            status,
+            source,
+            assigneeId,
+            companyId,
+            normalize(keyword),
+            pageable
+        ).map(LeadResponse::from);
+    }
+
+    @Transactional(readOnly = true)
+    public LeadResponse get(UUID id, CrmUserPrincipal principal) {
+        Lead lead = findActive(id);
+        assertReadable(lead, principal);
+        return LeadResponse.from(lead);
+    }
+
+    @Transactional
+    public LeadResponse create(LeadCreateRequest request, CrmUserPrincipal principal) {
+        User creator = currentUser(principal);
