@@ -103,3 +103,38 @@ public class LeadService {
         User previous = lead.getAssignedTo();
         if (request.assigneeUserId() == null) {
             lead.setAssignedTo(null);
+            lead.setAssignedAt(null);
+            record(lead, LeadEventType.UNASSIGNED, userLabel(previous), null, actor);
+            return LeadResponse.from(lead);
+        }
+        User assignee = userRepository.findById(request.assigneeUserId())
+            .orElseThrow(() -> new ResourceNotFoundException("Assignee not found"));
+        if (!assignee.isActive() || assignee.getRole() != Role.SALES_REP) {
+            throw new ConflictException("Lead can only be assigned to an active sales representative");
+        }
+        lead.setAssignedTo(assignee);
+        lead.setAssignedAt(OffsetDateTime.now());
+        record(lead, LeadEventType.ASSIGNED, userLabel(previous), userLabel(assignee), actor);
+        return LeadResponse.from(lead);
+    }
+
+    @Transactional
+    public LeadResponse changeStatus(UUID id, LeadStatusRequest request, CrmUserPrincipal principal) {
+        Lead lead = findActive(id);
+        assertStatusChangeAllowed(lead, principal);
+        LeadStatus previous = lead.getStatus();
+        LeadStatus next = request.status();
+        if (!isAllowedTransition(previous, next)) {
+            throw new ConflictException("Lead status transition is not allowed");
+        }
+        lead.setStatus(next);
+        record(lead, LeadEventType.STATUS_CHANGED, previous.name(), next.name(), currentUser(principal));
+        return LeadResponse.from(lead);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<LeadEventResponse> history(UUID id, CrmUserPrincipal principal, Pageable pageable) {
+        Lead lead = findActive(id);
+        assertReadable(lead, principal);
+        return leadEventRepository.findByLeadOrderByCreatedAtDesc(lead, pageable).map(LeadEventResponse::from);
+    }
