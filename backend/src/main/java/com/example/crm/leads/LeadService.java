@@ -173,3 +173,38 @@ public class LeadService {
         if (!canSeeAll(principal) && !isOwner(lead, principal)) {
             throw new AccessDeniedException("Lead is not visible to the current user");
         }
+    }
+
+    private void assertEditable(Lead lead, CrmUserPrincipal principal) {
+        if (canSeeAll(principal)) {
+            return;
+        }
+        if (!isOwner(lead, principal)) {
+            throw new AccessDeniedException("Lead cannot be edited by the current user");
+        }
+    }
+
+    private void assertStatusChangeAllowed(Lead lead, CrmUserPrincipal principal) {
+        if (canSeeAll(principal)) {
+            return;
+        }
+        if (lead.getAssignedTo() == null || !lead.getAssignedTo().getId().equals(principal.id())) {
+            throw new AccessDeniedException("Only the assigned representative can change lead status");
+        }
+    }
+
+    private boolean isOwner(Lead lead, CrmUserPrincipal principal) {
+        boolean assigned = lead.getAssignedTo() != null && lead.getAssignedTo().getId().equals(principal.id());
+        boolean created = lead.getCreatedBy() != null && lead.getCreatedBy().getId().equals(principal.id());
+        return assigned || created;
+    }
+
+    private boolean canSeeAll(CrmUserPrincipal principal) {
+        return principal.role() == Role.ADMIN || principal.role() == Role.MANAGER;
+    }
+
+    private void requireManager(CrmUserPrincipal principal) {
+        if (principal.role() != Role.ADMIN && principal.role() != Role.MANAGER) {
+            throw new AccessDeniedException("Only admin and manager users can assign leads");
+        }
+    }
