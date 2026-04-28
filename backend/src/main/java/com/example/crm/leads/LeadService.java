@@ -138,3 +138,38 @@ public class LeadService {
         assertReadable(lead, principal);
         return leadEventRepository.findByLeadOrderByCreatedAtDesc(lead, pageable).map(LeadEventResponse::from);
     }
+
+    private void apply(Lead lead, String email, String phone, String companyName, UUID companyId) {
+        lead.setEmail(normalize(email));
+        lead.setPhone(normalize(phone));
+        lead.setCompanyName(normalize(companyName));
+        lead.setCompany(companyId == null ? null : findCompany(companyId));
+    }
+
+    private Company findCompany(UUID id) {
+        Company company = companyRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Company not found"));
+        if (company.getDeletedAt() != null) {
+            throw new ResourceNotFoundException("Company not found");
+        }
+        return company;
+    }
+
+    private Lead findActive(UUID id) {
+        Lead lead = leadRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Lead not found"));
+        if (lead.getDeletedAt() != null) {
+            throw new ResourceNotFoundException("Lead not found");
+        }
+        return lead;
+    }
+
+    private User currentUser(CrmUserPrincipal principal) {
+        return userRepository.findById(principal.id())
+            .orElseThrow(() -> new AccessDeniedException("Current user is not available"));
+    }
+
+    private void assertReadable(Lead lead, CrmUserPrincipal principal) {
+        if (!canSeeAll(principal) && !isOwner(lead, principal)) {
+            throw new AccessDeniedException("Lead is not visible to the current user");
+        }
