@@ -58,3 +58,23 @@ public class LeadController {
     }
 
     @DeleteMapping("/{id}")
+    ResponseEntity<Void> delete(@PathVariable UUID id, @AuthenticationPrincipal CrmUserPrincipal principal) {
+        leadService.delete(id, principal);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/assignment")
+    LeadResponse assign(@PathVariable UUID id, @RequestBody LeadAssignmentRequest request, @AuthenticationPrincipal CrmUserPrincipal principal) {
+        return leadService.assign(id, request, principal);
+    }
+
+    @PatchMapping("/{id}/status")
+    LeadResponse changeStatus(@PathVariable UUID id, @Valid @RequestBody LeadStatusRequest request, @AuthenticationPrincipal CrmUserPrincipal principal) {
+        return leadService.changeStatus(id, request, principal);
+    }
+
+    @GetMapping("/{id}/history")
+    Page<LeadEventResponse> history(@PathVariable UUID id, @AuthenticationPrincipal CrmUserPrincipal principal, Pageable pageable) {
+        return leadService.history(id, principal, pageable);
+    }
+}
