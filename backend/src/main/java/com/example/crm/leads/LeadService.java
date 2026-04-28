@@ -208,3 +208,37 @@ public class LeadService {
             throw new AccessDeniedException("Only admin and manager users can assign leads");
         }
     }
+
+    private void requireRole(CrmUserPrincipal principal, Role role) {
+        if (principal.role() != role) {
+            throw new AccessDeniedException("Required role: " + role);
+        }
+    }
+
+    private boolean isAllowedTransition(LeadStatus previous, LeadStatus next) {
+        if (previous == next) {
+            return true;
+        }
+        return switch (previous) {
+            case NEW -> next == LeadStatus.CONTACTED || next == LeadStatus.UNQUALIFIED;
+            case CONTACTED -> next == LeadStatus.QUALIFIED || next == LeadStatus.UNQUALIFIED;
+            case QUALIFIED, UNQUALIFIED -> false;
+        };
+    }
+
+    private void record(Lead lead, LeadEventType type, String oldValue, String newValue, User actor) {
+        leadEventRepository.save(new LeadEvent(lead, type, oldValue, newValue, actor));
+    }
+
+    private String userLabel(User user) {
+        return user == null ? null : user.getId() + ":" + user.getFullName();
+    }
+
+    private String cleanRequired(String value) {
+        return value == null ? null : value.trim();
+    }
+
+    private String normalize(String value) {
+        return StringUtils.hasText(value) ? value.trim() : null;
+    }
+}
