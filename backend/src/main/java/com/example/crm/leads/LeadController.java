@@ -18,3 +18,23 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/v1/leads")
+public class LeadController {
+    private final LeadService leadService;
+
+    public LeadController(LeadService leadService) {
+        this.leadService = leadService;
+    }
+
+    @GetMapping
+    Page<LeadResponse> search(
+        @AuthenticationPrincipal CrmUserPrincipal principal,
+        @RequestParam(required = false) LeadStatus status,
+        @RequestParam(required = false) LeadSource source,
+        @RequestParam(required = false) UUID assigneeId,
+        @RequestParam(required = false) UUID companyId,
+        @RequestParam(required = false) String keyword,
+        Pageable pageable
+    ) {
