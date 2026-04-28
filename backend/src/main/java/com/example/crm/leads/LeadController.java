@@ -38,3 +38,23 @@ public class LeadController {
         @RequestParam(required = false) String keyword,
         Pageable pageable
     ) {
+        return leadService.search(principal, status, source, assigneeId, companyId, keyword, pageable);
+    }
+
+    @GetMapping("/{id}")
+    LeadResponse get(@PathVariable UUID id, @AuthenticationPrincipal CrmUserPrincipal principal) {
+        return leadService.get(id, principal);
+    }
+
+    @PostMapping
+    ResponseEntity<LeadResponse> create(@Valid @RequestBody LeadCreateRequest request, @AuthenticationPrincipal CrmUserPrincipal principal) {
+        LeadResponse response = leadService.create(request, principal);
+        return ResponseEntity.created(URI.create("/api/v1/leads/" + response.id())).body(response);
+    }
+
+    @PutMapping("/{id}")
+    LeadResponse update(@PathVariable UUID id, @Valid @RequestBody LeadUpdateRequest request, @AuthenticationPrincipal CrmUserPrincipal principal) {
+        return leadService.update(id, request, principal);
+    }
+
+    @DeleteMapping("/{id}")
