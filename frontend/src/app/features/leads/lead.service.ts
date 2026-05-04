@@ -27,3 +27,31 @@ export class LeadService {
   update(id: string, payload: LeadPayload): Observable<Lead> {
     return this.http.put<Lead>(`${this.baseUrl}/${id}`, this.clean(payload));
   }
+
+  delete(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${id}`);
+  }
+
+  assign(id: string, assigneeUserId: string | null): Observable<Lead> {
+    return this.http.patch<Lead>(`${this.baseUrl}/${id}/assignment`, { assigneeUserId });
+  }
+
+  changeStatus(id: string, status: LeadStatus): Observable<Lead> {
+    return this.http.patch<Lead>(`${this.baseUrl}/${id}/status`, { status });
+  }
+
+  history(id: string): Observable<PageResponse<LeadEvent>> {
+    return this.http.get<PageResponse<LeadEvent>>(`${this.baseUrl}/${id}/history`, {
+      params: new HttpParams().set('size', '20').set('sort', 'createdAt,desc')
+    });
+  }
+
+  salesRepresentatives(): Observable<UserSummary[]> {
+    return this.http.get<UserSummary[]>(`${environment.apiBaseUrl}/users/sales-representatives`);
+  }
+
+  private toParams(params: LeadSearchParams): HttpParams {
+    let httpParams = new HttpParams()
+      .set('page', String(params.page ?? 0))
+      .set('size', String(params.size ?? 10))
+      .set('sort', params.sort ?? 'createdAt,desc');
