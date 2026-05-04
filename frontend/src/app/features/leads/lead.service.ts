@@ -55,3 +55,31 @@ export class LeadService {
       .set('page', String(params.page ?? 0))
       .set('size', String(params.size ?? 10))
       .set('sort', params.sort ?? 'createdAt,desc');
+
+    for (const [key, value] of Object.entries(params)) {
+      if (['page', 'size', 'sort'].includes(key)) {
+        continue;
+      }
+      if (typeof value === 'string' && value.trim()) {
+        httpParams = httpParams.set(key, value.trim());
+      }
+    }
+    return httpParams;
+  }
+
+  private clean(payload: LeadPayload): LeadPayload {
+    return {
+      firstName: payload.firstName.trim(),
+      lastName: payload.lastName.trim(),
+      email: this.optional(payload.email),
+      phone: this.optional(payload.phone),
+      companyName: this.optional(payload.companyName),
+      companyId: this.optional(payload.companyId),
+      source: payload.source
+    };
+  }
+
+  private optional(value: string | null | undefined): string | null {
+    return value?.trim() ? value.trim() : null;
+  }
+}
