@@ -1,5 +1,69 @@
-<section class="page-header">
-  <p>CRM module</p>
-  <h1>Leads</h1>
+<section class="page-header entity-header">
+  <div>
+    <p>CRM module</p>
+    <h1>Leads</h1>
+  </div>
+  <a class="primary-link" routerLink="/leads/new">New lead</a>
 </section>
-<app-empty-state title="No leads data yet" message="Lead capture, assignment, qualification, and conversion are planned for later Month 2 work."></app-empty-state>
+
+<section class="toolbar" aria-label="Lead filters">
+  <label>
+    Search
+    <input type="search" [formControl]="keywordControl" placeholder="Name, email, or company" />
+  </label>
+  <label>
+    Status
+    <select [formControl]="statusControl">
+      <option value="">Any status</option>
+      <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
+    </select>
+  </label>
+  <label>
+    Source
+    <select [formControl]="sourceControl">
+      <option value="">Any source</option>
+      <option *ngFor="let source of sources" [value]="source">{{ source }}</option>
+    </select>
+  </label>
+</section>
+
+<p *ngIf="error" class="error-message">{{ error }}</p>
+<p *ngIf="loading" class="muted">Loading leads...</p>
+
+<div class="table-shell" *ngIf="!loading && leads.length > 0; else emptyState">
+  <table>
+    <thead>
+      <tr>
+        <th>Lead</th>
+        <th>Company</th>
+        <th>Status</th>
+        <th>Source</th>
+        <th>Assignee</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let lead of leads">
+        <td><a [routerLink]="['/leads', lead.id]">{{ lead.firstName }} {{ lead.lastName }}</a><span>{{ lead.email || '-' }}</span></td>
+        <td>{{ lead.linkedCompanyName || lead.companyName || '-' }}</td>
+        <td><span class="pill">{{ lead.status }}</span></td>
+        <td>{{ lead.source }}</td>
+        <td>{{ lead.assignedToName || 'Unassigned' }}</td>
+        <td><a [routerLink]="['/leads', lead.id]">Open</a></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<ng-template #emptyState>
+  <section *ngIf="!loading" class="empty-panel">
+    <h2>No leads found</h2>
+    <p>Create a lead or adjust the filters.</p>
+  </section>
+</ng-template>
+
+<footer class="pager" *ngIf="totalElements > 0">
+  <button type="button" (click)="previousPage()" [disabled]="page === 0">Previous</button>
+  <span>Page {{ page + 1 }} of {{ totalPages || 1 }} · {{ totalElements }} leads</span>
+  <button type="button" (click)="nextPage()" [disabled]="page + 1 >= totalPages">Next</button>
+</footer>
