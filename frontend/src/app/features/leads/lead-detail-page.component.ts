@@ -40,3 +40,45 @@ export class LeadDetailPageComponent implements OnInit {
       this.router.navigateByUrl('/leads');
       return;
     }
+    this.load(id);
+    this.loadSalesRepresentatives();
+  }
+
+  assign(): void {
+    if (!this.lead) {
+      return;
+    }
+    this.leadService.assign(this.lead.id, this.assigneeControl.value || null).subscribe({
+      next: (lead) => {
+        this.applyLead(lead);
+        this.loadHistory(lead.id);
+      },
+      error: (error) => this.error = apiErrorMessage(error, 'Lead assignment failed.')
+    });
+  }
+
+  changeStatus(): void {
+    if (!this.lead) {
+      return;
+    }
+    this.leadService.changeStatus(this.lead.id, this.statusControl.value).subscribe({
+      next: (lead) => {
+        this.applyLead(lead);
+        this.loadHistory(lead.id);
+      },
+      error: (error) => this.error = apiErrorMessage(error, 'Lead status could not be changed.')
+    });
+  }
+
+  deleteLead(): void {
+    if (!this.lead || !confirm('Delete this lead?')) {
+      return;
+    }
+    this.leadService.delete(this.lead.id).subscribe({
+      next: () => this.router.navigateByUrl('/leads'),
+      error: (error) => this.error = apiErrorMessage(error, 'Lead could not be deleted.')
+    });
+  }
+
+  canManage(role: string): boolean {
+    return role === 'ADMIN' || role === 'MANAGER';
