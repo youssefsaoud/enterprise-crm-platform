@@ -1,0 +1,48 @@
+<section class="page-header">
+  <p>Lead record</p>
+  <h1>{{ leadId ? 'Edit lead' : 'New lead' }}</h1>
+</section>
+
+<p *ngIf="loading" class="muted">Loading lead...</p>
+<p *ngIf="error" class="error-message">{{ error }}</p>
+
+<form class="entity-form" [formGroup]="form" (ngSubmit)="save()" *ngIf="!loading">
+  <label>
+    First name
+    <input formControlName="firstName" maxlength="80" required />
+    <small *ngIf="form.controls.firstName.touched && form.controls.firstName.invalid">First name is required.</small>
+  </label>
+  <label>
+    Last name
+    <input formControlName="lastName" maxlength="80" required />
+    <small *ngIf="form.controls.lastName.touched && form.controls.lastName.invalid">Last name is required.</small>
+  </label>
+  <label>
+    Email
+    <input type="email" formControlName="email" maxlength="180" />
+    <small *ngIf="form.controls.email.touched && form.controls.email.invalid">Enter a valid email address.</small>
+  </label>
+  <label>
+    Phone
+    <input formControlName="phone" maxlength="60" />
+  </label>
+  <label>
+    Prospect company
+    <input formControlName="companyName" maxlength="180" />
+  </label>
+  <label>
+    Linked company ID
+    <input formControlName="companyId" maxlength="36" />
+  </label>
+  <label>
+    Source
+    <select formControlName="source" required>
+      <option *ngFor="let source of sources" [value]="source">{{ source }}</option>
+    </select>
+  </label>
+
+  <div class="form-actions">
+    <button type="submit" [disabled]="saving">{{ saving ? 'Saving...' : 'Save lead' }}</button>
+    <a routerLink="/leads">Cancel</a>
+  </div>
+</form>
