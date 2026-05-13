@@ -1,0 +1,60 @@
+<section class="page-header entity-header">
+  <div>
+    <p>Lead record</p>
+    <h1>{{ lead ? lead.firstName + ' ' + lead.lastName : 'Lead' }}</h1>
+  </div>
+  <a routerLink="/leads">Back to leads</a>
+</section>
+
+<p *ngIf="loading" class="muted">Loading lead...</p>
+<p *ngIf="error" class="error-message">{{ error }}</p>
+
+<section *ngIf="lead as item" class="detail-layout">
+  <div class="detail-panel">
+    <dl>
+      <div><dt>Email</dt><dd>{{ item.email || '-' }}</dd></div>
+      <div><dt>Phone</dt><dd>{{ item.phone || '-' }}</dd></div>
+      <div><dt>Company</dt><dd>{{ item.linkedCompanyName || item.companyName || '-' }}</dd></div>
+      <div><dt>Status</dt><dd>{{ item.status }}</dd></div>
+      <div><dt>Source</dt><dd>{{ item.source }}</dd></div>
+      <div><dt>Assignee</dt><dd>{{ item.assignedToName || 'Unassigned' }}</dd></div>
+      <div><dt>Created by</dt><dd>{{ item.createdByName }}</dd></div>
+    </dl>
+  </div>
+
+  <aside class="actions" *ngIf="currentUser$ | async as user">
+    <a [routerLink]="['/leads', item.id, 'edit']">Edit lead</a>
+
+    <label *ngIf="canManage(user.role)">
+      Assign
+      <select [formControl]="assigneeControl">
+        <option value="">Unassigned</option>
+        <option *ngFor="let rep of salesReps" [value]="rep.id">{{ rep.fullName }}</option>
+      </select>
+    </label>
+    <button *ngIf="canManage(user.role)" type="button" (click)="assign()">Save assignment</button>
+
+    <label>
+      Status
+      <select [formControl]="statusControl">
+        <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
+      </select>
+    </label>
+    <button type="button" (click)="changeStatus()">Update status</button>
+    <button *ngIf="canDelete(user.role)" type="button" class="danger" (click)="deleteLead()">Delete</button>
+  </aside>
+</section>
+
+<section *ngIf="lead" class="history-panel">
+  <h2>History</h2>
+  <ul *ngIf="history.length > 0; else noHistory">
+    <li *ngFor="let event of history">
+      <strong>{{ event.eventType }}</strong>
+      <span>{{ event.oldValue || '-' }} → {{ event.newValue || '-' }}</span>
+      <small>{{ event.performedByName }} · {{ event.createdAt | date:'short' }}</small>
+    </li>
+  </ul>
+  <ng-template #noHistory>
+    <p class="muted">No history has been recorded yet.</p>
+  </ng-template>
+</section>
