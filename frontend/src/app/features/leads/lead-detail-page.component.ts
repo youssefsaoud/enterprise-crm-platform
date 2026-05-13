@@ -82,3 +82,45 @@ export class LeadDetailPageComponent implements OnInit {
 
   canManage(role: string): boolean {
     return role === 'ADMIN' || role === 'MANAGER';
+  }
+
+  canDelete(role: string): boolean {
+    return role === 'ADMIN';
+  }
+
+  private load(id: string): void {
+    this.loading = true;
+    this.error = '';
+    this.leadService.get(id).subscribe({
+      next: (lead) => {
+        this.applyLead(lead);
+        this.loadHistory(lead.id);
+        this.loading = false;
+      },
+      error: (error) => {
+        this.error = apiErrorMessage(error, 'Lead not found.');
+        this.loading = false;
+      }
+    });
+  }
+
+  private loadHistory(id: string): void {
+    this.leadService.history(id).subscribe({
+      next: (result) => this.history = result.content,
+      error: () => this.history = []
+    });
+  }
+
+  private loadSalesRepresentatives(): void {
+    this.leadService.salesRepresentatives().subscribe({
+      next: (users) => this.salesReps = users,
+      error: () => this.salesReps = []
+    });
+  }
+
+  private applyLead(lead: Lead): void {
+    this.lead = lead;
+    this.assigneeControl.setValue(lead.assignedToUserId ?? '', { emitEvent: false });
+    this.statusControl.setValue(lead.status, { emitEvent: false });
+  }
+}
