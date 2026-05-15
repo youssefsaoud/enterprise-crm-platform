@@ -150,3 +150,31 @@ Angular routes:
 /contacts/:id
 /contacts/:id/edit
 ```
+
+## Month 4 Lead Management
+
+Month 4 adds lead capture, assignment, qualification status tracking, and lead history.
+
+Lead endpoints:
+
+```text
+GET    /api/v1/leads
+POST   /api/v1/leads
+GET    /api/v1/leads/{id}
+PUT    /api/v1/leads/{id}
+DELETE /api/v1/leads/{id}
+PATCH  /api/v1/leads/{id}/assignment
+PATCH  /api/v1/leads/{id}/status
+GET    /api/v1/leads/{id}/history
+GET    /api/v1/users/sales-representatives
+```
+
+Angular routes:
+
+```text
+/leads
+/leads/new
+/leads/:id
+/leads/:id/edit
+```
+
