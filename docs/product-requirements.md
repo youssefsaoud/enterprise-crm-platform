@@ -60,7 +60,7 @@ Sales representatives create and update companies, contacts, leads, opportunitie
 ### Leads
 
 - Users can create, update, assign, qualify, and disqualify leads.
-- Leads have visible statuses: NEW, CONTACTED, QUALIFIED, DISQUALIFIED.
+- Leads have visible statuses: NEW, CONTACTED, QUALIFIED, UNQUALIFIED.
 - Qualified leads can be converted to opportunities after the conversion workflow is implemented.
 
 ### Opportunities
@@ -96,3 +96,4 @@ Sales representatives create and update companies, contacts, leads, opportunitie
 - Team assignment rules need more detail before role-based authorization.
 - Reporting definitions should wait until the opportunity model is stable.
 - The MVP assumes a modular monolith backend and a separate Angular SPA.
+

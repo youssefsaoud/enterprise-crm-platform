@@ -76,7 +76,7 @@ A role enum may be enough for the MVP, but a `roles` table leaves room for futur
 | `company_id` | Optional or newly created company during conversion. |
 | `assigned_to_id` | User assigned to qualify the lead. |
 | `source` | Lead source such as WEBSITE, REFERRAL, OUTBOUND. |
-| `status` | NEW, CONTACTED, QUALIFIED, DISQUALIFIED. |
+| `status` | NEW, CONTACTED, QUALIFIED, UNQUALIFIED. |
 | `summary` | Short business need. |
 | `created_at`, `updated_at` | Audit timestamps. |
 
@@ -124,3 +124,4 @@ A role enum may be enough for the MVP, but a `roles` table leaves room for futur
 - A qualified lead may become one opportunity.
 - An opportunity belongs to one company and one owner.
 - Activities use a generic related-record reference to avoid many nullable foreign keys in the first MVP design.
+
