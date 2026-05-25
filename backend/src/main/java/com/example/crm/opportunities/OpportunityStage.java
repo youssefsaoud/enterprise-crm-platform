@@ -5,6 +5,6 @@ public enum OpportunityStage {
     QUALIFICATION,
     PROPOSAL,
     NEGOTIATION,
-    WON,
-    LOST
+    CLOSED_WON,
+    CLOSED_LOST
 }
