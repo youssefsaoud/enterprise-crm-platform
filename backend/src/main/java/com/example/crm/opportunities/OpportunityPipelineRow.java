@@ -1,5 +1,10 @@
 package com.example.crm.opportunities;
 
-public interface OpportunityPipelineRow {
-}
+import java.math.BigDecimal;
 
+public interface OpportunityPipelineRow {
+    OpportunityStage getStage();
+    String getCurrencyCode();
+    long getCount();
+    BigDecimal getTotalAmount();
+}
