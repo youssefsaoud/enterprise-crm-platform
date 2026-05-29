@@ -1,5 +1,6 @@
 package com.example.crm.opportunities;
 
-public record OpportunityOwnerRequest() {
-}
+import jakarta.validation.constraints.NotNull;
+import java.util.UUID;
 
+public record OpportunityOwnerRequest(@NotNull UUID ownerUserId) {}
