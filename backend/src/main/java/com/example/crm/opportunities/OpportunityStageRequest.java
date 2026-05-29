@@ -1,5 +1,5 @@
 package com.example.crm.opportunities;
 
-public record OpportunityStageRequest() {
-}
+import jakarta.validation.constraints.NotNull;
 
+public record OpportunityStageRequest(@NotNull OpportunityStage stage) {}
