@@ -1,1 +1,72 @@
-<section class="page-header"><p>Sales pipeline</p><h1>Opportunities</h1></section>
+<section class="page-header entity-header">
+  <div>
+    <p>CRM module</p>
+    <h1>Opportunities</h1>
+  </div>
+  <a class="primary-link" routerLink="/opportunities/new">New opportunity</a>
+</section>
+
+<section class="pipeline-board" aria-label="Pipeline summary">
+  <article *ngFor="let stage of stages">
+    <h2>{{ stage }}</h2>
+    <p *ngFor="let item of totalFor(stage)">{{ item.count }} · {{ item.totalAmount | number:'1.0-2' }} {{ item.currencyCode }}</p>
+    <p *ngIf="totalFor(stage).length === 0">0 opportunities</p>
+  </article>
+</section>
+
+<section class="toolbar" aria-label="Opportunity filters">
+  <label>
+    Search
+    <input type="search" [formControl]="searchControl" placeholder="Opportunity name" />
+  </label>
+  <label>
+    Stage
+    <select [formControl]="stageControl">
+      <option value="">Any stage</option>
+      <option *ngFor="let stage of stages" [value]="stage">{{ stage }}</option>
+    </select>
+  </label>
+</section>
+
+<p *ngIf="error" class="error-message">{{ error }}</p>
+<p *ngIf="loading" class="muted">Loading opportunities...</p>
+
+<div class="table-shell" *ngIf="!loading && opportunities.length > 0; else emptyState">
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Company</th>
+        <th>Stage</th>
+        <th>Owner</th>
+        <th>Amount</th>
+        <th>Close date</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let opportunity of opportunities">
+        <td><a [routerLink]="['/opportunities', opportunity.id]">{{ opportunity.name }}</a></td>
+        <td>{{ opportunity.companyName }}</td>
+        <td><span class="pill">{{ opportunity.stage }}</span></td>
+        <td>{{ opportunity.ownerName || '-' }}</td>
+        <td>{{ opportunity.amount | number:'1.0-2' }} {{ opportunity.currencyCode }}</td>
+        <td>{{ opportunity.expectedCloseDate || '-' }}</td>
+        <td><a [routerLink]="['/opportunities', opportunity.id]">Open</a></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<ng-template #emptyState>
+  <section *ngIf="!loading" class="empty-panel">
+    <h2>No opportunities found</h2>
+    <p>Create an opportunity or adjust the filters.</p>
+  </section>
+</ng-template>
+
+<footer class="pager" *ngIf="totalElements > 0">
+  <button type="button" (click)="previousPage()" [disabled]="page === 0">Previous</button>
+  <span>Page {{ page + 1 }} of {{ totalPages || 1 }} · {{ totalElements }} opportunities</span>
+  <button type="button" (click)="nextPage()" [disabled]="page + 1 >= totalPages">Next</button>
+</footer>
