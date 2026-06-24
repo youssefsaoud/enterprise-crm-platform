@@ -1,1 +1,14 @@
-<section class="page-header"><p>Opportunity record</p><h1>New opportunity</h1></section>
+<section class="page-header"><p>Opportunity record</p><h1>{{ opportunityId ? 'Edit opportunity' : 'New opportunity' }}</h1></section>
+<p *ngIf="loading" class="muted">Loading opportunity...</p>
+<p *ngIf="error" class="error-message">{{ error }}</p>
+<form class="entity-form" [formGroup]="form" (ngSubmit)="save()" *ngIf="!loading">
+  <label>Name<input formControlName="name" maxlength="160" required /><small *ngIf="form.controls.name.touched && form.controls.name.invalid">Name must be 3 to 160 characters.</small></label>
+  <label>Company ID<input formControlName="companyId" required /></label>
+  <label>Contact ID<input formControlName="contactId" /></label>
+  <label>Owner user ID<input formControlName="ownerUserId" /></label>
+  <label>Amount<input type="number" min="0" step="0.01" formControlName="amount" /></label>
+  <label>Currency<input formControlName="currencyCode" maxlength="3" /></label>
+  <label>Expected close date<input type="date" formControlName="expectedCloseDate" /></label>
+  <label>Description<textarea formControlName="description" rows="5"></textarea></label>
+  <div class="form-actions"><button type="submit" [disabled]="saving">{{ saving ? 'Saving...' : 'Save opportunity' }}</button><a routerLink="/opportunities">Cancel</a></div>
+</form>
