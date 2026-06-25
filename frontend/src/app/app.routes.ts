@@ -13,6 +13,8 @@ import { LeadFormPageComponent } from './features/leads/lead-form-page.component
 import { LeadDetailPageComponent } from './features/leads/lead-detail-page.component';
 import { LoginPageComponent } from './features/auth/login-page.component';
 import { OpportunitiesPageComponent } from './features/opportunities/opportunities-page.component';
+import { OpportunityFormPageComponent } from './features/opportunities/opportunity-form-page.component';
+import { OpportunityDetailPageComponent } from './features/opportunities/opportunity-detail-page.component';
 import { StatusPageComponent } from './features/status/status-page.component';
 import { authGuard } from './core/guards/auth.guard';
 
@@ -32,11 +34,15 @@ export const routes: Routes = [
   { path: 'leads/:id/edit', component: LeadFormPageComponent, title: 'Edit Lead', canActivate: [authGuard] },
   { path: 'leads/:id', component: LeadDetailPageComponent, title: 'Lead Detail', canActivate: [authGuard] },
   { path: 'opportunities', component: OpportunitiesPageComponent, title: 'Opportunities', canActivate: [authGuard] },
+  { path: 'opportunities/new', component: OpportunityFormPageComponent, title: 'New Opportunity', canActivate: [authGuard] },
+  { path: 'opportunities/:id/edit', component: OpportunityFormPageComponent, title: 'Edit Opportunity', canActivate: [authGuard] },
+  { path: 'opportunities/:id', component: OpportunityDetailPageComponent, title: 'Opportunity Detail', canActivate: [authGuard] },
   { path: 'activities', component: ActivitiesPageComponent, title: 'Activities', canActivate: [authGuard] },
   { path: 'status', component: StatusPageComponent, title: 'API Status', canActivate: [authGuard] },
   { path: 'login', component: LoginPageComponent, title: 'Login' },
   { path: '**', redirectTo: 'dashboard' }
 ];
+
 
 
 
