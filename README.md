@@ -178,3 +178,8 @@ Angular routes:
 /leads/:id/edit
 ```
 
+
+## Month 5 Opportunity Pipeline
+
+Month 5 adds secured sales opportunity management.
+
