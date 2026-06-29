@@ -181,5 +181,27 @@ Angular routes:
 
 ## Month 5 Opportunity Pipeline
 
-Month 5 adds secured sales opportunity management.
+Month 5 adds secured sales opportunity management and pipeline summaries.
 
+Opportunity endpoints:
+
+```text
+GET    /api/v1/opportunities
+POST   /api/v1/opportunities
+GET    /api/v1/opportunities/{id}
+PUT    /api/v1/opportunities/{id}
+DELETE /api/v1/opportunities/{id}
+PATCH  /api/v1/opportunities/{id}/stage
+PATCH  /api/v1/opportunities/{id}/owner
+GET    /api/v1/opportunities/pipeline/summary
+```
+
+Angular routes:
+
+```text
+/opportunities
+/opportunities/new
+/opportunities/:id
+/opportunities/:id/edit
+```
+
