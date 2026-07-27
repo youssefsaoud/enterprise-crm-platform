@@ -1,0 +1,9 @@
+.timeline-panel { margin-top: 1.5rem; display: grid; gap: 1rem; }
+.timeline-header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.interaction-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: .75rem; align-items: end; }
+.interaction-form label { display: grid; gap: .35rem; font-weight: 600; }
+.interaction-form input, .interaction-form select, .interaction-form textarea { width: 100%; }
+.interaction-form .wide { grid-column: 1 / -1; }
+ul { list-style: none; padding: 0; margin: 0; display: grid; gap: .75rem; }
+li { border: 1px solid #dde3ea; border-radius: 8px; padding: .85rem; display: grid; gap: .35rem; }
+small, .muted { color: #64748b; }
