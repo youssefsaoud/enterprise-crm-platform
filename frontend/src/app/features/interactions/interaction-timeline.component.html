@@ -1,1 +1,21 @@
-<section class="timeline-panel"><h2>Activity timeline</h2></section>
+<section class="timeline-panel">
+  <div class="timeline-header"><h2>Activity timeline</h2><button type="button" (click)="load()" [disabled]="loading">Refresh</button></div>
+  <form class="interaction-form" [formGroup]="form" (ngSubmit)="save()">
+    <label>Type<select formControlName="type"><option *ngFor="let type of types" [value]="type">{{ type }}</option></select></label>
+    <label>Subject<input formControlName="subject" maxlength="160" /></label>
+    <label>Occurred<input type="datetime-local" formControlName="occurredAt" /></label>
+    <label>Follow up<input type="datetime-local" formControlName="followUpAt" /></label>
+    <label class="wide">Notes<textarea rows="3" formControlName="description"></textarea></label>
+    <button type="submit" [disabled]="saving">{{ saving ? 'Saving...' : 'Log activity' }}</button>
+  </form>
+  <p *ngIf="error" class="error-message">{{ error }}</p>
+  <p *ngIf="loading" class="muted">Loading activity...</p>
+  <ul *ngIf="!loading && interactions.length > 0; else noActivity">
+    <li *ngFor="let interaction of interactions">
+      <strong>{{ interaction.type }} · {{ interaction.subject }}</strong>
+      <span>{{ interaction.description || '-' }}</span>
+      <small>{{ interaction.authorName }} · {{ interaction.occurredAt | date:'short' }}<ng-container *ngIf="interaction.followUpAt"> · Follow up {{ interaction.followUpAt | date:'short' }}</ng-container></small>
+    </li>
+  </ul>
+  <ng-template #noActivity><p *ngIf="!loading" class="muted">No activity has been logged yet.</p></ng-template>
+</section>
