@@ -1,4 +1,4 @@
-export type LeadStatus = 'NEW' | 'CONTACTED' | 'QUALIFIED' | 'UNQUALIFIED';
+export type LeadStatus = 'NEW' | 'CONTACTED' | 'QUALIFIED' | 'UNQUALIFIED' | 'CONVERTED';
 export type LeadSource = 'WEBSITE' | 'REFERRAL' | 'EMAIL' | 'EVENT' | 'OTHER';
 export type LeadEventType = 'CREATED' | 'UPDATED' | 'ASSIGNED' | 'UNASSIGNED' | 'STATUS_CHANGED' | 'DELETED';
 
@@ -59,3 +59,4 @@ export interface UserSummary {
   email: string;
   role: string;
 }
+
