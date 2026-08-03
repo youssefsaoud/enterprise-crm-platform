@@ -1,1 +1,27 @@
-<section class="conversion-panel"><h2>Lead conversion</h2></section>
+<section class="conversion-panel" *ngIf="lead.status === 'QUALIFIED' || result">
+  <h2>Lead conversion</h2>
+  <article *ngIf="result; else conversionForm" class="conversion-result">
+    <p>Converted by {{ result.convertedByName }} on {{ result.convertedAt | date:'short' }}</p>
+    <a [routerLink]="['/companies', result.companyId]">{{ result.companyName }}</a>
+    <a [routerLink]="['/contacts', result.contactId]">{{ result.contactName }}</a>
+    <a *ngIf="result.opportunityId" [routerLink]="['/opportunities', result.opportunityId]">{{ result.opportunityName }}</a>
+  </article>
+  <ng-template #conversionForm>
+    <form [formGroup]="form" (ngSubmit)="convert()">
+      <label>Existing company ID<input formControlName="existingCompanyId" /></label>
+      <label>New company name<input formControlName="companyName" /></label>
+      <label>Existing contact ID<input formControlName="existingContactId" /></label>
+      <label>Contact first name<input formControlName="contactFirstName" /></label>
+      <label>Contact last name<input formControlName="contactLastName" /></label>
+      <label>Contact email<input formControlName="contactEmail" /></label>
+      <label class="inline"><input type="checkbox" formControlName="createOpportunity" /> Create opportunity</label>
+      <label>Opportunity name<input formControlName="opportunityName" /></label>
+      <label>Amount<input type="number" min="0" step="0.01" formControlName="opportunityAmount" /></label>
+      <label>Currency<input maxlength="3" formControlName="opportunityCurrency" /></label>
+      <label>Expected close<input type="date" formControlName="opportunityCloseDate" /></label>
+      <label class="wide">Notes<textarea rows="3" formControlName="notes"></textarea></label>
+      <button type="submit" [disabled]="saving">{{ saving ? 'Converting...' : 'Convert lead' }}</button>
+    </form>
+    <p *ngIf="error" class="error-message">{{ error }}</p>
+  </ng-template>
+</section>
