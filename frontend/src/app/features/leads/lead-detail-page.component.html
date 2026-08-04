@@ -58,3 +58,7 @@
     <p class="muted">No history has been recorded yet.</p>
   </ng-template>
 </section>
+
+<app-lead-conversion-panel *ngIf="lead as item" [lead]="item" (converted)="load(item.id)"></app-lead-conversion-panel>
+<app-interaction-timeline *ngIf="lead as item" parent="leads" [recordId]="item.id"></app-interaction-timeline>
+
