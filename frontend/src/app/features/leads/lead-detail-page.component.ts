@@ -7,11 +7,13 @@ import { apiErrorMessage } from '../../core/api/api-error';
 import { AuthService } from '../../core/auth/auth.service';
 import { Lead, LeadEvent, LeadStatus, UserSummary } from './lead.models';
 import { LeadService } from './lead.service';
+import { LeadConversionPanelComponent } from './lead-conversion-panel.component';
+import { InteractionTimelineComponent } from '../interactions/interaction-timeline.component';
 
 @Component({
   selector: 'app-lead-detail-page',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, LeadConversionPanelComponent, InteractionTimelineComponent],
   templateUrl: './lead-detail-page.component.html',
   styleUrls: ['./lead-detail-page.component.css']
 })
@@ -88,7 +90,7 @@ export class LeadDetailPageComponent implements OnInit {
     return role === 'ADMIN';
   }
 
-  private load(id: string): void {
+  load(id: string): void {
     this.loading = true;
     this.error = '';
     this.leadService.get(id).subscribe({
@@ -124,3 +126,5 @@ export class LeadDetailPageComponent implements OnInit {
     this.statusControl.setValue(lead.status, { emitEvent: false });
   }
 }
+
+
