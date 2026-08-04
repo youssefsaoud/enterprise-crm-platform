@@ -6,13 +6,14 @@ import { apiErrorMessage } from '../../core/api/api-error';
 import { AuthService } from '../../core/auth/auth.service';
 import { Contact } from '../contacts/contact.models';
 import { ContactService } from '../contacts/contact.service';
+import { InteractionTimelineComponent } from '../interactions/interaction-timeline.component';
 import { Company } from './company.models';
 import { CompanyService } from './company.service';
 
 @Component({
   selector: 'app-company-detail-page',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, InteractionTimelineComponent],
   templateUrl: './company-detail-page.component.html',
   styleUrls: ['./company-detail-page.component.css']
 })
@@ -27,6 +28,7 @@ export class CompanyDetailPageComponent implements OnInit {
     private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly companyService: CompanyService,
+    private readonly contactService: ContactService,
     private readonly authService: AuthService
   ) {}
 
@@ -40,6 +42,7 @@ export class CompanyDetailPageComponent implements OnInit {
     this.companyService.get(id).subscribe({
       next: (company) => {
         this.company = company;
+        this.loadContacts(company.id);
         this.loading = false;
       },
       error: () => {
@@ -74,5 +77,6 @@ export class CompanyDetailPageComponent implements OnInit {
     return role === 'ADMIN';
   }
 }
+
 
 
