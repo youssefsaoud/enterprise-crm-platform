@@ -6,3 +6,6 @@
   </dl></div>
   <aside class="actions" *ngIf="currentUser$ | async as user"><a [routerLink]="['/opportunities', item.id, 'edit']">Edit opportunity</a><label>Stage<select [formControl]="stageControl"><option *ngFor="let stage of stages" [value]="stage">{{ stage }}</option></select></label><button type="button" (click)="changeStage()">Update stage</button><label *ngIf="canManage(user.role)">Owner user ID<input [formControl]="ownerControl" /></label><button *ngIf="canManage(user.role)" type="button" (click)="changeOwner()">Save owner</button><button *ngIf="canManage(user.role)" type="button" class="danger" (click)="deleteOpportunity()">Delete</button></aside>
 </section>
+
+<app-interaction-timeline *ngIf="opportunity as item" parent="opportunities" [recordId]="item.id"></app-interaction-timeline>
+
