@@ -6,11 +6,12 @@ import { apiErrorMessage } from '../../core/api/api-error';
 import { AuthService } from '../../core/auth/auth.service';
 import { Contact } from './contact.models';
 import { ContactService } from './contact.service';
+import { InteractionTimelineComponent } from '../interactions/interaction-timeline.component';
 
 @Component({
   selector: 'app-contact-detail-page',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, InteractionTimelineComponent],
   templateUrl: './contact-detail-page.component.html',
   styleUrls: ['./contact-detail-page.component.css']
 })
@@ -60,4 +61,5 @@ export class ContactDetailPageComponent implements OnInit {
     return role === 'ADMIN' || role === 'MANAGER';
   }
 }
+
 
