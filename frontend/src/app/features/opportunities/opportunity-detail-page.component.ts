@@ -7,8 +7,9 @@ import { apiErrorMessage } from '../../core/api/api-error';
 import { AuthService } from '../../core/auth/auth.service';
 import { Opportunity, OpportunityStage } from './opportunity.models';
 import { OpportunityService } from './opportunity.service';
+import { InteractionTimelineComponent } from '../interactions/interaction-timeline.component';
 
-@Component({ selector: 'app-opportunity-detail-page', standalone: true, imports: [CommonModule, ReactiveFormsModule, RouterLink], templateUrl: './opportunity-detail-page.component.html', styleUrls: ['./opportunity-detail-page.component.css'] })
+@Component({ selector: 'app-opportunity-detail-page', standalone: true, imports: [CommonModule, ReactiveFormsModule, RouterLink, InteractionTimelineComponent], templateUrl: './opportunity-detail-page.component.html', styleUrls: ['./opportunity-detail-page.component.css'] })
 export class OpportunityDetailPageComponent implements OnInit {
   readonly currentUser$ = this.authService.currentUser$;
   readonly stages: OpportunityStage[] = ['PROSPECTING', 'QUALIFICATION', 'PROPOSAL', 'NEGOTIATION', 'CLOSED_WON', 'CLOSED_LOST'];
@@ -30,3 +31,4 @@ export class OpportunityDetailPageComponent implements OnInit {
   private load(id: string): void { this.loading = true; this.error = ''; this.opportunityService.get(id).subscribe({ next: (opportunity) => { this.apply(opportunity); this.loading = false; }, error: (error) => { this.error = apiErrorMessage(error, 'Opportunity not found.'); this.loading = false; } }); }
   private apply(opportunity: Opportunity): void { this.opportunity = opportunity; this.stageControl.setValue(opportunity.stage, { emitEvent: false }); this.ownerControl.setValue(opportunity.ownerUserId ?? '', { emitEvent: false }); }
 }
+
