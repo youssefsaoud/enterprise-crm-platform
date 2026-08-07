@@ -25,6 +25,7 @@
     <a [routerLink]="['/contacts']" [queryParams]="{ companyId: item.id }">View contacts</a>
     <button *ngIf="canDelete(user.role)" type="button" class="danger" (click)="deleteCompany()">Delete</button>
   </aside>
+</section>
 
 <section *ngIf="company" class="related-panel">
   <div class="related-header">
@@ -41,3 +42,7 @@
     <p class="muted">No contacts are linked to this company yet.</p>
   </ng-template>
 </section>
+
+<app-interaction-timeline *ngIf="company as item" parent="companies" [recordId]="item.id"></app-interaction-timeline>
+
+
