@@ -25,3 +25,6 @@
     <button *ngIf="canDelete(user.role)" type="button" class="danger" (click)="deleteContact()">Delete</button>
   </aside>
 </section>
+
+<app-interaction-timeline *ngIf="contact as item" parent="contacts" [recordId]="item.id"></app-interaction-timeline>
+
