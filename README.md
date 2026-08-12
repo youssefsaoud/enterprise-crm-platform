@@ -205,3 +205,8 @@ Angular routes:
 /opportunities/:id/edit
 ```
 
+
+## Month 6 Customer Interactions And Lead Conversion
+
+Month 6 adds activity timelines.
+
