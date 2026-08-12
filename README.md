@@ -208,5 +208,26 @@ Angular routes:
 
 ## Month 6 Customer Interactions And Lead Conversion
 
-Month 6 adds activity timelines.
+Month 6 adds activity timelines and transactional qualified lead conversion.
 
+Interaction endpoints:
+
+```text
+POST   /api/v1/interactions
+GET    /api/v1/interactions
+GET    /api/v1/interactions/{id}
+PATCH  /api/v1/interactions/{id}
+DELETE /api/v1/interactions/{id}
+GET    /api/v1/leads/{id}/interactions
+GET    /api/v1/companies/{id}/interactions
+GET    /api/v1/contacts/{id}/interactions
+GET    /api/v1/opportunities/{id}/interactions
+```
+
+Lead conversion endpoints:
+
+```text
+POST /api/v1/leads/{id}/convert
+GET  /api/v1/leads/{id}/conversion
+```
+
