@@ -1,11 +1,5 @@
 import { Component } from '@angular/core';
 
-import { EmptyStateComponent } from '../../shared/empty-state/empty-state.component';
-
-@Component({
-  selector: 'app-dashboard-page',
-  standalone: true,
-  imports: [EmptyStateComponent],
-  templateUrl: './dashboard-page.component.html'
-})
+@Component({ selector: 'app-dashboard-page', standalone: true, template: '<p>Dashboard</p>' })
 export class DashboardPageComponent {}
+
