@@ -1,1 +1,30 @@
-<section class="page-header entity-header"><h1>Activities</h1></section>
+<section class="page-header entity-header">
+  <div>
+    <p>CRM module</p>
+    <h1>Activities</h1>
+  </div>
+  <button type="button" (click)="load()" [disabled]="loading">Refresh</button>
+</section>
+
+<section class="toolbar" aria-label="Activity filters">
+  <label>Type<select [formControl]="typeControl"><option value="">Any type</option><option *ngFor="let type of types" [value]="type">{{ type }}</option></select></label>
+</section>
+
+<p *ngIf="error" class="error-message">{{ error }}</p>
+<p *ngIf="loading" class="muted">Loading activities...</p>
+
+<div class="table-shell" *ngIf="!loading && activities.length > 0; else emptyState">
+  <table>
+    <thead><tr><th>Activity</th><th>Related record</th><th>Owner</th><th>Occurred</th></tr></thead>
+    <tbody>
+      <tr *ngFor="let activity of activities">
+        <td><strong>{{ activity.type }}</strong><span>{{ activity.subject }}</span></td>
+        <td><a [routerLink]="activityLink(activity)">{{ activityTarget(activity) }}</a></td>
+        <td>{{ activity.authorName }}</td>
+        <td>{{ activity.occurredAt | date:'short' }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<ng-template #emptyState><section *ngIf="!loading" class="empty-panel"><h2>No activities found</h2><p>Log calls, emails, meetings, or notes from a CRM record timeline.</p></section></ng-template>
