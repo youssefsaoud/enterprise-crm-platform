@@ -231,3 +231,8 @@ POST /api/v1/leads/{id}/convert
 GET  /api/v1/leads/{id}/conversion
 ```
 
+
+## Month 7 Dashboard And Integration
+
+Month 7 adds dashboard endpoints.
+
