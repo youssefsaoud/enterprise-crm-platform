@@ -234,5 +234,20 @@ GET  /api/v1/leads/{id}/conversion
 
 ## Month 7 Dashboard And Integration
 
-Month 7 adds dashboard endpoints.
+Month 7 adds a role-scoped dashboard and connects activity data into the Angular application.
 
+Dashboard endpoints:
+
+```text
+GET /api/v1/dashboard/summary
+GET /api/v1/dashboard/pipeline
+GET /api/v1/dashboard/recent-activities?limit=10
+```
+
+Angular routes:
+
+```text
+/dashboard
+/activities
+```
+
