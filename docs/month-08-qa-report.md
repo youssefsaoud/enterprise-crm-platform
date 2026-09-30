@@ -1,3 +1,6 @@
 # Month 8 QA Report
 
-Initial QA findings draft.
+## Checks Run
+
+Frontend build passed. Backend verify and Angular unit execution have local toolchain blockers.
+
