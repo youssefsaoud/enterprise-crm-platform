@@ -251,3 +251,8 @@ Angular routes:
 /activities
 ```
 
+
+## Month 8 Testing And Stabilization
+
+Month 8 adds QA artifacts.
+
