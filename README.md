@@ -254,5 +254,18 @@ Angular routes:
 
 ## Month 8 Testing And Stabilization
 
-Month 8 adds QA artifacts.
+Month 8 adds targeted automated tests and release-readiness documentation.
 
+Quality artifacts:
+
+```text
+docs/month-08-qa-report.md
+docs/security/month-08-security-checklist.md
+docs/release-v0.8.0.md
+```
+
+Known local toolchain requirements:
+
+- Maven or a Maven wrapper is required to run backend verification.
+- ChromeHeadless or a configured `CHROME_BIN` is required to run Angular unit tests.
+
