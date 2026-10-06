@@ -1,0 +1,63 @@
+name: CRM CI
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+    branches: [main]
+
+jobs:
+  backend:
+    name: Backend verify
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: crm_test
+          POSTGRES_USER: crm_app
+          POSTGRES_PASSWORD: crm_app_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U crm_app -d crm_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    defaults:
+      run:
+        working-directory: backend
+    env:
+      CRM_DB_URL: jdbc:postgresql://localhost:5432/crm_test
+      CRM_DB_USERNAME: crm_app
+      CRM_DB_PASSWORD: crm_app_password
+      CRM_JWT_SECRET: ci-only-secret-ci-only-secret-ci-only-secret
+      CRM_BOOTSTRAP_ADMIN_ENABLED: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+      - run: mvn -B verify
+
+  frontend:
+    name: Frontend build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 8
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run build
