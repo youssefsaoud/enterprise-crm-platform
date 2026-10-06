@@ -1,0 +1,57 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${CRM_POSTGRES_DB:-crm_prod}
+      POSTGRES_USER: ${CRM_DB_USERNAME:-crm_app}
+      POSTGRES_PASSWORD: ${CRM_DB_PASSWORD:?CRM_DB_PASSWORD is required}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${CRM_DB_USERNAME:-crm_app} -d ${CRM_POSTGRES_DB:-crm_prod}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - crm_postgres_data:/var/lib/postgresql/data
+    networks:
+      - crm_internal
+
+  backend:
+    build:
+      context: ./backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      CRM_DB_URL: jdbc:postgresql://postgres:5432/${CRM_POSTGRES_DB:-crm_prod}
+      CRM_DB_USERNAME: ${CRM_DB_USERNAME:-crm_app}
+      CRM_DB_PASSWORD: ${CRM_DB_PASSWORD:?CRM_DB_PASSWORD is required}
+      CRM_CORS_ALLOWED_ORIGIN: ${CRM_CORS_ALLOWED_ORIGIN:-http://localhost:4200}
+      CRM_JWT_SECRET: ${CRM_JWT_SECRET:?CRM_JWT_SECRET is required}
+      CRM_JWT_ISSUER: ${CRM_JWT_ISSUER:-crm-api}
+      CRM_BOOTSTRAP_ADMIN_ENABLED: ${CRM_BOOTSTRAP_ADMIN_ENABLED:-false}
+      CRM_BOOTSTRAP_ADMIN_EMAIL: ${CRM_BOOTSTRAP_ADMIN_EMAIL:-admin@example.com}
+      CRM_BOOTSTRAP_ADMIN_PASSWORD: ${CRM_BOOTSTRAP_ADMIN_PASSWORD:-change-me}
+    ports:
+      - "8080:8080"
+    networks:
+      - crm_internal
+      - crm_edge
+
+  frontend:
+    build:
+      context: ./frontend
+    depends_on:
+      - backend
+    ports:
+      - "4200:80"
+    networks:
+      - crm_edge
+
+volumes:
+  crm_postgres_data:
+
+networks:
+  crm_internal:
+    internal: true
+  crm_edge:
