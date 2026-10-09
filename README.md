@@ -269,3 +269,42 @@ Known local toolchain requirements:
 - Maven or a Maven wrapper is required to run backend verification.
 - ChromeHeadless or a configured `CHROME_BIN` is required to run Angular unit tests.
 
+
+## Month 9 Deployment And Final Release
+
+Month 9 completes the MVP with container deployment assets, CI configuration, operational documentation, acceptance evidence, and final release handoff material.
+
+Deployment and release artifacts:
+
+```text
+backend/Dockerfile
+frontend/Dockerfile
+frontend/nginx.conf
+docker-compose.yml
+.github/workflows/ci.yml
+docs/deployment.md
+docs/operations-runbook.md
+docs/acceptance-tests.md
+docs/user-guide.md
+docs/release-notes-v1.0.0.md
+```
+ The final MVP release tag is `v1.0.0`.
+
+## Final MVP Handoff
+
+Use these documents for the final handoff:
+
+```text
+docs/mvp-release-checklist.md
+docs/demo-script.md
+docs/final-signoff.md
+docs/final-handoff.md
+docs/post-mvp-roadmap.md
+```
+
+Release commands:
+
+```powershell
+git tag v1.0.0
+git push origin main --tags
+```
