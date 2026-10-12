@@ -13,4 +13,3 @@ public record CompanyUpdateRequest(
     @Email @Size(max = 180) String email,
     @Size(max = 255) String address
 ) {}
-

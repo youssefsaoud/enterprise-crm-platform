@@ -41,4 +41,3 @@ public class RestExceptionHandler {
         return error.getField() + ": " + error.getDefaultMessage();
     }
 }
-

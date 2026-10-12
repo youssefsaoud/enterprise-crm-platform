@@ -12,11 +12,11 @@ import org.springframework.data.repository.query.Param;
 
 public interface OpportunityRepository extends JpaRepository<Opportunity, UUID> {
     @EntityGraph(attributePaths = {"company", "contact", "owner"})
-    @Query("""
+    @Query(value = """
         select o from Opportunity o
         where o.deletedAt is null
           and (:canSeeAll = true or o.owner.id = :userId)
-          and (:search is null or lower(o.name) like lower(concat('%', :search, '%')))
+          and (:search is null or lower(o.name) like lower(concat('%', cast(:search as string), '%')))
           and (:stage is null or o.stage = :stage)
           and (:ownerId is null or o.owner.id = :ownerId)
           and (:companyId is null or o.company.id = :companyId)
@@ -27,7 +27,7 @@ public interface OpportunityRepository extends JpaRepository<Opportunity, UUID> 
         select count(o) from Opportunity o
         where o.deletedAt is null
           and (:canSeeAll = true or o.owner.id = :userId)
-          and (:search is null or lower(o.name) like lower(concat('%', :search, '%')))
+          and (:search is null or lower(o.name) like lower(concat('%', cast(:search as string), '%')))
           and (:stage is null or o.stage = :stage)
           and (:ownerId is null or o.owner.id = :ownerId)
           and (:companyId is null or o.company.id = :companyId)
@@ -46,7 +46,7 @@ public interface OpportunityRepository extends JpaRepository<Opportunity, UUID> 
         Pageable pageable
     );
 
-    @Query("""
+    @Query(value = """
         select o.stage as stage, o.currencyCode as currencyCode, count(o) as count, coalesce(sum(o.amount), 0) as totalAmount
         from Opportunity o
         where o.deletedAt is null

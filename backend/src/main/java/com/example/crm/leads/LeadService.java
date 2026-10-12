@@ -222,7 +222,7 @@ public class LeadService {
         return switch (previous) {
             case NEW -> next == LeadStatus.CONTACTED || next == LeadStatus.UNQUALIFIED;
             case CONTACTED -> next == LeadStatus.QUALIFIED || next == LeadStatus.UNQUALIFIED;
-            case QUALIFIED, UNQUALIFIED -> false;
+            case QUALIFIED, UNQUALIFIED, CONVERTED -> false;
         };
     }
 

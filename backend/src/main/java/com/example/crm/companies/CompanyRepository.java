@@ -11,8 +11,8 @@ public interface CompanyRepository extends JpaRepository<Company, UUID> {
     @Query("""
         select c from Company c
         where c.deletedAt is null
-          and (:search is null or lower(c.name) like lower(concat('%', :search, '%')))
-          and (:industry is null or lower(c.industry) = lower(:industry))
+          and (:search is null or lower(c.name) like lower(concat('%', cast(:search as string), '%')))
+          and (:industry is null or lower(c.industry) = lower(cast(:industry as string)))
         """)
     Page<Company> search(@Param("search") String search, @Param("industry") String industry, Pageable pageable);
 }

@@ -16,16 +16,16 @@ public interface ContactRepository extends JpaRepository<Contact, UUID> {
     Page<Contact> findByCompanyAndDeletedAtIsNull(Company company, Pageable pageable);
 
     @EntityGraph(attributePaths = "company")
-    @Query("""
+    @Query(value = """
         select c from Contact c
         join c.company company
         where c.deletedAt is null
           and (:companyId is null or company.id = :companyId)
           and (
             :search is null
-            or lower(c.firstName) like lower(concat('%', :search, '%'))
-            or lower(c.lastName) like lower(concat('%', :search, '%'))
-            or lower(c.email) like lower(concat('%', :search, '%'))
+            or lower(c.firstName) like lower(concat('%', cast(:search as string), '%'))
+            or lower(c.lastName) like lower(concat('%', cast(:search as string), '%'))
+            or lower(c.email) like lower(concat('%', cast(:search as string), '%'))
           )
         """,
         countQuery = """
@@ -34,9 +34,9 @@ public interface ContactRepository extends JpaRepository<Contact, UUID> {
           and (:companyId is null or c.company.id = :companyId)
           and (
             :search is null
-            or lower(c.firstName) like lower(concat('%', :search, '%'))
-            or lower(c.lastName) like lower(concat('%', :search, '%'))
-            or lower(c.email) like lower(concat('%', :search, '%'))
+            or lower(c.firstName) like lower(concat('%', cast(:search as string), '%'))
+            or lower(c.lastName) like lower(concat('%', cast(:search as string), '%'))
+            or lower(c.email) like lower(concat('%', cast(:search as string), '%'))
           )
         """)
     Page<Contact> search(@Param("search") String search, @Param("companyId") UUID companyId, Pageable pageable);

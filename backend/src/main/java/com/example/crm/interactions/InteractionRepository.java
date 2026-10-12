@@ -11,7 +11,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface InteractionRepository extends JpaRepository<Interaction, UUID> {
     @EntityGraph(attributePaths = {"author", "company", "contact", "lead", "opportunity"})
-    @Query("""
+    @Query(value = """
         select i from Interaction i
         left join i.company company
         left join i.contact contact
@@ -28,8 +28,8 @@ public interface InteractionRepository extends JpaRepository<Interaction, UUID> 
           and (:contactId is null or contact.id = :contactId)
           and (:leadId is null or lead.id = :leadId)
           and (:opportunityId is null or opportunity.id = :opportunityId)
-          and (:fromDate is null or i.occurredAt >= :fromDate)
-          and (:toDate is null or i.occurredAt <= :toDate)
+          and i.occurredAt >= coalesce(:fromDate, i.occurredAt)
+          and i.occurredAt <= coalesce(:toDate, i.occurredAt)
         """,
         countQuery = """
         select count(i) from Interaction i
@@ -48,8 +48,8 @@ public interface InteractionRepository extends JpaRepository<Interaction, UUID> 
           and (:contactId is null or contact.id = :contactId)
           and (:leadId is null or lead.id = :leadId)
           and (:opportunityId is null or opportunity.id = :opportunityId)
-          and (:fromDate is null or i.occurredAt >= :fromDate)
-          and (:toDate is null or i.occurredAt <= :toDate)
+          and i.occurredAt >= coalesce(:fromDate, i.occurredAt)
+          and i.occurredAt <= coalesce(:toDate, i.occurredAt)
         """)
     Page<Interaction> searchVisible(
         @Param("userId") UUID userId,

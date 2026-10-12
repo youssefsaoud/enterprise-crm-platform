@@ -114,4 +114,3 @@ public class DashboardService {
         return principal.role() == Role.ADMIN || principal.role() == Role.MANAGER;
     }
 }
-

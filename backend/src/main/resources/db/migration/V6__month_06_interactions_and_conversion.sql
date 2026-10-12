@@ -40,4 +40,3 @@ CREATE INDEX IF NOT EXISTS idx_interactions_opportunity_occurred ON interactions
 CREATE INDEX IF NOT EXISTS idx_lead_conversions_company_id ON lead_conversions(company_id);
 CREATE INDEX IF NOT EXISTS idx_lead_conversions_contact_id ON lead_conversions(contact_id);
 CREATE INDEX IF NOT EXISTS idx_lead_conversions_opportunity_id ON lead_conversions(opportunity_id);
-

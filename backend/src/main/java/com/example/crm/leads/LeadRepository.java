@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface LeadRepository extends JpaRepository<Lead, UUID> {
     @EntityGraph(attributePaths = {"company", "assignedTo", "createdBy"})
-    @Query("""
+    @Query(value = """
         select l from Lead l
         where l.deletedAt is null
           and (:canSeeAll = true or l.assignedTo.id = :userId or l.createdBy.id = :userId)
@@ -20,10 +20,10 @@ public interface LeadRepository extends JpaRepository<Lead, UUID> {
           and (:companyId is null or l.company.id = :companyId)
           and (
             :keyword is null
-            or lower(l.firstName) like lower(concat('%', :keyword, '%'))
-            or lower(l.lastName) like lower(concat('%', :keyword, '%'))
-            or lower(l.email) like lower(concat('%', :keyword, '%'))
-            or lower(l.companyName) like lower(concat('%', :keyword, '%'))
+            or lower(l.firstName) like lower(concat('%', cast(:keyword as string), '%'))
+            or lower(l.lastName) like lower(concat('%', cast(:keyword as string), '%'))
+            or lower(l.email) like lower(concat('%', cast(:keyword as string), '%'))
+            or lower(l.companyName) like lower(concat('%', cast(:keyword as string), '%'))
           )
         """,
         countQuery = """
@@ -36,10 +36,10 @@ public interface LeadRepository extends JpaRepository<Lead, UUID> {
           and (:companyId is null or l.company.id = :companyId)
           and (
             :keyword is null
-            or lower(l.firstName) like lower(concat('%', :keyword, '%'))
-            or lower(l.lastName) like lower(concat('%', :keyword, '%'))
-            or lower(l.email) like lower(concat('%', :keyword, '%'))
-            or lower(l.companyName) like lower(concat('%', :keyword, '%'))
+            or lower(l.firstName) like lower(concat('%', cast(:keyword as string), '%'))
+            or lower(l.lastName) like lower(concat('%', cast(:keyword as string), '%'))
+            or lower(l.email) like lower(concat('%', cast(:keyword as string), '%'))
+            or lower(l.companyName) like lower(concat('%', cast(:keyword as string), '%'))
           )
         """)
     Page<Lead> searchVisible(
