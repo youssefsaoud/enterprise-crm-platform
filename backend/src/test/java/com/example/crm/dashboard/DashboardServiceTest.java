@@ -3,6 +3,7 @@ package com.example.crm.dashboard;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 import com.example.crm.interactions.InteractionResponse;
@@ -37,8 +38,8 @@ class DashboardServiceTest {
     @BeforeEach
     void setUp() {
         service = new DashboardService(leadRepository, opportunityRepository, interactionService);
-        when(principal.id()).thenReturn(UUID.randomUUID());
-        when(principal.role()).thenReturn(Role.SALES_REP);
+        lenient().when(principal.id()).thenReturn(UUID.randomUUID());
+        lenient().when(principal.role()).thenReturn(Role.SALES_REP);
     }
 
     @Test
