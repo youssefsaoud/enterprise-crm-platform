@@ -23,3 +23,4 @@ Release: CRM MVP v1.0.0.
 ## Release decision
 
 The MVP is ready for portfolio handoff once deployment secrets, backups, monitoring, and final smoke evidence are confirmed in the target environment.
+

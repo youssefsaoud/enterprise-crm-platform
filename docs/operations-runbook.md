@@ -57,3 +57,4 @@ Severity guide:
 - Low: documentation, copy, or cosmetic defect.
 
 For critical and high incidents, pause deployments, preserve logs, verify backup state, and communicate the workaround or recovery window before making code changes.
+

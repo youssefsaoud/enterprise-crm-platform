@@ -70,3 +70,4 @@ Flyway migrations run on API startup. Before deploying a release:
 4. Check startup logs for Flyway success.
 
 Rollback application code by redeploying the previous image tag. Avoid rolling back irreversible database migrations in production; instead apply a forward repair migration after preserving evidence and backup state.
+
