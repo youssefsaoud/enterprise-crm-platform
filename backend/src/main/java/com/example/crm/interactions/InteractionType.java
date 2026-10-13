@@ -4,5 +4,6 @@ public enum InteractionType {
     NOTE,
     CALL,
     EMAIL,
-    MEETING
+    MEETING,
+    FOLLOW_UP
 }

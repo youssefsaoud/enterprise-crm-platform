@@ -15,5 +15,8 @@ public record InteractionCreateRequest(
     UUID companyId,
     UUID contactId,
     UUID leadId,
-    UUID opportunityId
+    UUID opportunityId,
+    UUID projectId,
+    UUID projectVendorId,
+    UUID quotationId
 ) {}

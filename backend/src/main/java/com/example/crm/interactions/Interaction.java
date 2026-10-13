@@ -5,76 +5,38 @@ import com.example.crm.companies.Company;
 import com.example.crm.contacts.Contact;
 import com.example.crm.leads.Lead;
 import com.example.crm.opportunities.Opportunity;
+import com.example.crm.projectvendors.ProjectVendor;
+import com.example.crm.projects.Project;
+import com.example.crm.quotations.Quotation;
 import com.example.crm.users.User;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Entity
 @Table(name = "interactions")
 public class Interaction extends AuditSupport {
-    @Id
-    private UUID id;
+    @Id private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "author_id")
-    private User author;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false) @JoinColumn(name = "author_id") private User author;
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "company_id") private Company company;
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "contact_id") private Contact contact;
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "lead_id") private Lead lead;
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "opportunity_id") private Opportunity opportunity;
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "project_id") private Project project;
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "project_vendor_id") private ProjectVendor projectVendor;
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "quotation_id") private Quotation quotation;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "company_id")
-    private Company company;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "contact_id")
-    private Contact contact;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "lead_id")
-    private Lead lead;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "opportunity_id")
-    private Opportunity opportunity;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 32)
-    private InteractionType type;
-
-    @Column(nullable = false, length = 160)
-    private String subject;
-
-    @Column(columnDefinition = "text")
-    private String description;
-
-    @Column(nullable = false)
-    private OffsetDateTime occurredAt;
-
+    @Enumerated(EnumType.STRING) @Column(nullable = false, length = 32) private InteractionType type;
+    @Column(nullable = false, length = 160) private String subject;
+    @Column(columnDefinition = "text") private String description;
+    @Column(nullable = false) private OffsetDateTime occurredAt;
     private OffsetDateTime followUpAt;
     private OffsetDateTime deletedAt;
 
     protected Interaction() {}
-
-    public Interaction(User author, InteractionType type, String subject, OffsetDateTime occurredAt) {
-        this.author = author;
-        this.type = type;
-        this.subject = subject;
-        this.occurredAt = occurredAt;
-    }
-
-    @Override
-    protected void assignIdIfNecessary() {
-        if (id == null) {
-            id = newId();
-        }
-    }
+    public Interaction(User author, InteractionType type, String subject, OffsetDateTime occurredAt) { this.author = author; this.type = type; this.subject = subject; this.occurredAt = occurredAt; }
+    @Override protected void assignIdIfNecessary() { if (id == null) id = newId(); }
 
     public UUID getId() { return id; }
     public User getAuthor() { return author; }
@@ -87,6 +49,12 @@ public class Interaction extends AuditSupport {
     public void setLead(Lead lead) { this.lead = lead; }
     public Opportunity getOpportunity() { return opportunity; }
     public void setOpportunity(Opportunity opportunity) { this.opportunity = opportunity; }
+    public Project getProject() { return project; }
+    public void setProject(Project project) { this.project = project; }
+    public ProjectVendor getProjectVendor() { return projectVendor; }
+    public void setProjectVendor(ProjectVendor projectVendor) { this.projectVendor = projectVendor; }
+    public Quotation getQuotation() { return quotation; }
+    public void setQuotation(Quotation quotation) { this.quotation = quotation; }
     public InteractionType getType() { return type; }
     public void setType(InteractionType type) { this.type = type; }
     public String getSubject() { return subject; }
