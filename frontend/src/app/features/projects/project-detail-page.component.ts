@@ -8,6 +8,8 @@ import { CompanyService } from '../companies/company.service';
 import { Company } from '../companies/company.models';
 import { Quotation, QuotationStatus } from './quotation.models';
 import { QuotationService } from './quotation.service';
+import { ProjectDocument } from './project-document.models';
+import { ProjectDocumentService } from './project-document.service';
 import { OutreachStatus, ProjectVendor } from './project-vendor.models';
 import { ProjectVendorService } from './project-vendor.service';
 import { Project, ProjectStatus } from './project.models';
@@ -28,17 +30,22 @@ export class ProjectDetailPageComponent implements OnInit {
   vendors: ProjectVendor[] = [];
   vendorDirectory: Company[] = [];
   quotations = new Map<string, Quotation[]>();
+  documents: ProjectDocument[] = [];
   loading = false;
   vendorLoading = false;
   error = '';
   vendorError = '';
   quoteError = '';
+  documentError = '';
+  selectedFile: File | null = null;
+
   readonly vendorForm = new FormGroup({
     vendorId: new FormControl('', { nonNullable: true }),
     status: new FormControl<OutreachStatus>('NOT_CONTACTED', { nonNullable: true }),
     nextFollowUpDate: new FormControl('', { nonNullable: true }),
     notes: new FormControl('', { nonNullable: true })
   });
+
   readonly quoteForm = new FormGroup({
     projectVendorId: new FormControl('', { nonNullable: true }),
     amount: new FormControl<number | null>(null),
@@ -54,6 +61,7 @@ export class ProjectDetailPageComponent implements OnInit {
     private readonly projectService: ProjectService,
     private readonly projectVendorService: ProjectVendorService,
     private readonly quotationService: QuotationService,
+    private readonly documentService: ProjectDocumentService,
     private readonly companyService: CompanyService,
     private readonly authService: AuthService
   ) {}
@@ -71,6 +79,7 @@ export class ProjectDetailPageComponent implements OnInit {
         this.loading = false;
         this.loadVendors();
         this.loadVendorDirectory();
+        this.loadDocuments();
       },
       error: error => {
         this.error = apiErrorMessage(error, 'Project not found.');
@@ -84,6 +93,31 @@ export class ProjectDetailPageComponent implements OnInit {
     this.projectService.delete(this.project.id).subscribe({
       next: () => void this.router.navigateByUrl('/projects'),
       error: error => this.error = apiErrorMessage(error, 'Project could not be deleted.')
+    });
+  }
+
+  loadDocuments(): void {
+    if (!this.project) return;
+    this.documentService.list(this.project.id).subscribe({
+      next: documents => this.documents = documents,
+      error: error => this.documentError = apiErrorMessage(error, 'Documents could not be loaded.')
+    });
+  }
+
+  selectDocument(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.selectedFile = input.files?.[0] || null;
+  }
+
+  uploadDocument(): void {
+    if (!this.project || !this.selectedFile) return;
+    this.documentError = '';
+    this.documentService.upload(this.project.id, this.selectedFile).subscribe({
+      next: item => {
+        this.documents = [item, ...this.documents];
+        this.selectedFile = null;
+      },
+      error: error => this.documentError = apiErrorMessage(error, 'Document could not be uploaded.')
     });
   }
 
@@ -182,6 +216,18 @@ export class ProjectDetailPageComponent implements OnInit {
   }
 
   quotesFor(vendorId: string): Quotation[] { return this.quotations.get(vendorId) || []; }
+
+  downloadDocument(item: ProjectDocument): void {
+    this.documentService.download(item.id).subscribe(blob => {
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = item.originalFilename;
+      anchor.click();
+      URL.revokeObjectURL(url);
+    });
+  }
+
   canManage(role: string): boolean { return role === 'ADMIN' || role === 'MANAGER'; }
   statusLabel(status: ProjectStatus): string { return status.replaceAll('_', ' '); }
   outreachLabel(status: OutreachStatus): string { return status.replaceAll('_', ' '); }
