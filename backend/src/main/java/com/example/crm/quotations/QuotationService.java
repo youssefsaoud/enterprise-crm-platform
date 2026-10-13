@@ -40,6 +40,7 @@ public class QuotationService {
         quotation.setValidUntil(request.validUntil());
         quotation.setStatus(request.status() == null ? QuotationStatus.RECEIVED : request.status());
         quotation.setNotes(normalize(request.notes()));
+        if (quotation.getStatus() == QuotationStatus.RECEIVED || quotation.getStatus() == QuotationStatus.UNDER_REVIEW || quotation.getStatus() == QuotationStatus.REVISED || quotation.getStatus() == QuotationStatus.SELECTED) quotation.getProjectVendor().setStatus(com.example.crm.projectvendors.OutreachStatus.QUOTE_RECEIVED);
         return QuotationResponse.from(quotationRepository.save(quotation));
     }
 
@@ -55,6 +56,7 @@ public class QuotationService {
         quotation.setValidUntil(request.validUntil());
         quotation.setStatus(request.status());
         quotation.setNotes(normalize(request.notes()));
+        if (quotation.getStatus() == QuotationStatus.RECEIVED || quotation.getStatus() == QuotationStatus.UNDER_REVIEW || quotation.getStatus() == QuotationStatus.REVISED || quotation.getStatus() == QuotationStatus.SELECTED) quotation.getProjectVendor().setStatus(com.example.crm.projectvendors.OutreachStatus.QUOTE_RECEIVED);
         return QuotationResponse.from(quotation);
     }
 
@@ -67,6 +69,7 @@ public class QuotationService {
         quotationRepository.clearSelectionForProject(assignment.getProject().getId());
         quotation.setSelected(true);
         quotation.setStatus(QuotationStatus.SELECTED);
+        quotation.getProjectVendor().setStatus(com.example.crm.projectvendors.OutreachStatus.QUOTE_RECEIVED);
         return QuotationResponse.from(quotation);
     }
 

@@ -71,6 +71,11 @@ public class InteractionService {
     }
 
     @Transactional(readOnly = true)
+    public Page<InteractionResponse> search(CrmUserPrincipal principal, InteractionType type, UUID creatorId, UUID companyId, UUID contactId, UUID leadId, UUID opportunityId, OffsetDateTime fromDate, OffsetDateTime toDate, Pageable pageable) {
+        return search(principal, type, creatorId, companyId, contactId, leadId, opportunityId, null, null, fromDate, toDate, pageable);
+    }
+
+    @Transactional(readOnly = true)
     public Page<InteractionResponse> search(CrmUserPrincipal principal, InteractionType type, UUID creatorId, UUID companyId, UUID contactId, UUID leadId, UUID opportunityId, UUID projectId, UUID projectVendorId, OffsetDateTime fromDate, OffsetDateTime toDate, Pageable pageable) {
         return interactionRepository.searchVisible(principal.id(), canSeeAll(principal), type, creatorId, companyId, contactId, leadId, opportunityId, projectId, projectVendorId, fromDate, toDate, pageable).map(InteractionResponse::from);
     }
