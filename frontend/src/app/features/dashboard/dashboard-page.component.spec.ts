@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 import { of, throwError } from 'rxjs';
 
 import { DashboardPageComponent } from './dashboard-page.component';
@@ -15,7 +16,7 @@ import { DashboardService } from './dashboard.service';
     dashboardService.recentActivities.and.returnValue(of([]));
 
     await TestBed.configureTestingModule({
-      imports: [DashboardPageComponent],
+      imports: [DashboardPageComponent, RouterTestingModule],
       providers: [{ provide: DashboardService, useValue: dashboardService }]
     }).compileComponents();
     fixture = TestBed.createComponent(DashboardPageComponent);

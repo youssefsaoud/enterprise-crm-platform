@@ -42,8 +42,3 @@ export const routes: Routes = [
   { path: 'login', component: LoginPageComponent, title: 'Login' },
   { path: '**', redirectTo: 'dashboard' }
 ];
-
-
-
-
-

@@ -81,4 +81,3 @@ export class StatusPageComponent {
 
   constructor(private readonly healthService: HealthService) {}
 }
-

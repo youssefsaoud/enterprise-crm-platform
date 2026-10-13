@@ -59,4 +59,3 @@ export interface UserSummary {
   email: string;
   role: string;
 }
-

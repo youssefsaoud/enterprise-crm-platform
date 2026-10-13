@@ -77,6 +77,3 @@ export class CompanyDetailPageComponent implements OnInit {
     return role === 'ADMIN';
   }
 }
-
-
-

@@ -126,5 +126,3 @@ export class LeadDetailPageComponent implements OnInit {
     this.statusControl.setValue(lead.status, { emitEvent: false });
   }
 }
-
-

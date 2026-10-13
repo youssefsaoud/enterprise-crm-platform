@@ -61,5 +61,3 @@ export class ContactDetailPageComponent implements OnInit {
     return role === 'ADMIN' || role === 'MANAGER';
   }
 }
-
-

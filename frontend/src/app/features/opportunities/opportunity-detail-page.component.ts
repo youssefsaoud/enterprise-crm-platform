@@ -31,4 +31,3 @@ export class OpportunityDetailPageComponent implements OnInit {
   private load(id: string): void { this.loading = true; this.error = ''; this.opportunityService.get(id).subscribe({ next: (opportunity) => { this.apply(opportunity); this.loading = false; }, error: (error) => { this.error = apiErrorMessage(error, 'Opportunity not found.'); this.loading = false; } }); }
   private apply(opportunity: Opportunity): void { this.opportunity = opportunity; this.stageControl.setValue(opportunity.stage, { emitEvent: false }); this.ownerControl.setValue(opportunity.ownerUserId ?? '', { emitEvent: false }); }
 }
-
