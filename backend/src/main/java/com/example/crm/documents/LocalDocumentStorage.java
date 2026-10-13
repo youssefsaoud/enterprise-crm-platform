@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
+
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -21,7 +21,7 @@ public class LocalDocumentStorage implements DocumentStorage {
     public String store(InputStream content, String extension) throws IOException {
         Files.createDirectories(root);
         String storageKey = UUID.randomUUID() + extension;
-        Files.copy(content, root.resolve(storageKey), StandardCopyOption.CREATE_NEW);
+        Files.copy(content, root.resolve(storageKey));
         return storageKey;
     }
 

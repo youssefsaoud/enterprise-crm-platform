@@ -47,7 +47,7 @@ public class ProjectVendorService {
         Project project = editableProject(projectId, principal);
         Company vendor = companyRepository.findById(request.vendorId()).orElseThrow(() -> new ResourceNotFoundException("Vendor company not found"));
         if (vendor.getDeletedAt() != null || !vendor.getRoles().contains(CompanyRole.VENDOR)) throw new ConflictException("Selected company is not marked as a vendor");
-        if (repository.existsByProjectIdAndVendorIdAndDeletedAtIsNull(projectId, vendor.getId())) throw new ConflictException("Vendor is already assigned to this project");
+        if (repository.existsByProjectIdAndVendorIdAndDeletedAtIsNull(projectId, request.vendorId())) throw new ConflictException("Vendor is already assigned to this project");
         ProjectVendor assignment = new ProjectVendor(project, vendor);
         apply(assignment, request.responsibleAssociateId(), request.status(), request.firstContactDate(), request.lastContactDate(), request.nextFollowUpDate(), request.notes(), principal);
         return ProjectVendorResponse.from(repository.save(assignment));

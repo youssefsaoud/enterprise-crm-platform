@@ -36,11 +36,11 @@ public class InteractionController {
     @GetMapping("/leads/{id}/interactions")
     Page<InteractionResponse> leadTimeline(@PathVariable UUID id, @AuthenticationPrincipal CrmUserPrincipal principal, Pageable pageable) { return interactionService.search(principal, null, null, null, null, id, null, null, null, null, null, pageable); }
     @GetMapping("/companies/{id}/interactions")
-    Page<InteractionResponse> companyTimeline(@PathVariable UUID id, @AuthenticationPrincipal CrmUserPrincipal principal, Pageable pageable) { return interactionService.search(principal, null, null, id, null, null, null, null, null, null, null, null, pageable); }
+    Page<InteractionResponse> companyTimeline(@PathVariable UUID id, @AuthenticationPrincipal CrmUserPrincipal principal, Pageable pageable) { return interactionService.search(principal, null, null, id, null, null, null, null, null, pageable); }
     @GetMapping("/contacts/{id}/interactions")
-    Page<InteractionResponse> contactTimeline(@PathVariable UUID id, @AuthenticationPrincipal CrmUserPrincipal principal, Pageable pageable) { return interactionService.search(principal, null, null, null, id, null, null, null, null, null, null, null, pageable); }
+    Page<InteractionResponse> contactTimeline(@PathVariable UUID id, @AuthenticationPrincipal CrmUserPrincipal principal, Pageable pageable) { return interactionService.search(principal, null, null, null, id, null, null, null, null, pageable); }
     @GetMapping("/opportunities/{id}/interactions")
-    Page<InteractionResponse> opportunityTimeline(@PathVariable UUID id, @AuthenticationPrincipal CrmUserPrincipal principal, Pageable pageable) { return interactionService.search(principal, null, null, null, null, null, id, null, null, null, null, null, pageable); }
+    Page<InteractionResponse> opportunityTimeline(@PathVariable UUID id, @AuthenticationPrincipal CrmUserPrincipal principal, Pageable pageable) { return interactionService.search(principal, null, null, null, null, id, null, null, null, pageable); }
     @GetMapping("/projects/{id}/interactions")
     Page<InteractionResponse> projectTimeline(@PathVariable UUID id, @AuthenticationPrincipal CrmUserPrincipal principal, Pageable pageable) { return interactionService.search(principal, null, null, null, null, null, null, id, null, null, null, pageable); }
     @GetMapping("/project-vendors/{id}/interactions")

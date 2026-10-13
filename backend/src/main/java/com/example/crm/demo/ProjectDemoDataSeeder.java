@@ -28,7 +28,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Order;
+import org.springframework.core.annotation.Order;
 import org.springframework.context.annotation.Profile;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -108,8 +108,9 @@ public class ProjectDemoDataSeeder {
                     quotationRepository.save(quote);
                 }
 
+                final java.util.UUID assignmentId = assignment.getId();
                 boolean activityExists = interactionRepository.findAll().stream()
-                    .anyMatch(item -> item.getProjectVendor() != null && item.getProjectVendor().getId().equals(assignment.getId()) && item.getDescription() != null && item.getDescription().contains(MARKER));
+                    .anyMatch(item -> item.getProjectVendor() != null && item.getProjectVendor().getId().equals(assignmentId) && item.getDescription() != null && item.getDescription().contains(MARKER));
                 if (!activityExists) {
                     Interaction activity = new Interaction(project.getAssignedAssociate(), InteractionType.FOLLOW_UP, "Vendor follow-up", OffsetDateTime.now().minusDays(i % 10));
                     activity.setCompany(vendor);
