@@ -14,6 +14,7 @@ import com.example.crm.security.CrmUserPrincipal;
 import com.example.crm.users.Role;
 import com.example.crm.users.User;
 import com.example.crm.users.UserRepository;
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -28,6 +29,7 @@ class ProjectVendorServiceTest {
     private UserRepository userRepository;
     private ProjectVendorService service;
     private CrmUserPrincipal associate;
+    private CrmUserPrincipal admin;
 
     @BeforeEach
     void setUp() {
@@ -36,13 +38,8 @@ class ProjectVendorServiceTest {
         companyRepository = mock(CompanyRepository.class);
         userRepository = mock(UserRepository.class);
         service = new ProjectVendorService(projectVendorRepository, projectRepository, companyRepository, userRepository);
-        User user = mock(User.class);
-        UUID userId = UUID.randomUUID();
-        when(user.getId()).thenReturn(userId);
-        when(user.getRole()).thenReturn(Role.SALES_REP);
-        when(user.getFullName()).thenReturn("Associate");
-        when(user.isActive()).thenReturn(true);
-        associate = new CrmUserPrincipal(user);
+        associate = principal(Role.SALES_REP, "Associate");
+        admin = principal(Role.ADMIN, "Admin");
     }
 
     @Test
@@ -62,7 +59,7 @@ class ProjectVendorServiceTest {
 
     @Test
     void clientCompanyCannotBeAssignedAsVendor() {
-        Project project = assignedProject(associate.id());
+        Project project = assignedProject(admin.id());
         UUID projectId = UUID.randomUUID();
         when(project.getId()).thenReturn(projectId);
         when(projectRepository.findById(projectId)).thenReturn(Optional.of(project));
@@ -72,14 +69,14 @@ class ProjectVendorServiceTest {
         UUID vendorId = UUID.randomUUID();
         when(companyRepository.findById(vendorId)).thenReturn(Optional.of(company));
 
-        assertThatThrownBy(() -> service.add(projectId, new ProjectVendorCreateRequest(vendorId, null, null, null, null, null, null), associate))
+        assertThatThrownBy(() -> service.add(projectId, new ProjectVendorCreateRequest(vendorId, null, null, null, null, null, null), admin))
             .isInstanceOf(ConflictException.class)
             .hasMessageContaining("vendor");
     }
 
     @Test
     void duplicateActiveAssignmentIsRejected() {
-        Project project = assignedProject(associate.id());
+        Project project = assignedProject(admin.id());
         UUID projectId = UUID.randomUUID();
         when(project.getId()).thenReturn(projectId);
         when(projectRepository.findById(projectId)).thenReturn(Optional.of(project));
@@ -90,9 +87,56 @@ class ProjectVendorServiceTest {
         when(companyRepository.findById(vendorId)).thenReturn(Optional.of(company));
         when(projectVendorRepository.existsByProjectIdAndVendorIdAndDeletedAtIsNull(projectId, vendorId)).thenReturn(true);
 
-        assertThatThrownBy(() -> service.add(projectId, new ProjectVendorCreateRequest(vendorId, null, null, null, null, null, null), associate))
+        assertThatThrownBy(() -> service.add(projectId, new ProjectVendorCreateRequest(vendorId, null, null, null, null, null, null), admin))
             .isInstanceOf(ConflictException.class)
             .hasMessageContaining("already assigned");
+    }
+
+    @Test
+    void associateCannotAddOrRemoveVendorAssignments() {
+        UUID projectId = UUID.randomUUID();
+
+        assertThatThrownBy(() -> service.add(projectId, new ProjectVendorCreateRequest(UUID.randomUUID(), null, null, null, null, null, null), associate))
+            .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+        assertThatThrownBy(() -> service.remove(UUID.randomUUID(), associate))
+            .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+        verifyNoInteractions(projectRepository, companyRepository, projectVendorRepository);
+    }
+
+    @Test
+    void assignedAssociateCanUpdateVendorFollowUpDetails() {
+        UUID projectId = UUID.randomUUID();
+        UUID assignmentId = UUID.randomUUID();
+        Project project = assignedProject(associate.id());
+        when(project.getId()).thenReturn(projectId);
+        when(project.getName()).thenReturn("Hotel Security Camera Installation");
+        when(project.getReference()).thenReturn("TEST-HOTEL-001");
+        when(projectRepository.findById(projectId)).thenReturn(Optional.of(project));
+        Company vendor = mock(Company.class);
+        when(vendor.getId()).thenReturn(UUID.randomUUID());
+        when(vendor.getName()).thenReturn("SecureVision Technologies");
+        when(vendor.getIndustry()).thenReturn("Security");
+        ProjectVendor assignment = mock(ProjectVendor.class);
+        when(assignment.getId()).thenReturn(assignmentId);
+        when(assignment.getProject()).thenReturn(project);
+        when(assignment.getVendor()).thenReturn(vendor);
+        when(projectVendorRepository.findActive(assignmentId)).thenReturn(Optional.of(assignment));
+
+        ProjectVendorUpdateRequest request = new ProjectVendorUpdateRequest(null, OutreachStatus.QUOTE_IN_PROCESS, null, null, LocalDate.of(2026, 10, 16), "Call scheduled");
+        service.update(assignmentId, request, associate);
+
+        verify(assignment).setStatus(OutreachStatus.QUOTE_IN_PROCESS);
+        verify(assignment).setNextFollowUpDate(LocalDate.of(2026, 10, 16));
+        verify(assignment).setNotes("Call scheduled");
+    }
+
+    private CrmUserPrincipal principal(Role role, String name) {
+        User user = mock(User.class);
+        when(user.getId()).thenReturn(UUID.randomUUID());
+        when(user.getRole()).thenReturn(role);
+        when(user.getFullName()).thenReturn(name);
+        when(user.isActive()).thenReturn(true);
+        return new CrmUserPrincipal(user);
     }
 
     private Project assignedProject(UUID userId) {

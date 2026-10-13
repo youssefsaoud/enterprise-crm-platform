@@ -33,6 +33,7 @@ export class ProjectVendorService {
   private clean(payload: ProjectVendorPayload): ProjectVendorPayload {
     return {
       ...payload,
+      responsibleAssociateId: payload.responsibleAssociateId || null,
       firstContactDate: payload.firstContactDate || null,
       lastContactDate: payload.lastContactDate || null,
       nextFollowUpDate: payload.nextFollowUpDate || null,

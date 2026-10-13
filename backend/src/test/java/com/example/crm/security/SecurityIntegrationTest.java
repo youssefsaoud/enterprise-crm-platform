@@ -48,6 +48,8 @@ class SecurityIntegrationTest {
             .andExpect(status().isOk());
         mockMvc.perform(get("/api/v1/projects").header(HttpHeaders.AUTHORIZATION, bearer))
             .andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/projects/e81a1a03-3ce2-4a23-ad81-29131fcbf5f2/vendors").header(HttpHeaders.AUTHORIZATION, bearer))
+            .andExpect(status().isOk());
         mockMvc.perform(get("/api/v1/opportunities").header(HttpHeaders.AUTHORIZATION, bearer))
             .andExpect(status().isOk());
     }

@@ -44,6 +44,7 @@ public class ProjectVendorService {
 
     @Transactional
     public ProjectVendorResponse add(UUID projectId, ProjectVendorCreateRequest request, CrmUserPrincipal principal) {
+        assertCanManageAssignments(principal);
         Project project = editableProject(projectId, principal);
         Company vendor = companyRepository.findById(request.vendorId()).orElseThrow(() -> new ResourceNotFoundException("Vendor company not found"));
         if (vendor.getDeletedAt() != null || !vendor.getRoles().contains(CompanyRole.VENDOR)) throw new ConflictException("Selected company is not marked as a vendor");
@@ -63,6 +64,7 @@ public class ProjectVendorService {
 
     @Transactional
     public void remove(UUID id, CrmUserPrincipal principal) {
+        assertCanManageAssignments(principal);
         ProjectVendor assignment = findActive(id);
         editableProject(assignment.getProject().getId(), principal);
         if (!canManageAll(principal) && assignment.getResponsibleAssociate() != null && !assignment.getResponsibleAssociate().getId().equals(principal.id())) {
@@ -104,6 +106,10 @@ public class ProjectVendorService {
 
     private ProjectVendor findActive(UUID id) { return repository.findActive(id).orElseThrow(() -> new ResourceNotFoundException("Project vendor assignment not found")); }
     private User findAssociate(UUID id) { if (id == null) return null; User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Associate not found")); if (!user.isActive() || user.getRole() != Role.SALES_REP) throw new ConflictException("Responsible user must be an active associate"); return user; }
+    private void assertCanManageAssignments(CrmUserPrincipal principal) {
+        if (!canManageAll(principal)) throw new AccessDeniedException("Only administrators and managers can add or remove vendor assignments");
+    }
+
     private boolean canManageAll(CrmUserPrincipal principal) { return principal.role() == Role.ADMIN || principal.role() == Role.MANAGER; }
     private String normalize(String value) { return StringUtils.hasText(value) ? value.trim() : null; }
 }

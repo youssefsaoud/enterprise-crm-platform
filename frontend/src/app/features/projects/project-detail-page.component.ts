@@ -4,6 +4,8 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { apiErrorMessage } from '../../core/api/api-error';
 import { AuthService } from '../../core/auth/auth.service';
+import { UserService } from '../../core/users/user.service';
+import { UserSummary } from '../../core/users/user.models';
 import { CompanyService } from '../companies/company.service';
 import { Company } from '../companies/company.models';
 import { Quotation, QuotationStatus } from './quotation.models';
@@ -30,6 +32,8 @@ export class ProjectDetailPageComponent implements OnInit {
   project: Project | null = null;
   vendors: ProjectVendor[] = [];
   vendorDirectory: Company[] = [];
+  associates: UserSummary[] = [];
+  editingVendorId: string | null = null;
   quotations = new Map<string, Quotation[]>();
   documents: ProjectDocument[] = [];
   loading = false;
@@ -47,6 +51,14 @@ export class ProjectDetailPageComponent implements OnInit {
     notes: new FormControl('', { nonNullable: true })
   });
 
+  readonly vendorEditForm = new FormGroup({
+    status: new FormControl<OutreachStatus>('NOT_CONTACTED', { nonNullable: true }),
+    firstContactDate: new FormControl('', { nonNullable: true }),
+    lastContactDate: new FormControl('', { nonNullable: true }),
+    nextFollowUpDate: new FormControl('', { nonNullable: true }),
+    responsibleAssociateId: new FormControl('', { nonNullable: true }),
+    notes: new FormControl('', { nonNullable: true })
+  });
   readonly quoteForm = new FormGroup({
     projectVendorId: new FormControl('', { nonNullable: true }),
     amount: new FormControl<number | null>(null),
@@ -64,6 +76,7 @@ export class ProjectDetailPageComponent implements OnInit {
     private readonly quotationService: QuotationService,
     private readonly documentService: ProjectDocumentService,
     private readonly companyService: CompanyService,
+    private readonly userService: UserService,
     private readonly authService: AuthService
   ) {}
 
@@ -74,6 +87,8 @@ export class ProjectDetailPageComponent implements OnInit {
       return;
     }
     this.loading = true;
+    const user = this.authService.currentUser();
+    if (user && this.canManage(user.role)) this.loadAssociates();
     this.projectService.get(id).subscribe({
       next: project => {
         this.project = project;
@@ -138,6 +153,9 @@ export class ProjectDetailPageComponent implements OnInit {
     });
   }
 
+  loadAssociates(): void {
+    this.userService.salesRepresentatives().subscribe({ next: associates => this.associates = associates });
+  }
   loadVendorDirectory(): void {
     this.companyService.search({ role: 'VENDOR', size: 100, sort: 'name,asc' }).subscribe({
       next: page => this.vendorDirectory = page.content
@@ -156,6 +174,34 @@ export class ProjectDetailPageComponent implements OnInit {
     });
   }
 
+  beginEdit(vendor: ProjectVendor): void {
+    this.editingVendorId = vendor.id;
+    this.vendorEditForm.reset({
+      status: vendor.status,
+      firstContactDate: vendor.firstContactDate ?? '',
+      lastContactDate: vendor.lastContactDate ?? '',
+      nextFollowUpDate: vendor.nextFollowUpDate ?? '',
+      responsibleAssociateId: vendor.responsibleAssociateId ?? '',
+      notes: vendor.notes ?? ''
+    });
+  }
+
+  cancelEdit(): void {
+    this.editingVendorId = null;
+  }
+
+  saveVendor(): void {
+    const id = this.editingVendorId;
+    if (!id) return;
+    this.vendorError = '';
+    this.projectVendorService.update(id, this.vendorEditForm.getRawValue()).subscribe({
+      next: updated => {
+        this.vendors = this.vendors.map(item => item.id === id ? updated : item);
+        this.editingVendorId = null;
+      },
+      error: error => this.vendorError = apiErrorMessage(error, 'Vendor details could not be updated.')
+    });
+  }
   updateStatus(vendor: ProjectVendor, status: OutreachStatus): void {
     this.projectVendorService.update(vendor.id, { status }).subscribe({
       next: updated => vendor.status = updated.status,

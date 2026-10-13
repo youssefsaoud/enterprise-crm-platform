@@ -18,7 +18,7 @@ public interface ProjectVendorRepository extends JpaRepository<ProjectVendor, UU
         where pv.deletedAt is null
           and pv.project.id = :projectId
           and (:status is null or pv.status = :status)
-          and (:search is null or lower(pv.vendor.name) like lower(concat('%', :search, '%')))
+          and (:search is null or lower(pv.vendor.name) like lower(concat('%', cast(:search as string), '%')))
         order by pv.vendor.name asc
         """)
     Page<ProjectVendor> searchByProject(@Param("projectId") UUID projectId, @Param("status") OutreachStatus status, @Param("search") String search, Pageable pageable);

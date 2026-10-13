@@ -48,7 +48,8 @@
       <p *ngIf="vendorError" class="project-error">{{ vendorError }}</p>
       <p *ngIf="vendorLoading" class="project-muted">Loading vendors...</p>
 
-      <form class="vendor-form" [formGroup]="vendorForm" (ngSubmit)="addVendor()">
+      <ng-container *ngIf="currentUser$ | async as user">
+      <form *ngIf="canManage(user.role)" class="vendor-form" [formGroup]="vendorForm" (ngSubmit)="addVendor()">
         <label>Vendor
           <select formControlName="vendorId">
             <option value="">Select a vendor</option>
@@ -75,12 +76,34 @@
             <strong>{{ vendor.vendorName }}</strong>
             <small>{{ vendor.vendorIndustry || 'Vendor' }} - {{ vendor.responsibleAssociateName || 'Project associate' }}</small>
           </div>
+          <form *ngIf="editingVendorId === vendor.id" class="vendor-edit-form" [formGroup]="vendorEditForm" (ngSubmit)="saveVendor()">
+            <label>Status
+              <select formControlName="status">
+                <option *ngFor="let status of statuses" [value]="status">{{ outreachLabel(status) }}</option>
+              </select>
+            </label>
+            <label>First contact<input type="date" formControlName="firstContactDate"></label>
+            <label>Last contact<input type="date" formControlName="lastContactDate"></label>
+            <label>Next follow-up<input type="date" formControlName="nextFollowUpDate"></label>
+            <label *ngIf="canManage(user.role)">Responsible associate
+              <select formControlName="responsibleAssociateId">
+                <option value="">Unassigned</option>
+                <option *ngFor="let associate of associates" [value]="associate.id">{{ associate.fullName }}</option>
+              </select>
+            </label>
+            <label class="vendor-edit-notes">Notes<textarea rows="2" formControlName="notes" maxlength="4000"></textarea></label>
+            <div class="vendor-edit-actions">
+              <button type="submit">Save</button>
+              <button type="button" (click)="cancelEdit()">Cancel</button>
+            </div>
+          </form>
           <select [value]="vendor.status" (change)="updateStatus(vendor, $any($event.target).value)">
             <option *ngFor="let status of statuses" [value]="status">{{ outreachLabel(status) }}</option>
           </select>
           <span class="status" [class]="'status ' + vendor.status.toLowerCase()">{{ outreachLabel(vendor.status) }}</span>
           <span *ngIf="vendor.nextFollowUpDate" [class.overdue]="isOverdue(vendor)">Follow-up {{ vendor.nextFollowUpDate }}</span>
-          <button type="button" class="danger-action" (click)="removeVendor(vendor)">Remove</button>
+          <button type="button" (click)="beginEdit(vendor)">Edit</button>
+          <button *ngIf="canManage(user.role)" type="button" class="danger-action" (click)="removeVendor(vendor)">Remove</button>
           <div class="quote-list">
             <div class="quote-row" *ngFor="let quote of quotesFor(vendor.id)">
               <span><strong>{{ quote.amount | number:'1.0-2' }} {{ quote.currencyCode }}</strong> - revision {{ quote.revisionNumber }}</span>
@@ -90,6 +113,7 @@
           </div>
         </div>
       </div>
+      </ng-container>
       <ng-template #noVendors><p class="project-muted">No vendors assigned yet.</p></ng-template>
     </article>
 
