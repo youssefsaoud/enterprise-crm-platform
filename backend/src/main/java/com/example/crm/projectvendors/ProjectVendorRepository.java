@@ -28,6 +28,7 @@ public interface ProjectVendorRepository extends JpaRepository<ProjectVendor, UU
     Optional<ProjectVendor> findActive(@Param("id") UUID id);
 
     boolean existsByProjectIdAndVendorIdAndDeletedAtIsNull(UUID projectId, UUID vendorId);
+    Optional<ProjectVendor> findByProjectIdAndVendorIdAndDeletedAtIsNull(UUID projectId, UUID vendorId);
 
     @EntityGraph(attributePaths = {"project", "vendor", "responsibleAssociate"})
     @Query("""

@@ -1,5 +1,6 @@
 package com.example.crm.projects;
 
+import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.repository.*;
@@ -25,6 +26,8 @@ public interface ProjectRepository extends JpaRepository<Project, UUID> {
           and (:assignedAssociateId is null or p.assignedAssociate.id = :assignedAssociateId)
         """)
     Page<Project> searchVisible(@Param("userId") UUID userId, @Param("canSeeAll") boolean canSeeAll, @Param("search") String search, @Param("status") ProjectStatus status, @Param("clientId") UUID clientId, @Param("assignedAssociateId") UUID assignedAssociateId, Pageable pageable);
+
+    Optional<Project> findByReference(String reference);
 
     @Query("select count(p) from Project p where p.deletedAt is null and (:canSeeAll = true or p.assignedAssociate.id = :userId)")
     long countVisible(@Param("userId") UUID userId, @Param("canSeeAll") boolean canSeeAll);
