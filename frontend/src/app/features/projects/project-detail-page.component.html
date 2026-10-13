@@ -1,1 +1,89 @@
-<section class="project-detail-space"><header class="project-detail-header"><div><p class="eyebrow">Project workspace</p><h1>{{ project?.name || 'Project' }}</h1><span *ngIf="project">{{ project.reference }} Â· {{ project.clientName }}</span></div><a routerLink="/projects">Back to projects</a></header><p *ngIf="loading" class="project-muted">Loading project...</p><p *ngIf="error" class="project-error">{{ error }}</p><section *ngIf="project as item" class="project-detail-grid"><article class="project-card"><div class="summary-top"><span class="status" [class]="'status ' + item.status.toLowerCase()">{{ statusLabel(item.status) }}</span><div class="detail-actions" *ngIf="currentUser$ | async as user"><a *ngIf="canManage(user.role)" [routerLink]="['/projects',item.id,'edit']">Edit</a><button *ngIf="canManage(user.role)" type="button" (click)="deleteProject()">Delete</button></div></div><dl><div><dt>Client</dt><dd>{{ item.clientName }}</dd></div><div><dt>Category</dt><dd>{{ item.category || '-' }}</dd></div><div><dt>Location</dt><dd>{{ item.location || '-' }}</dd></div><div><dt>Deadline</dt><dd>{{ item.deadline || 'No deadline' }}</dd></div><div><dt>Budget</dt><dd>{{ item.estimatedBudget === null || item.estimatedBudget === undefined ? '-' : (item.estimatedBudget | number:'1.0-2') + ' ' + item.currencyCode }}</dd></div><div><dt>Assigned associate</dt><dd>{{ item.assignedAssociateName || 'Unassigned' }}</dd></div></dl></article><article class="project-card"><h2>Description</h2><p>{{ item.description || 'No description added.' }}</p><h2>Scope of work</h2><p class="long-text">{{ item.scopeOfWork || 'No scope of work added.' }}</p><h2>Notes</h2><p class="long-text">{{ item.notes || 'No notes added.' }}</p></article></section></section>
+<section class="project-detail-space">
+  <header class="project-detail-header">
+    <div>
+      <p class="eyebrow">Project workspace</p>
+      <h1>{{ project?.name || 'Project' }}</h1>
+      <span *ngIf="project">{{ project.reference }} · {{ project.clientName }}</span>
+    </div>
+    <a routerLink="/projects">Back to projects</a>
+  </header>
+
+  <p *ngIf="loading" class="project-muted">Loading project...</p>
+  <p *ngIf="error" class="project-error">{{ error }}</p>
+
+  <section *ngIf="project as item" class="project-detail-grid">
+    <article class="project-card">
+      <div class="summary-top">
+        <span class="status" [class]="'status ' + item.status.toLowerCase()">{{ statusLabel(item.status) }}</span>
+        <div class="detail-actions" *ngIf="currentUser$ | async as user">
+          <a *ngIf="canManage(user.role)" [routerLink]="['/projects', item.id, 'edit']">Edit</a>
+          <button *ngIf="canManage(user.role)" type="button" (click)="deleteProject()">Delete</button>
+        </div>
+      </div>
+      <dl>
+        <div><dt>Client</dt><dd>{{ item.clientName }}</dd></div>
+        <div><dt>Category</dt><dd>{{ item.category || '-' }}</dd></div>
+        <div><dt>Location</dt><dd>{{ item.location || '-' }}</dd></div>
+        <div><dt>Deadline</dt><dd>{{ item.deadline || 'No deadline' }}</dd></div>
+        <div><dt>Budget</dt><dd>{{ item.estimatedBudget === null || item.estimatedBudget === undefined ? '-' : (item.estimatedBudget | number:'1.0-2') + ' ' + item.currencyCode }}</dd></div>
+        <div><dt>Assigned associate</dt><dd>{{ item.assignedAssociateName || 'Unassigned' }}</dd></div>
+      </dl>
+    </article>
+
+    <article class="project-card">
+      <h2>Description</h2>
+      <p>{{ item.description || 'No description added.' }}</p>
+      <h2>Scope of work</h2>
+      <p class="long-text">{{ item.scopeOfWork || 'No scope of work added.' }}</p>
+      <h2>Notes</h2>
+      <p class="long-text">{{ item.notes || 'No notes added.' }}</p>
+    </article>
+
+    <article class="project-card project-vendors-card">
+      <div class="section-heading">
+        <div><p class="eyebrow">Outreach</p><h2>Project vendors</h2></div>
+        <span class="project-muted">{{ vendors.length }} assigned</span>
+      </div>
+
+      <p *ngIf="vendorError" class="project-error">{{ vendorError }}</p>
+      <p *ngIf="vendorLoading" class="project-muted">Loading vendors...</p>
+
+      <form *ngIf="currentUser$ | async as user" class="vendor-form" [formGroup]="vendorForm" (ngSubmit)="addVendor()">
+        <label>Vendor
+          <select formControlName="vendorId">
+            <option value="">Select a vendor</option>
+            <option *ngFor="let vendor of vendorDirectory" [value]="vendor.id">{{ vendor.name }}<span *ngIf="vendor.industry"> · {{ vendor.industry }}</span></option>
+          </select>
+        </label>
+        <label>Status
+          <select formControlName="status">
+            <option *ngFor="let status of statuses" [value]="status">{{ outreachLabel(status) }}</option>
+          </select>
+        </label>
+        <label>Next follow-up
+          <input type="date" formControlName="nextFollowUpDate">
+        </label>
+        <label>Notes
+          <input type="text" formControlName="notes" maxlength="4000">
+        </label>
+        <button type="submit" [disabled]="!vendorForm.controls.vendorId.value">Add vendor</button>
+      </form>
+
+      <div class="vendor-list" *ngIf="vendors.length; else noVendors">
+        <div class="vendor-row" *ngFor="let vendor of vendors">
+          <div class="vendor-info">
+            <strong>{{ vendor.vendorName }}</strong>
+            <small>{{ vendor.vendorIndustry || 'Vendor' }} · {{ vendor.responsibleAssociateName || 'Project associate' }}</small>
+          </div>
+          <select [value]="vendor.status" (change)="updateStatus(vendor, $any($event.target).value)">
+            <option *ngFor="let status of statuses" [value]="status">{{ outreachLabel(status) }}</option>
+          </select>
+          <span class="status" [class]="'status ' + vendor.status.toLowerCase()">{{ outreachLabel(vendor.status) }}</span>
+          <span *ngIf="vendor.nextFollowUpDate" [class.overdue]="isOverdue(vendor)">Follow-up {{ vendor.nextFollowUpDate }}</span>
+          <button type="button" class="danger-action" (click)="removeVendor(vendor)">Remove</button>
+        </div>
+      </div>
+      <ng-template #noVendors><p class="project-muted">No vendors assigned yet.</p></ng-template>
+    </article>
+  </section>
+</section>
