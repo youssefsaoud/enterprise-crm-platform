@@ -14,10 +14,10 @@ import { InteractionService } from './interaction.service';
   styleUrls: ['./interaction-timeline.component.css']
 })
 export class InteractionTimelineComponent implements OnChanges {
-  @Input({ required: true }) parent!: 'companies' | 'contacts' | 'leads' | 'opportunities';
+  @Input({ required: true }) parent!: 'companies' | 'contacts' | 'leads' | 'opportunities' | 'projects' | 'project-vendors';
   @Input({ required: true }) recordId!: string;
 
-  readonly types: InteractionType[] = ['CALL', 'EMAIL', 'MEETING', 'NOTE'];
+  readonly types: InteractionType[] = ['CALL', 'EMAIL', 'MEETING', 'NOTE', 'FOLLOW_UP'];
   readonly form = this.fb.nonNullable.group({
     type: ['NOTE' as InteractionType, Validators.required],
     subject: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(160)]],
@@ -33,26 +33,19 @@ export class InteractionTimelineComponent implements OnChanges {
 
   constructor(private readonly fb: FormBuilder, private readonly interactionService: InteractionService) {}
 
-  ngOnChanges(): void {
-    if (this.recordId) {
-      this.load();
-    }
-  }
+  ngOnChanges(): void { if (this.recordId) this.load(); }
 
   load(): void {
     this.loading = true;
     this.error = '';
     this.interactionService.timeline(this.parent, this.recordId).subscribe({
-      next: (result) => { this.interactions = result.content; this.loading = false; },
-      error: (error) => { this.error = apiErrorMessage(error, 'Activity timeline could not be loaded.'); this.loading = false; }
+      next: result => { this.interactions = result.content; this.loading = false; },
+      error: error => { this.error = apiErrorMessage(error, 'Activity timeline could not be loaded.'); this.loading = false; }
     });
   }
 
   save(): void {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
+    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
     this.saving = true;
     this.error = '';
     const value = this.form.getRawValue();
@@ -65,14 +58,14 @@ export class InteractionTimelineComponent implements OnChanges {
       companyId: this.parent === 'companies' ? this.recordId : null,
       contactId: this.parent === 'contacts' ? this.recordId : null,
       leadId: this.parent === 'leads' ? this.recordId : null,
-      opportunityId: this.parent === 'opportunities' ? this.recordId : null
+      opportunityId: this.parent === 'opportunities' ? this.recordId : null,
+      projectId: this.parent === 'projects' ? this.recordId : null,
+      projectVendorId: this.parent === 'project-vendors' ? this.recordId : null
     }).subscribe({
       next: () => { this.form.patchValue({ subject: '', description: '', followUpAt: '', occurredAt: this.localNow() }); this.saving = false; this.load(); },
-      error: (error) => { this.error = apiErrorMessage(error, 'Interaction could not be saved.'); this.saving = false; }
+      error: error => { this.error = apiErrorMessage(error, 'Interaction could not be saved.'); this.saving = false; }
     });
   }
 
-  private localNow(): string {
-    return new Date().toISOString().slice(0, 16);
-  }
+  private localNow(): string { return new Date().toISOString().slice(0, 16); }
 }

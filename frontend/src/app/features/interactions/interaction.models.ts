@@ -1,4 +1,4 @@
-export type InteractionType = 'CALL' | 'EMAIL' | 'MEETING' | 'NOTE';
+export type InteractionType = 'CALL' | 'EMAIL' | 'MEETING' | 'NOTE' | 'FOLLOW_UP';
 
 export interface Interaction {
   id: string;
@@ -17,6 +17,11 @@ export interface Interaction {
   leadName?: string | null;
   opportunityId?: string | null;
   opportunityName?: string | null;
+  projectId?: string | null;
+  projectName?: string | null;
+  projectVendorId?: string | null;
+  projectVendorName?: string | null;
+  quotationId?: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -31,6 +36,9 @@ export interface InteractionPayload {
   contactId?: string | null;
   leadId?: string | null;
   opportunityId?: string | null;
+  projectId?: string | null;
+  projectVendorId?: string | null;
+  quotationId?: string | null;
 }
 
 export interface InteractionSearchParams {
@@ -40,6 +48,8 @@ export interface InteractionSearchParams {
   contactId?: string;
   leadId?: string;
   opportunityId?: string;
+  projectId?: string;
+  projectVendorId?: string;
   fromDate?: string;
   toDate?: string;
   page?: number;

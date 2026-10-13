@@ -14,11 +14,12 @@ import { OutreachStatus, ProjectVendor } from './project-vendor.models';
 import { ProjectVendorService } from './project-vendor.service';
 import { Project, ProjectStatus } from './project.models';
 import { ProjectService } from './project.service';
+import { InteractionTimelineComponent } from '../interactions/interaction-timeline.component';
 
 @Component({
   selector: 'app-project-detail-page',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, InteractionTimelineComponent],
   templateUrl: './project-detail-page.component.html',
   styleUrls: ['./project-detail-page.component.css']
 })

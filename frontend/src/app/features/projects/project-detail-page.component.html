@@ -113,9 +113,7 @@
         <button type="submit" [disabled]="!quoteForm.controls.projectVendorId.value || quoteForm.controls.amount.value === null">Record quotation</button>
       </form>
     </article>
-  </section>
-
-    <article class="project-card project-documents-card">
+      <article class="project-card project-documents-card">
       <div class="section-heading">
         <div><p class="eyebrow">Files</p><h2>Project documents</h2></div>
         <span class="project-muted">{{ documents.length }} files</span>
@@ -133,4 +131,9 @@
       </div>
       <ng-template #noDocuments><p class="project-muted">No project documents uploaded.</p></ng-template>
     </article>
+
+    <article class="project-card project-activity-card">
+      <app-interaction-timeline parent="projects" [recordId]="item.id"></app-interaction-timeline>
+    </article>
+  </section>
 </section>
