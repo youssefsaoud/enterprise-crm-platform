@@ -3,7 +3,7 @@
     <div>
       <p class="eyebrow">Project workspace</p>
       <h1>{{ project?.name || 'Project' }}</h1>
-      <span *ngIf="project">{{ project.reference }} · {{ project.clientName }}</span>
+      <span *ngIf="project">{{ project.reference }} - {{ project.clientName }}</span>
     </div>
     <a routerLink="/projects">Back to projects</a>
   </header>
@@ -48,11 +48,11 @@
       <p *ngIf="vendorError" class="project-error">{{ vendorError }}</p>
       <p *ngIf="vendorLoading" class="project-muted">Loading vendors...</p>
 
-      <form *ngIf="currentUser$ | async as user" class="vendor-form" [formGroup]="vendorForm" (ngSubmit)="addVendor()">
+      <form class="vendor-form" [formGroup]="vendorForm" (ngSubmit)="addVendor()">
         <label>Vendor
           <select formControlName="vendorId">
             <option value="">Select a vendor</option>
-            <option *ngFor="let vendor of vendorDirectory" [value]="vendor.id">{{ vendor.name }}<span *ngIf="vendor.industry"> · {{ vendor.industry }}</span></option>
+            <option *ngFor="let vendor of vendorDirectory" [value]="vendor.id">{{ vendor.name }} - {{ vendor.industry || 'Vendor' }}</option>
           </select>
         </label>
         <label>Status
@@ -73,7 +73,7 @@
         <div class="vendor-row" *ngFor="let vendor of vendors">
           <div class="vendor-info">
             <strong>{{ vendor.vendorName }}</strong>
-            <small>{{ vendor.vendorIndustry || 'Vendor' }} · {{ vendor.responsibleAssociateName || 'Project associate' }}</small>
+            <small>{{ vendor.vendorIndustry || 'Vendor' }} - {{ vendor.responsibleAssociateName || 'Project associate' }}</small>
           </div>
           <select [value]="vendor.status" (change)="updateStatus(vendor, $any($event.target).value)">
             <option *ngFor="let status of statuses" [value]="status">{{ outreachLabel(status) }}</option>
@@ -81,9 +81,37 @@
           <span class="status" [class]="'status ' + vendor.status.toLowerCase()">{{ outreachLabel(vendor.status) }}</span>
           <span *ngIf="vendor.nextFollowUpDate" [class.overdue]="isOverdue(vendor)">Follow-up {{ vendor.nextFollowUpDate }}</span>
           <button type="button" class="danger-action" (click)="removeVendor(vendor)">Remove</button>
+          <div class="quote-list">
+            <div class="quote-row" *ngFor="let quote of quotesFor(vendor.id)">
+              <span><strong>{{ quote.amount | number:'1.0-2' }} {{ quote.currencyCode }}</strong> - revision {{ quote.revisionNumber }}</span>
+              <span class="project-muted">{{ quoteStatusLabel(quote.status) }}</span>
+              <button *ngIf="currentUser$ | async as user" type="button" [disabled]="!canManage(user.role) || quote.selected" (click)="selectQuote(quote)">{{ quote.selected ? 'Selected' : 'Select quote' }}</button>
+            </div>
+          </div>
         </div>
       </div>
       <ng-template #noVendors><p class="project-muted">No vendors assigned yet.</p></ng-template>
+    </article>
+
+    <article class="project-card project-quotes-card">
+      <div class="section-heading">
+        <div><p class="eyebrow">Commercial review</p><h2>Record a quotation</h2></div>
+      </div>
+      <p *ngIf="quoteError" class="project-error">{{ quoteError }}</p>
+      <form class="quote-form" [formGroup]="quoteForm" (ngSubmit)="createQuote()">
+        <label>Vendor
+          <select formControlName="projectVendorId">
+            <option value="">Select assigned vendor</option>
+            <option *ngFor="let vendor of vendors" [value]="vendor.id">{{ vendor.vendorName }}</option>
+          </select>
+        </label>
+        <label>Amount<input type="number" min="0" step="0.01" formControlName="amount"></label>
+        <label>Currency<input maxlength="3" formControlName="currencyCode"></label>
+        <label>Received<input type="date" formControlName="receivedDate"></label>
+        <label>Valid until<input type="date" formControlName="validUntil"></label>
+        <label>Notes<input type="text" maxlength="4000" formControlName="notes"></label>
+        <button type="submit" [disabled]="!quoteForm.controls.projectVendorId.value || quoteForm.controls.amount.value === null">Record quotation</button>
+      </form>
     </article>
   </section>
 </section>
