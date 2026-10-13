@@ -5,12 +5,17 @@ import { of, throwError } from 'rxjs';
 import { DashboardPageComponent } from './dashboard-page.component';
 import { DashboardService } from './dashboard.service';
 
- describe('DashboardPageComponent', () => {
+describe('DashboardPageComponent', () => {
   let fixture: ComponentFixture<DashboardPageComponent>;
   let dashboardService: jasmine.SpyObj<DashboardService>;
 
   beforeEach(async () => {
-    dashboardService = jasmine.createSpyObj('DashboardService', ['summary', 'pipeline', 'recentActivities']);
+    dashboardService = jasmine.createSpyObj('DashboardService', ['summary', 'projectSummary', 'pipeline', 'recentActivities']);
+    dashboardService.projectSummary.and.returnValue(of({
+      totalProjects: 2, activeProjects: 1, nearingDeadlineProjects: 0, overdueProjects: 0,
+      vendorsContacted: 1, vendorsAwaitingResponse: 1, quotationsReceived: 1, quotationsPending: 1,
+      quoteResponseRate: 50, upcomingFollowUps: 1, overdueFollowUps: 0, projectsByStatus: [], quotationValueByCurrency: [], recentActivities: []
+    }));
     dashboardService.summary.and.returnValue(of({ totalLeads: 3, leadsByStatus: [], openOpportunities: 1, openPipelineValue: [], recentInteractionCount: 0 }));
     dashboardService.pipeline.and.returnValue(of([]));
     dashboardService.recentActivities.and.returnValue(of([]));
@@ -22,9 +27,11 @@ import { DashboardService } from './dashboard.service';
     fixture = TestBed.createComponent(DashboardPageComponent);
   });
 
-  it('loads summary, pipeline and activity data', () => {
+  it('loads project and legacy dashboard data', () => {
     fixture.detectChanges();
     expect(fixture.componentInstance.summary?.totalLeads).toBe(3);
+    expect(fixture.componentInstance.projectSummary?.totalProjects).toBe(2);
+    expect(dashboardService.projectSummary).toHaveBeenCalled();
     expect(dashboardService.pipeline).toHaveBeenCalled();
     expect(dashboardService.recentActivities).toHaveBeenCalledWith(10);
   });
