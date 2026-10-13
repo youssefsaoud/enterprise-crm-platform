@@ -16,43 +16,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-@RequestMapping("/api/v1/companies")
+@RestController @RequestMapping("/api/v1/companies")
 public class CompanyController {
     private final CompanyService companyService;
-
-    public CompanyController(CompanyService companyService) {
-        this.companyService = companyService;
-    }
-
-    @GetMapping
-    Page<CompanyResponse> search(
-        @RequestParam(required = false) String search,
-        @RequestParam(required = false) String industry,
-        Pageable pageable
-    ) {
-        return companyService.search(search, industry, pageable);
-    }
-
-    @GetMapping("/{id}")
-    CompanyResponse get(@PathVariable UUID id) {
-        return companyService.get(id);
-    }
-
-    @PostMapping
-    ResponseEntity<CompanyResponse> create(@Valid @RequestBody CompanyCreateRequest request) {
-        CompanyResponse response = companyService.create(request);
-        return ResponseEntity.created(URI.create("/api/v1/companies/" + response.id())).body(response);
-    }
-
-    @PutMapping("/{id}")
-    CompanyResponse update(@PathVariable UUID id, @Valid @RequestBody CompanyUpdateRequest request) {
-        return companyService.update(id, request);
-    }
-
-    @DeleteMapping("/{id}")
-    ResponseEntity<Void> delete(@PathVariable UUID id) {
-        companyService.delete(id);
-        return ResponseEntity.noContent().build();
-    }
+    public CompanyController(CompanyService companyService) { this.companyService = companyService; }
+    @GetMapping Page<CompanyResponse> search(@RequestParam(required = false) String search, @RequestParam(required = false) String industry, @RequestParam(required = false) CompanyRole role, Pageable pageable) { return companyService.search(search, industry, role, pageable); }
+    @GetMapping("/{id}") CompanyResponse get(@PathVariable UUID id) { return companyService.get(id); }
+    @PostMapping ResponseEntity<CompanyResponse> create(@Valid @RequestBody CompanyCreateRequest request) { CompanyResponse response = companyService.create(request); return ResponseEntity.created(URI.create("/api/v1/companies/" + response.id())).body(response); }
+    @PutMapping("/{id}") CompanyResponse update(@PathVariable UUID id, @Valid @RequestBody CompanyUpdateRequest request) { return companyService.update(id, request); }
+    @DeleteMapping("/{id}") ResponseEntity<Void> delete(@PathVariable UUID id) { companyService.delete(id); return ResponseEntity.noContent().build(); }
 }

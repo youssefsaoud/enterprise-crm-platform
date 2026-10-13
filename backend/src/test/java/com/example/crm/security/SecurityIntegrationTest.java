@@ -44,6 +44,10 @@ class SecurityIntegrationTest {
             .andExpect(status().isOk());
         mockMvc.perform(get("/api/v1/companies").header(HttpHeaders.AUTHORIZATION, bearer))
             .andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/companies").param("role", "CLIENT").header(HttpHeaders.AUTHORIZATION, bearer))
+            .andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/projects").header(HttpHeaders.AUTHORIZATION, bearer))
+            .andExpect(status().isOk());
         mockMvc.perform(get("/api/v1/opportunities").header(HttpHeaders.AUTHORIZATION, bearer))
             .andExpect(status().isOk());
     }

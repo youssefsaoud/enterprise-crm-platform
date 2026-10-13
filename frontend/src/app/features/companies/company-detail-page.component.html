@@ -12,7 +12,7 @@
 <section *ngIf="company as item" class="detail-layout">
   <div class="detail-panel">
     <dl>
-      <div><dt>Industry</dt><dd>{{ item.industry || '-' }}</dd></div>
+      <div><dt>Roles</dt><dd>{{ item.roles.join(' · ') || '-' }}</dd></div><div><dt>Industry</dt><dd>{{ item.industry || '-' }}</dd></div>
       <div><dt>Email</dt><dd>{{ item.email || '-' }}</dd></div>
       <div><dt>Phone</dt><dd>{{ item.phone || '-' }}</dd></div>
       <div><dt>Website</dt><dd>{{ item.website || '-' }}</dd></div>

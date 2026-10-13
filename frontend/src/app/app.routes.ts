@@ -1,44 +1,12 @@
 import { Routes } from '@angular/router';
-
-import { ActivitiesPageComponent } from './features/activities/activities-page.component';
-import { CompaniesPageComponent } from './features/companies/companies-page.component';
-import { CompanyDetailPageComponent } from './features/companies/company-detail-page.component';
-import { CompanyFormPageComponent } from './features/companies/company-form-page.component';
-import { ContactsPageComponent } from './features/contacts/contacts-page.component';
-import { ContactDetailPageComponent } from './features/contacts/contact-detail-page.component';
-import { ContactFormPageComponent } from './features/contacts/contact-form-page.component';
-import { DashboardPageComponent } from './features/dashboard/dashboard-page.component';
-import { LeadsPageComponent } from './features/leads/leads-page.component';
-import { LeadFormPageComponent } from './features/leads/lead-form-page.component';
-import { LeadDetailPageComponent } from './features/leads/lead-detail-page.component';
-import { LoginPageComponent } from './features/auth/login-page.component';
-import { OpportunitiesPageComponent } from './features/opportunities/opportunities-page.component';
-import { OpportunityFormPageComponent } from './features/opportunities/opportunity-form-page.component';
-import { OpportunityDetailPageComponent } from './features/opportunities/opportunity-detail-page.component';
-import { StatusPageComponent } from './features/status/status-page.component';
-import { authGuard } from './core/guards/auth.guard';
-
+import { ActivitiesPageComponent } from './features/activities/activities-page.component'; import { CompaniesPageComponent } from './features/companies/companies-page.component'; import { CompanyDetailPageComponent } from './features/companies/company-detail-page.component'; import { CompanyFormPageComponent } from './features/companies/company-form-page.component'; import { ContactsPageComponent } from './features/contacts/contacts-page.component'; import { ContactDetailPageComponent } from './features/contacts/contact-detail-page.component'; import { ContactFormPageComponent } from './features/contacts/contact-form-page.component'; import { DashboardPageComponent } from './features/dashboard/dashboard-page.component'; import { LeadsPageComponent } from './features/leads/leads-page.component'; import { LeadFormPageComponent } from './features/leads/lead-form-page.component'; import { LeadDetailPageComponent } from './features/leads/lead-detail-page.component'; import { LoginPageComponent } from './features/auth/login-page.component'; import { OpportunitiesPageComponent } from './features/opportunities/opportunities-page.component'; import { OpportunityFormPageComponent } from './features/opportunities/opportunity-form-page.component'; import { OpportunityDetailPageComponent } from './features/opportunities/opportunity-detail-page.component'; import { ProjectDetailPageComponent } from './features/projects/project-detail-page.component'; import { ProjectFormPageComponent } from './features/projects/project-form-page.component'; import { ProjectsPageComponent } from './features/projects/projects-page.component'; import { StatusPageComponent } from './features/status/status-page.component'; import { authGuard } from './core/guards/auth.guard';
+import { roleGuard } from './core/guards/auth.guard';
 export const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
-  { path: 'dashboard', component: DashboardPageComponent, title: 'Dashboard', canActivate: [authGuard] },
-  { path: 'companies', component: CompaniesPageComponent, title: 'Companies', canActivate: [authGuard] },
-  { path: 'companies/new', component: CompanyFormPageComponent, title: 'New Company', canActivate: [authGuard] },
-  { path: 'companies/:id', component: CompanyDetailPageComponent, title: 'Company Detail', canActivate: [authGuard] },
-  { path: 'companies/:id/edit', component: CompanyFormPageComponent, title: 'Edit Company', canActivate: [authGuard] },
-  { path: 'contacts', component: ContactsPageComponent, title: 'Contacts', canActivate: [authGuard] },
-  { path: 'contacts/new', component: ContactFormPageComponent, title: 'New Contact', canActivate: [authGuard] },
-  { path: 'contacts/:id', component: ContactDetailPageComponent, title: 'Contact Detail', canActivate: [authGuard] },
-  { path: 'contacts/:id/edit', component: ContactFormPageComponent, title: 'Edit Contact', canActivate: [authGuard] },
-  { path: 'leads', component: LeadsPageComponent, title: 'Leads', canActivate: [authGuard] },
-  { path: 'leads/new', component: LeadFormPageComponent, title: 'New Lead', canActivate: [authGuard] },
-  { path: 'leads/:id/edit', component: LeadFormPageComponent, title: 'Edit Lead', canActivate: [authGuard] },
-  { path: 'leads/:id', component: LeadDetailPageComponent, title: 'Lead Detail', canActivate: [authGuard] },
-  { path: 'opportunities', component: OpportunitiesPageComponent, title: 'Opportunities', canActivate: [authGuard] },
-  { path: 'opportunities/new', component: OpportunityFormPageComponent, title: 'New Opportunity', canActivate: [authGuard] },
-  { path: 'opportunities/:id/edit', component: OpportunityFormPageComponent, title: 'Edit Opportunity', canActivate: [authGuard] },
-  { path: 'opportunities/:id', component: OpportunityDetailPageComponent, title: 'Opportunity Detail', canActivate: [authGuard] },
-  { path: 'activities', component: ActivitiesPageComponent, title: 'Activities', canActivate: [authGuard] },
-  { path: 'status', component: StatusPageComponent, title: 'API Status', canActivate: [authGuard] },
-  { path: 'login', component: LoginPageComponent, title: 'Login' },
-  { path: '**', redirectTo: 'dashboard' }
-];
+{path:'',pathMatch:'full',redirectTo:'dashboard'},{path:'dashboard',component:DashboardPageComponent,title:'Dashboard',canActivate:[authGuard]},
+{path:'projects',component:ProjectsPageComponent,title:'Projects',canActivate:[authGuard]},{path:'projects/new',component:ProjectFormPageComponent,title:'New Project',canActivate:[authGuard,roleGuard(['ADMIN','MANAGER'])]},{path:'projects/:id/edit',component:ProjectFormPageComponent,title:'Edit Project',canActivate:[authGuard,roleGuard(['ADMIN','MANAGER'])]},{path:'projects/:id',component:ProjectDetailPageComponent,title:'Project Detail',canActivate:[authGuard]},
+{path:'clients',component:CompaniesPageComponent,data:{role:'CLIENT'},title:'Clients',canActivate:[authGuard]},{path:'vendors',component:CompaniesPageComponent,data:{role:'VENDOR'},title:'Vendors',canActivate:[authGuard]},
+{path:'companies',component:CompaniesPageComponent,title:'Companies',canActivate:[authGuard]},{path:'companies/new',component:CompanyFormPageComponent,title:'New Organization',canActivate:[authGuard]},{path:'companies/:id',component:CompanyDetailPageComponent,title:'Organization Detail',canActivate:[authGuard]},{path:'companies/:id/edit',component:CompanyFormPageComponent,title:'Edit Organization',canActivate:[authGuard]},
+{path:'contacts',component:ContactsPageComponent,title:'Contacts',canActivate:[authGuard]},{path:'contacts/new',component:ContactFormPageComponent,title:'New Contact',canActivate:[authGuard]},{path:'contacts/:id',component:ContactDetailPageComponent,title:'Contact Detail',canActivate:[authGuard]},{path:'contacts/:id/edit',component:ContactFormPageComponent,title:'Edit Contact',canActivate:[authGuard]},
+{path:'leads',component:LeadsPageComponent,title:'Leads',canActivate:[authGuard]},{path:'leads/new',component:LeadFormPageComponent,title:'New Lead',canActivate:[authGuard]},{path:'leads/:id/edit',component:LeadFormPageComponent,title:'Edit Lead',canActivate:[authGuard]},{path:'leads/:id',component:LeadDetailPageComponent,title:'Lead Detail',canActivate:[authGuard]},
+{path:'opportunities',component:OpportunitiesPageComponent,title:'Opportunities',canActivate:[authGuard]},{path:'opportunities/new',component:OpportunityFormPageComponent,title:'New Opportunity',canActivate:[authGuard]},{path:'opportunities/:id/edit',component:OpportunityFormPageComponent,title:'Edit Opportunity',canActivate:[authGuard]},{path:'opportunities/:id',component:OpportunityDetailPageComponent,title:'Opportunity Detail',canActivate:[authGuard]},
+{path:'activities',component:ActivitiesPageComponent,title:'Activities',canActivate:[authGuard]},{path:'status',component:StatusPageComponent,title:'API Status',canActivate:[authGuard]},{path:'login',component:LoginPageComponent,title:'Login'},{path:'**',redirectTo:'dashboard'}];
