@@ -39,4 +39,10 @@ public interface ProjectVendorRepository extends JpaRepository<ProjectVendor, UU
         order by pv.nextFollowUpDate asc, pv.vendor.name asc
         """)
     List<ProjectVendor> findFollowUps(@Param("userId") UUID userId, @Param("canSeeAll") boolean canSeeAll, @Param("throughDate") LocalDate throughDate);
+
+    @Query("select count(pv) from ProjectVendor pv where pv.deletedAt is null and (:canSeeAll = true or pv.project.assignedAssociate.id = :userId)")
+    long countVisible(@Param("userId") UUID userId, @Param("canSeeAll") boolean canSeeAll);
+
+    @Query("select count(pv) from ProjectVendor pv where pv.deletedAt is null and (:canSeeAll = true or pv.project.assignedAssociate.id = :userId) and pv.status in :statuses")
+    long countVisibleByStatusIn(@Param("userId") UUID userId, @Param("canSeeAll") boolean canSeeAll, @Param("statuses") java.util.Set<OutreachStatus> statuses);
 }

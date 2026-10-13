@@ -25,4 +25,16 @@ public interface ProjectRepository extends JpaRepository<Project, UUID> {
           and (:assignedAssociateId is null or p.assignedAssociate.id = :assignedAssociateId)
         """)
     Page<Project> searchVisible(@Param("userId") UUID userId, @Param("canSeeAll") boolean canSeeAll, @Param("search") String search, @Param("status") ProjectStatus status, @Param("clientId") UUID clientId, @Param("assignedAssociateId") UUID assignedAssociateId, Pageable pageable);
+
+    @Query("select count(p) from Project p where p.deletedAt is null and (:canSeeAll = true or p.assignedAssociate.id = :userId)")
+    long countVisible(@Param("userId") UUID userId, @Param("canSeeAll") boolean canSeeAll);
+
+    @Query("select count(p) from Project p where p.deletedAt is null and (:canSeeAll = true or p.assignedAssociate.id = :userId) and p.status = :status")
+    long countVisibleByStatus(@Param("userId") UUID userId, @Param("canSeeAll") boolean canSeeAll, @Param("status") ProjectStatus status);
+
+    @Query("select count(p) from Project p where p.deletedAt is null and (:canSeeAll = true or p.assignedAssociate.id = :userId) and p.deadline between :fromDate and :toDate")
+    long countVisibleWithDeadlineBetween(@Param("userId") UUID userId, @Param("canSeeAll") boolean canSeeAll, @Param("fromDate") java.time.LocalDate fromDate, @Param("toDate") java.time.LocalDate toDate);
+
+    @Query("select count(p) from Project p where p.deletedAt is null and (:canSeeAll = true or p.assignedAssociate.id = :userId) and p.deadline < :beforeDate")
+    long countVisibleWithDeadlineBefore(@Param("userId") UUID userId, @Param("canSeeAll") boolean canSeeAll, @Param("beforeDate") java.time.LocalDate beforeDate);
 }

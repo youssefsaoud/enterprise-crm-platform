@@ -38,3 +38,37 @@ export interface RecentActivity {
   opportunityId?: string | null;
   opportunityName?: string | null;
 }
+
+export interface ProjectStatusCount {
+  status: string;
+  count: number;
+}
+
+export interface ProjectDashboardActivity {
+  id: string;
+  type: string;
+  subject: string;
+  occurredAt: string;
+  authorName: string;
+  projectId: string;
+  projectName: string;
+  projectVendorId?: string | null;
+  vendorName?: string | null;
+}
+
+export interface ProjectDashboardSummary {
+  totalProjects: number;
+  activeProjects: number;
+  nearingDeadlineProjects: number;
+  overdueProjects: number;
+  vendorsContacted: number;
+  vendorsAwaitingResponse: number;
+  quotationsReceived: number;
+  quotationsPending: number;
+  quoteResponseRate: number;
+  upcomingFollowUps: number;
+  overdueFollowUps: number;
+  projectsByStatus: ProjectStatusCount[];
+  quotationValueByCurrency: DashboardCurrencyTotal[];
+  recentActivities: ProjectDashboardActivity[];
+}

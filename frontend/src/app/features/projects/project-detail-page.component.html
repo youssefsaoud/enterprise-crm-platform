@@ -114,4 +114,23 @@
       </form>
     </article>
   </section>
+
+    <article class="project-card project-documents-card">
+      <div class="section-heading">
+        <div><p class="eyebrow">Files</p><h2>Project documents</h2></div>
+        <span class="project-muted">{{ documents.length }} files</span>
+      </div>
+      <p *ngIf="documentError" class="project-error">{{ documentError }}</p>
+      <form class="document-form" (submit)="$event.preventDefault(); uploadDocument()">
+        <input type="file" accept=".pdf,.png,.jpg,.jpeg,.txt,.docx" (change)="selectDocument($event)">
+        <button type="submit" [disabled]="!selectedFile">Upload document</button>
+      </form>
+      <div class="document-list" *ngIf="documents.length; else noDocuments">
+        <button type="button" class="document-row" *ngFor="let item of documents" (click)="downloadDocument(item)">
+          <span><strong>{{ item.originalFilename }}</strong><small>{{ item.contentType }} - {{ item.fileSize | number }} bytes</small></span>
+          <span class="project-muted">{{ item.uploadedAt | date:'mediumDate' }}</span>
+        </button>
+      </div>
+      <ng-template #noDocuments><p class="project-muted">No project documents uploaded.</p></ng-template>
+    </article>
 </section>

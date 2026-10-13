@@ -9,6 +9,35 @@
 <p *ngIf="error" class="error-message">{{ error }}</p>
 <p *ngIf="loading" class="muted">Loading dashboard...</p>
 
+
+<section class="project-dashboard" *ngIf="projectSummary as projectData">
+  <div class="project-dashboard-heading">
+    <div><p>Operations overview</p><h2>Projects and vendors</h2></div>
+    <a routerLink="/projects">Open projects</a>
+  </div>
+  <div class="kpi-grid project-kpi-grid">
+    <article><span>Total projects</span><strong>{{ projectData.totalProjects | number }}</strong><a routerLink="/projects">View projects</a></article>
+    <article><span>Active projects</span><strong>{{ projectData.activeProjects | number }}</strong><span class="metric-note">{{ projectData.nearingDeadlineProjects }} nearing deadline</span></article>
+    <article><span>Vendor response rate</span><strong>{{ projectData.quoteResponseRate | number:'1.0-1' }}%</strong><span class="metric-note">{{ projectData.vendorsAwaitingResponse }} awaiting response</span></article>
+    <article><span>Follow-ups</span><strong>{{ projectData.upcomingFollowUps | number }}</strong><span class="metric-note overdue-note">{{ projectData.overdueFollowUps }} overdue</span></article>
+  </div>
+  <div class="dashboard-grid">
+    <article class="panel">
+      <div class="panel-header"><h2>Project status</h2><a routerLink="/projects">Open</a></div>
+      <ul class="status-list"><li *ngFor="let item of projectData.projectsByStatus"><span>{{ item.status }}</span><strong>{{ item.count | number }}</strong></li></ul>
+    </article>
+    <article class="panel wide-panel">
+      <div class="panel-header"><h2>Quotation review</h2><a routerLink="/projects">Review</a></div>
+      <div class="project-review-grid">
+        <span><strong>{{ projectData.quotationsReceived | number }}</strong> quotations received</span>
+        <span><strong>{{ projectData.quotationsPending | number }}</strong> pending review</span>
+        <span><strong>{{ projectData.overdueProjects | number }}</strong> overdue projects</span>
+        <span><strong>{{ totalQuotationValue(projectData.quotationValueByCurrency) }}</strong> active quote value</span>
+      </div>
+    </article>
+  </div>
+</section>
+
 <ng-container *ngIf="summary as data">
   <section class="kpi-grid" aria-label="Dashboard metrics">
     <article>
