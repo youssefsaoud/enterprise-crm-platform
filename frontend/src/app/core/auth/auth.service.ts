@@ -38,6 +38,10 @@ export class AuthService {
     return this.accessToken;
   }
 
+  currentUser(): CurrentUser | null {
+    return this.userSubject.value;
+  }
+
   isAuthenticated(): boolean {
     return this.accessToken !== null;
   }
