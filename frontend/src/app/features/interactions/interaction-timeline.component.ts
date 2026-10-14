@@ -67,5 +67,7 @@ export class InteractionTimelineComponent implements OnChanges {
     });
   }
 
+  typeLabel(type: InteractionType): string { return type.toLowerCase().replaceAll('_', ' ').replace(/\b\w/g, character => character.toUpperCase()); }
+
   private localNow(): string { return new Date().toISOString().slice(0, 16); }
 }

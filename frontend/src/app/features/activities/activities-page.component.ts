@@ -36,6 +36,8 @@ export class ActivitiesPageComponent implements OnInit {
     });
   }
 
+  typeLabel(type: InteractionType): string { return type.toLowerCase().replaceAll('_', ' ').replace(/\b\w/g, character => character.toUpperCase()); }
+
   activityLink(activity: Interaction): string[] {
     if (activity.opportunityId) { return ['/opportunities', activity.opportunityId]; }
     if (activity.leadId) { return ['/leads', activity.leadId]; }

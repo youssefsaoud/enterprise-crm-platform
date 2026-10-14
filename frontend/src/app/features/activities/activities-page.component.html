@@ -1,30 +1,41 @@
 <section class="page-header entity-header">
   <div>
-    <p>CRM module</p>
+    <p>Communication history</p>
     <h1>Activities</h1>
+    <span>Calls, emails, meetings, notes, and scheduled follow-ups.</span>
   </div>
-  <button type="button" (click)="load()" [disabled]="loading">Refresh</button>
+  <button class="refresh-button" type="button" (click)="load()" [disabled]="loading">
+    <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0 2 5M20 4v7h-7"></path></svg>
+    Refresh
+  </button>
 </section>
 
 <section class="toolbar" aria-label="Activity filters">
-  <label>Type<select [formControl]="typeControl"><option value="">Any type</option><option *ngFor="let type of types" [value]="type">{{ type }}</option></select></label>
+  <label>Activity type
+    <select [formControl]="typeControl">
+      <option value="">All activity</option>
+      <option *ngFor="let type of types" [value]="type">{{ typeLabel(type) }}</option>
+    </select>
+  </label>
 </section>
 
 <p *ngIf="error" class="error-message">{{ error }}</p>
 <p *ngIf="loading" class="muted">Loading activities...</p>
 
-<div class="table-shell" *ngIf="!loading && activities.length > 0; else emptyState">
-  <table>
-    <thead><tr><th>Activity</th><th>Related record</th><th>Owner</th><th>Occurred</th></tr></thead>
-    <tbody>
-      <tr *ngFor="let activity of activities">
-        <td><strong>{{ activity.type }}</strong><span>{{ activity.subject }}</span></td>
-        <td><a [routerLink]="activityLink(activity)">{{ activityTarget(activity) }}</a></td>
-        <td>{{ activity.authorName }}</td>
-        <td>{{ activity.occurredAt | date:'short' }}</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+<section class="activity-surface" *ngIf="!loading && activities.length > 0; else emptyState">
+  <div class="activity-row" *ngFor="let activity of activities">
+    <span class="activity-icon" [attr.data-type]="activity.type" aria-hidden="true"></span>
+    <div class="activity-copy">
+      <div><span class="activity-type">{{ typeLabel(activity.type) }}</span><strong>{{ activity.subject }}</strong></div>
+      <span>{{ activity.authorName }} · {{ activity.occurredAt | date:'medium' }}</span>
+    </div>
+    <a [routerLink]="activityLink(activity)">{{ activityTarget(activity) }}</a>
+  </div>
+</section>
 
-<ng-template #emptyState><section *ngIf="!loading" class="empty-panel"><h2>No activities found</h2><p>Log calls, emails, meetings, or notes from a CRM record timeline.</p></section></ng-template>
+<ng-template #emptyState>
+  <section *ngIf="!loading" class="empty-panel">
+    <h2>No activities found</h2>
+    <p>Log a call, email, meeting, note, or follow-up from a related record.</p>
+  </section>
+</ng-template>

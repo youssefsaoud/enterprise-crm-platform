@@ -17,8 +17,8 @@
 
 .detail-panel {
   flex: 1 1 560px;
-  background: #fff;
-  border: 1px solid #dfe5ef;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 8px;
   padding: 1.25rem;
 }
@@ -35,7 +35,7 @@ dl div {
 }
 
 dt {
-  color: #5f6b7a;
+  color: var(--color-text-secondary);
   font-weight: 700;
 }
 
@@ -51,15 +51,15 @@ dd {
 a,
 .actions button {
   border-radius: 6px;
-  color: #1f6feb;
+  color: #76b5ff;
   font-weight: 700;
   text-decoration: none;
 }
 
 .actions a,
 .actions button {
-  background: #fff;
-  border: 1px solid #dfe5ef;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   padding: 0.75rem 1rem;
   text-align: left;
 }
@@ -69,13 +69,13 @@ a,
 }
 
 .muted {
-  color: #5f6b7a;
+  color: var(--color-text-secondary);
 }
 
 .related-panel {
   margin-top: 1rem;
-  background: #fff;
-  border: 1px solid #dfe5ef;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 8px;
   padding: 1.25rem;
 }
@@ -104,10 +104,10 @@ a,
   display: flex;
   justify-content: space-between;
   gap: 1rem;
-  border-top: 1px solid #edf1f7;
+  border-top: 1px solid var(--color-border);
   padding-top: 0.75rem;
 }
 
 .related-panel span {
-  color: #5f6b7a;
+  color: var(--color-text-secondary);
 }

@@ -1,20 +1,15 @@
 <section class="page-header entity-header">
   <div>
-    <p>CRM module</p>
+    <p>People directory</p>
     <h1>Contacts</h1>
+    <span>Client and vendor contacts linked to their organizations.</span>
   </div>
   <a class="primary-link" routerLink="/contacts/new">New contact</a>
 </section>
 
 <section class="toolbar" aria-label="Contact filters">
-  <label>
-    Search
-    <input type="search" [formControl]="searchControl" placeholder="Name or email contains..." />
-  </label>
-  <label>
-    Company ID
-    <input type="search" [formControl]="companyIdControl" placeholder="Filter by company UUID" />
-  </label>
+  <label>Search<input type="search" [formControl]="searchControl" placeholder="Name or email"></label>
+  <label>Company reference<input type="search" [formControl]="companyIdControl" placeholder="Company ID"></label>
 </section>
 
 <p *ngIf="error" class="error-message">{{ error }}</p>
@@ -22,24 +17,15 @@
 
 <div class="table-shell" *ngIf="!loading && contacts.length > 0; else emptyState">
   <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Company</th>
-        <th>Email</th>
-        <th>Phone</th>
-        <th>Job title</th>
-        <th></th>
-      </tr>
-    </thead>
+    <thead><tr><th>Contact</th><th>Company</th><th>Job title</th><th>Email</th><th>Phone</th><th></th></tr></thead>
     <tbody>
       <tr *ngFor="let contact of contacts">
-        <td><a [routerLink]="['/contacts', contact.id]">{{ contact.firstName }} {{ contact.lastName }}</a></td>
+        <td><a class="contact-name" [routerLink]="['/contacts', contact.id]"><span class="contact-avatar" aria-hidden="true">{{ contact.firstName.charAt(0) }}{{ contact.lastName.charAt(0) }}</span><strong>{{ contact.firstName }} {{ contact.lastName }}</strong></a></td>
         <td><a [routerLink]="['/companies', contact.companyId]">{{ contact.companyName }}</a></td>
-        <td>{{ contact.email || '-' }}</td>
-        <td>{{ contact.phone || '-' }}</td>
-        <td>{{ contact.jobTitle || '-' }}</td>
-        <td><a [routerLink]="['/contacts', contact.id]">Open</a></td>
+        <td>{{ contact.jobTitle || 'Not specified' }}</td>
+        <td><a *ngIf="contact.email" [href]="'mailto:' + contact.email">{{ contact.email }}</a><span *ngIf="!contact.email" class="muted">Not provided</span></td>
+        <td>{{ contact.phone || 'Not provided' }}</td>
+        <td><a class="row-action" [routerLink]="['/contacts', contact.id]">Open</a></td>
       </tr>
     </tbody>
   </table>
@@ -48,7 +34,7 @@
 <ng-template #emptyState>
   <section *ngIf="!loading" class="empty-panel">
     <h2>No contacts found</h2>
-    <p>Adjust search filters or create a contact linked to a company.</p>
+    <p>Adjust the filters or create a contact linked to an organization.</p>
   </section>
 </ng-template>
 

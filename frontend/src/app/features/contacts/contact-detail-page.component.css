@@ -17,8 +17,8 @@
 
 .detail-panel {
   flex: 1 1 560px;
-  background: #fff;
-  border: 1px solid #dfe5ef;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 8px;
   padding: 1.25rem;
 }
@@ -30,7 +30,7 @@ dl {
 }
 
 dt {
-  color: #5f6b7a;
+  color: var(--color-text-secondary);
   font-weight: 700;
 }
 
@@ -40,7 +40,7 @@ dd {
 
 a,
 .actions button {
-  color: #1f6feb;
+  color: #76b5ff;
   font-weight: 700;
   text-decoration: none;
 }
@@ -52,8 +52,8 @@ a,
 
 .actions a,
 .actions button {
-  background: #fff;
-  border: 1px solid #dfe5ef;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 6px;
   padding: 0.75rem 1rem;
   text-align: left;
@@ -64,5 +64,5 @@ a,
 }
 
 .muted {
-  color: #5f6b7a;
+  color: var(--color-text-secondary);
 }

@@ -1,30 +1,4 @@
-.timeline-panel { margin-top: 1.5rem; display: grid; gap: 1rem; }
-.timeline-header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
-.interaction-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: .75rem; align-items: end; }
-.interaction-form label { display: grid; gap: .35rem; font-weight: 600; }
-.interaction-form input, .interaction-form select, .interaction-form textarea { width: 100%; }
-.interaction-form .wide { grid-column: 1 / -1; }
-ul { list-style: none; padding: 0; margin: 0; display: grid; gap: .75rem; }
-li { border: 1px solid #dde3ea; border-radius: 8px; padding: .85rem; display: grid; gap: .35rem; }
-small, .muted { color: #64748b; }
-
-/* Allow activity controls and long notes to shrink with the enclosing card. */
-.timeline-panel,
-.timeline-header,
-.interaction-form,
-.interaction-form label,
-.interaction-form input,
-.interaction-form select,
-.interaction-form textarea,
-.timeline-panel li {
-  min-width: 0;
-}
-.interaction-form input,
-.interaction-form select,
-.interaction-form textarea {
-  box-sizing: border-box;
-  max-width: 100%;
-}
-.timeline-panel li {
-  overflow-wrap: anywhere;
-}
+.timeline-panel{display:grid;gap:1rem;min-width:0}.timeline-header{display:flex;align-items:flex-end;justify-content:space-between;gap:1rem}.timeline-header p{margin:0 0 .2rem;color:var(--color-text-tertiary);font-size:var(--text-xs);font-weight:650;text-transform:uppercase}.timeline-header h2{margin:0;font-size:1.05rem}.refresh-button{min-height:2.25rem;padding:.5rem .7rem;background:var(--color-surface-raised);border-color:var(--color-border);color:var(--color-text);font-size:var(--text-xs)}
+.interaction-form{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));align-items:flex-end;gap:.75rem;padding:1rem;border:1px solid var(--color-border);border-radius:var(--radius-lg);background:#111318}.interaction-form label{grid-column:span 3;min-width:0}.interaction-form .subject-field{grid-column:span 6}.interaction-form .notes-field{grid-column:span 10}.form-submit{grid-column:span 2}.form-submit button{width:100%}
+.timeline-list{list-style:none;margin:0;padding:0}.timeline-list li{position:relative;display:grid;grid-template-columns:auto minmax(0,1fr);gap:.9rem;padding:0 0 1.25rem}.timeline-list li:not(:last-child)::before{content:"";position:absolute;left:.3rem;top:.8rem;bottom:0;width:1px;background:var(--color-border)}.timeline-dot{position:relative;z-index:1;width:.65rem;height:.65rem;margin-top:.35rem;border-radius:50%;background:var(--color-text-tertiary);box-shadow:0 0 0 4px var(--color-surface)}.timeline-dot[data-type="CALL"],.timeline-dot[data-type="MEETING"]{background:var(--color-accent)}.timeline-dot[data-type="EMAIL"]{background:var(--color-success)}.timeline-dot[data-type="FOLLOW_UP"]{background:var(--color-warning)}.timeline-copy{min-width:0;display:grid;gap:.35rem}.timeline-title{display:flex;align-items:center;gap:.55rem}.timeline-title>span{color:#8bc2ff;font-size:.68rem;font-weight:700;text-transform:uppercase}.timeline-title strong{font-size:var(--text-sm)}.timeline-copy p{margin:0;color:var(--color-text-secondary);font-size:var(--text-sm);overflow-wrap:anywhere}.timeline-copy small{font-size:var(--text-xs)}.follow-up-note{width:fit-content;padding:.3rem .45rem;border-radius:var(--radius-sm);background:var(--color-warning-soft);color:#f0c979;font-size:var(--text-xs)}.timeline-empty{min-height:8rem;display:grid;place-items:center;color:var(--color-text-secondary);font-size:var(--text-sm)}
+@media(max-width:1000px){.interaction-form label,.interaction-form .subject-field{grid-column:span 6}.interaction-form .notes-field{grid-column:span 9}.form-submit{grid-column:span 3}}@media(max-width:650px){.timeline-header{align-items:stretch;flex-direction:column}.interaction-form label,.interaction-form .subject-field,.interaction-form .notes-field,.form-submit{grid-column:1/-1}.timeline-title{align-items:flex-start;flex-direction:column}}
