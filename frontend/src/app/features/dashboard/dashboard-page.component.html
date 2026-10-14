@@ -1,96 +1,149 @@
 <section class="page-header dashboard-header">
   <div>
-    <p>CRM overview</p>
+    <p>Operations overview</p>
     <h1>Dashboard</h1>
+    <span>Projects, vendor outreach, quotations, and follow-ups at a glance.</span>
   </div>
-  <button type="button" (click)="load()" [disabled]="loading">Refresh</button>
+  <div class="header-actions">
+    <div class="currency-filter" aria-label="Dashboard currency">
+      <button type="button" [class.active]="selectedCurrency === 'ALL'" (click)="selectCurrency('ALL')">All</button>
+      <button *ngFor="let currency of availableCurrencies" type="button" [class.active]="selectedCurrency === currency" (click)="selectCurrency(currency)">{{ currency }}</button>
+    </div>
+    <button class="refresh-button" type="button" (click)="load()" [disabled]="loading" aria-label="Refresh dashboard">
+      <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0 2 5M20 4v7h-7"></path></svg>
+      <span>Refresh</span>
+    </button>
+  </div>
 </section>
 
 <p *ngIf="error" class="error-message">{{ error }}</p>
-<p *ngIf="loading" class="muted">Loading dashboard...</p>
-
+<p *ngIf="loading" class="loading-state" aria-live="polite"><span></span> Loading dashboard</p>
 
 <section class="project-dashboard" *ngIf="projectSummary as projectData">
-  <div class="project-dashboard-heading">
-    <div><p>Operations overview</p><h2>Projects and vendors</h2></div>
-    <a routerLink="/projects">Open projects</a>
+  <div class="kpi-grid" aria-label="Project operations metrics">
+    <a class="kpi-card" routerLink="/projects">
+      <span>Total projects</span>
+      <strong>{{ projectData.totalProjects | number }}</strong>
+      <small>All authorized projects</small>
+    </a>
+    <a class="kpi-card" routerLink="/projects">
+      <span>Active projects</span>
+      <strong>{{ projectData.activeProjects | number }}</strong>
+      <small>{{ projectData.nearingDeadlineProjects }} near deadline</small>
+    </a>
+    <a class="kpi-card" routerLink="/projects">
+      <span>Awaiting vendors</span>
+      <strong>{{ projectData.vendorsAwaitingResponse | number }}</strong>
+      <small>{{ projectData.vendorsContacted }} vendors contacted</small>
+    </a>
+    <a class="kpi-card" routerLink="/projects">
+      <span>Quotes received</span>
+      <strong>{{ projectData.quotationsReceived | number }}</strong>
+      <small>{{ projectData.quotationsPending }} pending review</small>
+    </a>
+    <a class="kpi-card" routerLink="/projects">
+      <span>Overdue follow-ups</span>
+      <strong [class.critical]="projectData.overdueFollowUps > 0">{{ projectData.overdueFollowUps | number }}</strong>
+      <small>{{ projectData.upcomingFollowUps }} upcoming</small>
+    </a>
+    <a class="kpi-card" routerLink="/activities">
+      <span>Recent activity</span>
+      <strong>{{ projectData.recentActivities.length | number }}</strong>
+      <small>Latest project updates</small>
+    </a>
   </div>
-  <div class="kpi-grid project-kpi-grid">
-    <article><span>Total projects</span><strong>{{ projectData.totalProjects | number }}</strong><a routerLink="/projects">View projects</a></article>
-    <article><span>Active projects</span><strong>{{ projectData.activeProjects | number }}</strong><span class="metric-note">{{ projectData.nearingDeadlineProjects }} nearing deadline</span></article>
-    <article><span>Vendor response rate</span><strong>{{ projectData.quoteResponseRate | number:'1.0-1' }}%</strong><span class="metric-note">{{ projectData.vendorsAwaitingResponse }} awaiting response</span></article>
-    <article><span>Follow-ups</span><strong>{{ projectData.upcomingFollowUps | number }}</strong><span class="metric-note overdue-note">{{ projectData.overdueFollowUps }} overdue</span></article>
-  </div>
-  <div class="dashboard-grid">
-    <article class="panel">
-      <div class="panel-header"><h2>Project status</h2><a routerLink="/projects">Open</a></div>
-      <ul class="status-list"><li *ngFor="let item of projectData.projectsByStatus"><span>{{ item.status }}</span><strong>{{ item.count | number }}</strong></li></ul>
-    </article>
-    <article class="panel wide-panel">
-      <div class="panel-header"><h2>Quotation review</h2><a routerLink="/projects">Review</a></div>
-      <div class="project-review-grid">
-        <span><strong>{{ projectData.quotationsReceived | number }}</strong> quotations received</span>
-        <span><strong>{{ projectData.quotationsPending | number }}</strong> pending review</span>
-        <span><strong>{{ projectData.overdueProjects | number }}</strong> overdue projects</span>
-        <span><strong>{{ totalQuotationValue(projectData.quotationValueByCurrency) }}</strong> active quote value</span>
+
+  <div class="operations-grid">
+    <article class="surface status-panel">
+      <div class="panel-header">
+        <div><p>Portfolio</p><h2>Projects by status</h2></div>
+        <a routerLink="/projects">View all</a>
       </div>
+      <ul class="status-list">
+        <li *ngFor="let item of projectData.projectsByStatus">
+          <span>{{ statusLabel(item.status) }}</span>
+          <strong>{{ item.count | number }}</strong>
+        </li>
+      </ul>
+    </article>
+
+    <article class="surface quote-panel">
+      <div class="panel-header">
+        <div><p>Commercial health</p><h2>Quotation response</h2></div>
+        <span class="response-rate">{{ projectData.quoteResponseRate | number:'1.0-1' }}%</span>
+      </div>
+      <div class="quote-summary">
+        <div><span>Active quote value</span><strong>{{ displayTotals(projectData.quotationValueByCurrency) }}</strong></div>
+        <div><span>Pending review</span><strong>{{ projectData.quotationsPending | number }}</strong></div>
+        <div><span>Overdue projects</span><strong [class.critical]="projectData.overdueProjects > 0">{{ projectData.overdueProjects | number }}</strong></div>
+      </div>
+    </article>
+
+    <article class="surface activity-panel">
+      <div class="panel-header">
+        <div><p>Latest updates</p><h2>Project activity</h2></div>
+        <a routerLink="/activities">All activity</a>
+      </div>
+      <ul class="activity-feed" *ngIf="projectData.recentActivities.length > 0; else noProjectActivity">
+        <li *ngFor="let activity of projectData.recentActivities | slice:0:6">
+          <span class="activity-marker" aria-hidden="true"></span>
+          <div>
+            <a [routerLink]="projectActivityLink(activity)">{{ activity.subject }}</a>
+            <span>{{ statusLabel(activity.type) }} · {{ activity.authorName }} · {{ activity.occurredAt | date:'mediumDate' }}</span>
+          </div>
+          <small>{{ activity.vendorName || activity.projectName }}</small>
+        </li>
+      </ul>
+      <ng-template #noProjectActivity><p class="empty-copy">No project activity has been logged yet.</p></ng-template>
     </article>
   </div>
 </section>
 
-<ng-container *ngIf="summary as data">
-  <section class="kpi-grid" aria-label="Dashboard metrics">
-    <article>
-      <span>Total leads</span>
-      <strong>{{ data.totalLeads | number }}</strong>
-      <a routerLink="/leads">View leads</a>
-    </article>
-    <article>
-      <span>Open opportunities</span>
-      <strong>{{ data.openOpportunities | number }}</strong>
-      <a routerLink="/opportunities">View pipeline</a>
-    </article>
-    <article>
-      <span>Open pipeline value</span>
-      <strong>{{ totalPipelineValue(data.openPipelineValue) }}</strong>
-      <a routerLink="/opportunities">Review deals</a>
-    </article>
-    <article>
-      <span>Recent activity</span>
-      <strong>{{ data.recentInteractionCount | number }}</strong>
-      <a routerLink="/activities">View activity</a>
-    </article>
-  </section>
+<details class="legacy-dashboard" *ngIf="summary as data">
+  <summary>
+    <span><small>Sales CRM</small><strong>Leads and opportunity pipeline</strong></span>
+    <span class="summary-hint">Open analytics</span>
+  </summary>
 
-  <section class="dashboard-grid">
-    <article class="panel">
-      <div class="panel-header"><h2>Lead status</h2><a routerLink="/leads">Open</a></div>
-      <ul class="status-list" *ngIf="data.leadsByStatus.length > 0; else emptyLeads">
-        <li *ngFor="let item of data.leadsByStatus"><span>{{ item.status }}</span><strong>{{ item.count | number }}</strong></li>
-      </ul>
-      <ng-template #emptyLeads><p class="muted">No lead data yet.</p></ng-template>
-    </article>
+  <div class="legacy-content">
+    <div class="legacy-kpis">
+      <a routerLink="/leads"><span>Total leads</span><strong>{{ data.totalLeads | number }}</strong></a>
+      <a routerLink="/opportunities"><span>Open opportunities</span><strong>{{ data.openOpportunities | number }}</strong></a>
+      <a routerLink="/opportunities"><span>Open pipeline</span><strong>{{ displayTotals(data.openPipelineValue) }}</strong></a>
+      <a routerLink="/activities"><span>Recent interactions</span><strong>{{ data.recentInteractionCount | number }}</strong></a>
+    </div>
 
-    <article class="panel wide-panel">
-      <div class="panel-header"><h2>Pipeline by stage</h2><a routerLink="/opportunities">Open</a></div>
-      <div class="pipeline-list" *ngIf="pipeline.length > 0; else emptyPipeline">
-        <div *ngFor="let item of pipeline" class="pipeline-row">
-          <div><strong>{{ item.stage }}</strong><span>{{ item.count }} · {{ item.totalAmount | number:'1.0-2' }} {{ item.currencyCode }}</span></div>
-          <div class="bar" aria-hidden="true"><span [style.width.%]="stagePercent(item)"></span></div>
+    <div class="legacy-grid">
+      <article class="surface">
+        <div class="panel-header"><h2>Lead status</h2><a routerLink="/leads">Open</a></div>
+        <ul class="status-list" *ngIf="data.leadsByStatus.length > 0; else emptyLeads">
+          <li *ngFor="let item of data.leadsByStatus"><span>{{ statusLabel(item.status) }}</span><strong>{{ item.count | number }}</strong></li>
+        </ul>
+        <ng-template #emptyLeads><p class="empty-copy">No lead data yet.</p></ng-template>
+      </article>
+
+      <article class="surface pipeline-panel">
+        <div class="panel-header"><h2>Pipeline by stage</h2><a routerLink="/opportunities">Open</a></div>
+        <div class="pipeline-list" *ngIf="groupedPipeline.length > 0; else emptyPipeline">
+          <div class="pipeline-row" *ngFor="let item of groupedPipeline">
+            <div><strong>{{ statusLabel(item.stage) }}</strong><span>{{ item.count }} opportunities</span></div>
+            <span>{{ displayTotals(item.totals) }}</span>
+          </div>
         </div>
-      </div>
-      <ng-template #emptyPipeline><p class="muted">No opportunities in the pipeline yet.</p></ng-template>
-    </article>
-  </section>
+        <ng-template #emptyPipeline><p class="empty-copy">No opportunities for this currency.</p></ng-template>
+      </article>
+    </div>
 
-  <section class="panel">
-    <div class="panel-header"><h2>Recent activity</h2><a routerLink="/activities">All activity</a></div>
-    <ul class="activity-list" *ngIf="activities.length > 0; else emptyActivity">
-      <li *ngFor="let activity of activities">
-        <div><strong>{{ activity.type }} · {{ activity.subject }}</strong><span>{{ activity.authorName }} · {{ activity.occurredAt | date:'short' }}</span></div>
-        <a [routerLink]="activityLink(activity)">{{ activityTarget(activity) }}</a>
-      </li>
-    </ul>
-    <ng-template #emptyActivity><p class="muted">No activity has been logged yet.</p></ng-template>
-  </section>
-</ng-container>
+    <article class="surface">
+      <div class="panel-header"><h2>Recent CRM activity</h2><a routerLink="/activities">All activity</a></div>
+      <ul class="activity-feed" *ngIf="activities.length > 0; else emptyActivity">
+        <li *ngFor="let activity of activities | slice:0:6">
+          <span class="activity-marker" aria-hidden="true"></span>
+          <div><a [routerLink]="activityLink(activity)">{{ activity.subject }}</a><span>{{ statusLabel(activity.type) }} · {{ activity.authorName }} · {{ activity.occurredAt | date:'short' }}</span></div>
+          <small>{{ activityTarget(activity) }}</small>
+        </li>
+      </ul>
+      <ng-template #emptyActivity><p class="empty-copy">No activity has been logged yet.</p></ng-template>
+    </article>
+  </div>
+</details>
