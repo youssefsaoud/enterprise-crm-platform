@@ -4,4 +4,4 @@ label { display: grid; gap: .35rem; font-weight: 600; }
 .inline { display: flex; align-items: center; gap: .5rem; }
 .wide { grid-column: 1 / -1; }
 .conversion-result { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; }
-.conversion-result p { flex-basis: 100%; margin: 0; color: #64748b; }
+.conversion-result p { flex-basis: 100%; margin: 0; color: var(--color-text-secondary); }

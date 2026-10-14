@@ -65,6 +65,8 @@ export class OpportunitiesPageComponent implements OnInit {
     return this.summary.filter((item) => item.stage === stage);
   }
 
+  label(value: string): string { return value.toLowerCase().replaceAll('_', ' ').replace(/\b\w/g, character => character.toUpperCase()); }
+
   private resetAndLoad(): void {
     this.page = 0;
     this.load();

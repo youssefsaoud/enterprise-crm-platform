@@ -75,6 +75,8 @@ export class LeadsPageComponent implements OnInit {
     }
   }
 
+  label(value: string): string { return value.toLowerCase().replaceAll('_', ' ').replace(/\b\w/g, character => character.toUpperCase()); }
+
   private resetAndLoad(): void {
     this.page = 0;
     this.load();

@@ -2,14 +2,14 @@
   display: grid;
   gap: 1rem;
   width: min(720px, 100%);
-  background: #fff;
-  border: 1px solid #dfe5ef;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 8px;
   padding: 1.25rem;
 }
 
 select {
-  border: 1px solid #bdc8d8;
+  border: 1px solid var(--color-border);
   border-radius: 6px;
   font: inherit;
   padding: 0.65rem 0.75rem;
@@ -22,7 +22,7 @@ select {
 }
 
 .form-actions a {
-  color: #1f6feb;
+  color: #76b5ff;
   font-weight: 700;
   text-decoration: none;
 }
@@ -38,5 +38,5 @@ button:disabled {
 }
 
 .muted {
-  color: #5f6b7a;
+  color: var(--color-text-secondary);
 }

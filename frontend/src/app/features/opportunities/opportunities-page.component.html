@@ -1,6 +1,6 @@
 <section class="page-header entity-header">
   <div>
-    <p>CRM module</p>
+    <p>Sales CRM</p>
     <h1>Opportunities</h1>
   </div>
   <a class="primary-link" routerLink="/opportunities/new">New opportunity</a>
@@ -8,7 +8,7 @@
 
 <section class="pipeline-board" aria-label="Pipeline summary">
   <article *ngFor="let stage of stages">
-    <h2>{{ stage }}</h2>
+    <h2>{{ label(stage) }}</h2>
     <p *ngFor="let item of totalFor(stage)">{{ item.count }} · {{ item.totalAmount | number:'1.0-2' }} {{ item.currencyCode }}</p>
     <p *ngIf="totalFor(stage).length === 0">0 opportunities</p>
   </article>
@@ -23,7 +23,7 @@
     Stage
     <select [formControl]="stageControl">
       <option value="">Any stage</option>
-      <option *ngFor="let stage of stages" [value]="stage">{{ stage }}</option>
+      <option *ngFor="let stage of stages" [value]="stage">{{ label(stage) }}</option>
     </select>
   </label>
 </section>
@@ -48,7 +48,7 @@
       <tr *ngFor="let opportunity of opportunities">
         <td><a [routerLink]="['/opportunities', opportunity.id]">{{ opportunity.name }}</a></td>
         <td>{{ opportunity.companyName }}</td>
-        <td><span class="pill">{{ opportunity.stage }}</span></td>
+        <td><span class="pill">{{ label(opportunity.stage) }}</span></td>
         <td>{{ opportunity.ownerName || '-' }}</td>
         <td>{{ opportunity.amount | number:'1.0-2' }} {{ opportunity.currencyCode }}</td>
         <td>{{ opportunity.expectedCloseDate || '-' }}</td>

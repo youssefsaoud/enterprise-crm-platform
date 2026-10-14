@@ -1,6 +1,6 @@
 <section class="page-header entity-header">
   <div>
-    <p>CRM module</p>
+    <p>Sales CRM</p>
     <h1>Leads</h1>
   </div>
   <a class="primary-link" routerLink="/leads/new">New lead</a>
@@ -15,14 +15,14 @@
     Status
     <select [formControl]="statusControl">
       <option value="">Any status</option>
-      <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
+      <option *ngFor="let status of statuses" [value]="status">{{ label(status) }}</option>
     </select>
   </label>
   <label>
     Source
     <select [formControl]="sourceControl">
       <option value="">Any source</option>
-      <option *ngFor="let source of sources" [value]="source">{{ source }}</option>
+      <option *ngFor="let source of sources" [value]="source">{{ label(source) }}</option>
     </select>
   </label>
 </section>
@@ -46,8 +46,8 @@
       <tr *ngFor="let lead of leads">
         <td><a [routerLink]="['/leads', lead.id]">{{ lead.firstName }} {{ lead.lastName }}</a><span>{{ lead.email || '-' }}</span></td>
         <td>{{ lead.linkedCompanyName || lead.companyName || '-' }}</td>
-        <td><span class="pill">{{ lead.status }}</span></td>
-        <td>{{ lead.source }}</td>
+        <td><span class="pill">{{ label(lead.status) }}</span></td>
+        <td>{{ label(lead.source) }}</td>
         <td>{{ lead.assignedToName || 'Unassigned' }}</td>
         <td><a [routerLink]="['/leads', lead.id]">Open</a></td>
       </tr>

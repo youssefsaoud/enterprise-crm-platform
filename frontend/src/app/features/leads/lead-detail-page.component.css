@@ -17,8 +17,8 @@
 
 .detail-panel,
 .history-panel {
-  background: #fff;
-  border: 1px solid #dfe5ef;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 8px;
   padding: 1.25rem;
 }
@@ -34,7 +34,7 @@ dl {
 }
 
 dt {
-  color: #5f6b7a;
+  color: var(--color-text-secondary);
   font-weight: 700;
 }
 
@@ -50,20 +50,20 @@ dd {
 .actions a,
 .actions button,
 .actions label {
-  background: #fff;
-  border: 1px solid #dfe5ef;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 6px;
   padding: 0.75rem 1rem;
 }
 
 .actions a {
-  color: #1f6feb;
+  color: #76b5ff;
   font-weight: 700;
   text-decoration: none;
 }
 
 select {
-  border: 1px solid #bdc8d8;
+  border: 1px solid var(--color-border);
   border-radius: 6px;
   font: inherit;
   margin-top: 0.35rem;
@@ -93,7 +93,7 @@ select {
 }
 
 .history-panel li {
-  border-top: 1px solid #edf1f7;
+  border-top: 1px solid var(--color-border);
   display: grid;
   gap: 0.25rem;
   padding-top: 0.75rem;
@@ -102,5 +102,5 @@ select {
 .history-panel span,
 .history-panel small,
 .muted {
-  color: #5f6b7a;
+  color: var(--color-text-secondary);
 }
