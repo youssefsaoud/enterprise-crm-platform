@@ -18,6 +18,8 @@ import { Project, ProjectStatus } from './project.models';
 import { ProjectService } from './project.service';
 import { InteractionTimelineComponent } from '../interactions/interaction-timeline.component';
 
+type ProjectTab = 'overview' | 'scope' | 'vendors' | 'quotations' | 'activities' | 'documents';
+
 @Component({
   selector: 'app-project-detail-page',
   standalone: true,
@@ -42,6 +44,8 @@ export class ProjectDetailPageComponent implements OnInit {
   vendorError = '';
   quoteError = '';
   documentError = '';
+  activeTab: ProjectTab = 'overview';
+  vendorStatusFilter: OutreachStatus | '' = '';
   selectedFile: File | null = null;
 
   readonly vendorForm = new FormGroup({
@@ -256,6 +260,28 @@ export class ProjectDetailPageComponent implements OnInit {
   }
 
   quotesFor(vendorId: string): Quotation[] { return this.quotations.get(vendorId) || []; }
+
+  get filteredVendors(): ProjectVendor[] {
+    return this.vendorStatusFilter
+      ? this.vendors.filter(vendor => vendor.status === this.vendorStatusFilter)
+      : this.vendors;
+  }
+
+  get allQuotations(): Quotation[] {
+    return this.vendors.flatMap(vendor => this.quotesFor(vendor.id));
+  }
+
+  get selectedQuotation(): Quotation | undefined {
+    return this.allQuotations.find(quote => quote.selected);
+  }
+
+  setTab(tab: ProjectTab): void {
+    this.activeTab = tab;
+  }
+
+  setVendorStatusFilter(event: Event): void {
+    this.vendorStatusFilter = (event.target as HTMLSelectElement).value as OutreachStatus | '';
+  }
 
   downloadDocument(item: ProjectDocument): void {
     this.documentService.download(item.id).subscribe(blob => {

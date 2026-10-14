@@ -1,160 +1,243 @@
 <section class="project-detail-space">
   <header class="project-detail-header">
     <div>
+      <a class="back-link" routerLink="/projects">
+        <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"></path></svg>
+        Projects
+      </a>
       <p class="eyebrow">Project workspace</p>
       <h1>{{ project?.name || 'Project' }}</h1>
-      <span *ngIf="project">{{ project.reference }} - {{ project.clientName }}</span>
+      <span *ngIf="project">{{ project.reference }} · {{ project.clientName }}</span>
     </div>
-    <a routerLink="/projects">Back to projects</a>
+    <div class="detail-actions" *ngIf="project as item">
+      <ng-container *ngIf="currentUser$ | async as user">
+        <a *ngIf="canManage(user.role)" [routerLink]="['/projects', item.id, 'edit']">Edit project</a>
+        <button *ngIf="canManage(user.role)" type="button" (click)="deleteProject()">Delete</button>
+      </ng-container>
+    </div>
   </header>
 
   <p *ngIf="loading" class="project-muted">Loading project...</p>
   <p *ngIf="error" class="project-error">{{ error }}</p>
 
-  <section *ngIf="project as item" class="project-detail-grid">
-    <article class="project-card">
-      <div class="summary-top">
-        <span class="status" [class]="'status ' + item.status.toLowerCase()">{{ statusLabel(item.status) }}</span>
-        <div class="detail-actions" *ngIf="currentUser$ | async as user">
-          <a *ngIf="canManage(user.role)" [routerLink]="['/projects', item.id, 'edit']">Edit</a>
-          <button *ngIf="canManage(user.role)" type="button" (click)="deleteProject()">Delete</button>
-        </div>
-      </div>
-      <dl>
-        <div><dt>Client</dt><dd>{{ item.clientName }}</dd></div>
-        <div><dt>Category</dt><dd>{{ item.category || '-' }}</dd></div>
-        <div><dt>Location</dt><dd>{{ item.location || '-' }}</dd></div>
-        <div><dt>Deadline</dt><dd>{{ item.deadline || 'No deadline' }}</dd></div>
-        <div><dt>Budget</dt><dd>{{ item.estimatedBudget === null || item.estimatedBudget === undefined ? '-' : (item.estimatedBudget | number:'1.0-2') + ' ' + item.currencyCode }}</dd></div>
-        <div><dt>Assigned associate</dt><dd>{{ item.assignedAssociateName || 'Unassigned' }}</dd></div>
-      </dl>
-    </article>
+  <ng-container *ngIf="project as item">
+    <nav class="project-tabs" aria-label="Project sections">
+      <button type="button" [class.active]="activeTab === 'overview'" [attr.aria-selected]="activeTab === 'overview'" (click)="setTab('overview')">Overview</button>
+      <button type="button" [class.active]="activeTab === 'scope'" [attr.aria-selected]="activeTab === 'scope'" (click)="setTab('scope')">Scope of work</button>
+      <button type="button" [class.active]="activeTab === 'vendors'" [attr.aria-selected]="activeTab === 'vendors'" (click)="setTab('vendors')">Vendors <span>{{ vendors.length }}</span></button>
+      <button type="button" [class.active]="activeTab === 'quotations'" [attr.aria-selected]="activeTab === 'quotations'" (click)="setTab('quotations')">Quotations <span>{{ allQuotations.length }}</span></button>
+      <button type="button" [class.active]="activeTab === 'activities'" [attr.aria-selected]="activeTab === 'activities'" (click)="setTab('activities')">Activities</button>
+      <button type="button" [class.active]="activeTab === 'documents'" [attr.aria-selected]="activeTab === 'documents'" (click)="setTab('documents')">Documents <span>{{ documents.length }}</span></button>
+    </nav>
 
-    <article class="project-card">
-      <h2>Description</h2>
-      <p>{{ item.description || 'No description added.' }}</p>
-      <h2>Scope of work</h2>
-      <p class="long-text">{{ item.scopeOfWork || 'No scope of work added.' }}</p>
-      <h2>Notes</h2>
-      <p class="long-text">{{ item.notes || 'No notes added.' }}</p>
-    </article>
-
-    <article class="project-card project-vendors-card">
-      <div class="section-heading">
-        <div><p class="eyebrow">Outreach</p><h2>Project vendors</h2></div>
-        <span class="project-muted">{{ vendors.length }} assigned</span>
-      </div>
-
-      <p *ngIf="vendorError" class="project-error">{{ vendorError }}</p>
-      <p *ngIf="vendorLoading" class="project-muted">Loading vendors...</p>
-
-      <ng-container *ngIf="currentUser$ | async as user">
-      <form *ngIf="canManage(user.role)" class="vendor-form" [formGroup]="vendorForm" (ngSubmit)="addVendor()">
-        <label>Vendor
-          <select formControlName="vendorId">
-            <option value="">Select a vendor</option>
-            <option *ngFor="let vendor of vendorDirectory" [value]="vendor.id">{{ vendor.name }} - {{ vendor.industry || 'Vendor' }}</option>
-          </select>
-        </label>
-        <label>Status
-          <select formControlName="status">
-            <option *ngFor="let status of statuses" [value]="status">{{ outreachLabel(status) }}</option>
-          </select>
-        </label>
-        <label>Next follow-up
-          <input type="date" formControlName="nextFollowUpDate">
-        </label>
-        <label>Notes
-          <input type="text" formControlName="notes" maxlength="4000">
-        </label>
-        <button type="submit" [disabled]="!vendorForm.controls.vendorId.value">Add vendor</button>
-      </form>
-
-      <div class="vendor-list" *ngIf="vendors.length; else noVendors">
-        <div class="vendor-row" *ngFor="let vendor of vendors">
-          <div class="vendor-info">
-            <strong>{{ vendor.vendorName }}</strong>
-            <small>{{ vendor.vendorIndustry || 'Vendor' }} - {{ vendor.responsibleAssociateName || 'Project associate' }}</small>
+    <section class="tab-panel" [hidden]="activeTab !== 'overview'">
+      <div class="overview-grid">
+        <article class="project-card project-summary">
+          <div class="summary-top">
+            <span class="status" [class]="'status ' + item.status.toLowerCase()">{{ statusLabel(item.status) }}</span>
+            <span class="project-muted">Updated {{ item.updatedAt | date:'mediumDate' }}</span>
           </div>
-          <form *ngIf="editingVendorId === vendor.id" class="vendor-edit-form" [formGroup]="vendorEditForm" (ngSubmit)="saveVendor()">
+          <dl>
+            <div><dt>Client</dt><dd>{{ item.clientName }}</dd></div>
+            <div><dt>Category</dt><dd>{{ item.category || 'Not specified' }}</dd></div>
+            <div><dt>Location</dt><dd>{{ item.location || 'Not specified' }}</dd></div>
+            <div><dt>Deadline</dt><dd>{{ item.deadline ? (item.deadline | date:'mediumDate') : 'No deadline' }}</dd></div>
+            <div><dt>Estimated budget</dt><dd>{{ item.estimatedBudget === null || item.estimatedBudget === undefined ? 'Not specified' : (item.estimatedBudget | number:'1.0-2') + ' ' + item.currencyCode }}</dd></div>
+            <div><dt>Assigned associate</dt><dd>{{ item.assignedAssociateName || 'Unassigned' }}</dd></div>
+          </dl>
+        </article>
+
+        <article class="project-card overview-copy">
+          <div class="section-heading"><div><p class="eyebrow">Brief</p><h2>Project description</h2></div></div>
+          <p class="long-text">{{ item.description || 'No description added.' }}</p>
+          <div class="overview-stats">
+            <button type="button" (click)="setTab('vendors')"><strong>{{ vendors.length }}</strong><span>Assigned vendors</span></button>
+            <button type="button" (click)="setTab('quotations')"><strong>{{ allQuotations.length }}</strong><span>Quote revisions</span></button>
+            <button type="button" (click)="setTab('documents')"><strong>{{ documents.length }}</strong><span>Documents</span></button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="tab-panel" [hidden]="activeTab !== 'scope'">
+      <article class="project-card scope-card">
+        <div class="section-heading"><div><p class="eyebrow">Delivery brief</p><h2>Scope of work</h2></div></div>
+        <p class="long-text">{{ item.scopeOfWork || 'No scope of work has been added.' }}</p>
+        <div class="notes-section">
+          <h3>Internal notes</h3>
+          <p class="long-text">{{ item.notes || 'No notes have been added.' }}</p>
+        </div>
+      </article>
+    </section>
+
+    <section class="tab-panel" [hidden]="activeTab !== 'vendors'">
+      <article class="project-card">
+        <div class="section-heading">
+          <div><p class="eyebrow">Outreach</p><h2>Project vendors</h2></div>
+          <label class="compact-filter">Status
+            <select [value]="vendorStatusFilter" (change)="setVendorStatusFilter($event)">
+              <option value="">All statuses</option>
+              <option *ngFor="let status of statuses" [value]="status">{{ outreachLabel(status) }}</option>
+            </select>
+          </label>
+        </div>
+
+        <p *ngIf="vendorError" class="project-error">{{ vendorError }}</p>
+        <p *ngIf="vendorLoading" class="project-muted">Loading vendors...</p>
+
+        <ng-container *ngIf="currentUser$ | async as user">
+          <form *ngIf="canManage(user.role)" class="vendor-form" [formGroup]="vendorForm" (ngSubmit)="addVendor()">
+            <label>Vendor
+              <select formControlName="vendorId">
+                <option value="">Select a vendor</option>
+                <option *ngFor="let vendor of vendorDirectory" [value]="vendor.id">{{ vendor.name }} · {{ vendor.industry || 'Vendor' }}</option>
+              </select>
+            </label>
             <label>Status
               <select formControlName="status">
                 <option *ngFor="let status of statuses" [value]="status">{{ outreachLabel(status) }}</option>
               </select>
             </label>
-            <label>First contact<input type="date" formControlName="firstContactDate"></label>
-            <label>Last contact<input type="date" formControlName="lastContactDate"></label>
             <label>Next follow-up<input type="date" formControlName="nextFollowUpDate"></label>
-            <label *ngIf="canManage(user.role)">Responsible associate
-              <select formControlName="responsibleAssociateId">
-                <option value="">Unassigned</option>
-                <option *ngFor="let associate of associates" [value]="associate.id">{{ associate.fullName }}</option>
+            <label>Notes<input type="text" formControlName="notes" maxlength="4000"></label>
+            <button type="submit" [disabled]="!vendorForm.controls.vendorId.value">Assign vendor</button>
+          </form>
+
+          <div class="vendor-list" *ngIf="filteredVendors.length; else noVendors">
+            <article class="vendor-row" *ngFor="let vendor of filteredVendors">
+              <div class="vendor-main">
+                <div class="vendor-info">
+                  <strong>{{ vendor.vendorName }}</strong>
+                  <small>{{ vendor.vendorIndustry || 'Vendor' }} · {{ vendor.responsibleAssociateName || 'Project associate' }}</small>
+                </div>
+                <span class="status" [class]="'status ' + vendor.status.toLowerCase()">{{ outreachLabel(vendor.status) }}</span>
+              </div>
+
+              <div class="vendor-meta">
+                <span><small>Last contact</small>{{ vendor.lastContactDate ? (vendor.lastContactDate | date:'mediumDate') : 'Not recorded' }}</span>
+                <span class="follow-up" [class.overdue]="isOverdue(vendor)"><small>Next follow-up</small>{{ vendor.nextFollowUpDate ? (vendor.nextFollowUpDate | date:'mediumDate') : 'Not scheduled' }}</span>
+                <span><small>Quotations</small>{{ quotesFor(vendor.id).length }} revisions</span>
+                <span class="vendor-notes"><small>Notes</small>{{ vendor.notes || 'No notes' }}</span>
+              </div>
+
+              <div class="vendor-actions">
+                <button type="button" class="secondary-button" (click)="beginEdit(vendor)">Edit outreach</button>
+                <button *ngIf="canManage(user.role)" type="button" class="danger-action" (click)="removeVendor(vendor)">Remove</button>
+              </div>
+
+              <form *ngIf="editingVendorId === vendor.id" class="vendor-edit-form" [formGroup]="vendorEditForm" (ngSubmit)="saveVendor()">
+                <label>Status
+                  <select formControlName="status">
+                    <option *ngFor="let status of statuses" [value]="status">{{ outreachLabel(status) }}</option>
+                  </select>
+                </label>
+                <label>First contact<input type="date" formControlName="firstContactDate"></label>
+                <label>Last contact<input type="date" formControlName="lastContactDate"></label>
+                <label>Next follow-up<input type="date" formControlName="nextFollowUpDate"></label>
+                <label *ngIf="canManage(user.role)">Responsible associate
+                  <select formControlName="responsibleAssociateId">
+                    <option value="">Unassigned</option>
+                    <option *ngFor="let associate of associates" [value]="associate.id">{{ associate.fullName }}</option>
+                  </select>
+                </label>
+                <label class="vendor-edit-notes">Notes<textarea rows="3" formControlName="notes" maxlength="4000"></textarea></label>
+                <div class="vendor-edit-actions">
+                  <button type="submit">Save changes</button>
+                  <button type="button" class="secondary-button" (click)="cancelEdit()">Cancel</button>
+                </div>
+              </form>
+            </article>
+          </div>
+        </ng-container>
+        <ng-template #noVendors>
+          <div class="inline-empty"><strong>No vendors match this view</strong><span>Assign a vendor or choose another status filter.</span></div>
+        </ng-template>
+      </article>
+    </section>
+
+    <section class="tab-panel" [hidden]="activeTab !== 'quotations'">
+      <ng-container *ngIf="currentUser$ | async as user">
+        <article class="project-card quotation-comparison">
+          <div class="section-heading">
+            <div><p class="eyebrow">Commercial review</p><h2>Quotation comparison</h2></div>
+            <span class="project-muted">{{ allQuotations.length }} revisions</span>
+          </div>
+
+          <div class="selected-quote" *ngIf="selectedQuotation as selected">
+            <span>Selected quotation</span>
+            <strong>{{ selected.vendorName }}</strong>
+            <b>{{ selected.amount | number:'1.0-2' }} {{ selected.currencyCode }}</b>
+            <small>Revision {{ selected.revisionNumber }} · received {{ selected.receivedDate | date:'mediumDate' }}</small>
+          </div>
+
+          <p *ngIf="quoteError" class="project-error">{{ quoteError }}</p>
+          <div class="quote-table" *ngIf="allQuotations.length; else noQuotes">
+            <table>
+              <thead><tr><th>Vendor</th><th>Quote</th><th>Received</th><th>Valid until</th><th>Status</th><th></th></tr></thead>
+              <tbody>
+                <tr *ngFor="let quote of allQuotations" [class.selected-row]="quote.selected">
+                  <td><strong>{{ quote.vendorName }}</strong><small>Revision {{ quote.revisionNumber }}</small></td>
+                  <td>{{ quote.amount | number:'1.0-2' }} {{ quote.currencyCode }}</td>
+                  <td>{{ quote.receivedDate | date:'mediumDate' }}</td>
+                  <td>{{ quote.validUntil ? (quote.validUntil | date:'mediumDate') : 'Not set' }}</td>
+                  <td><span class="status" [class.selected]="quote.selected">{{ quoteStatusLabel(quote.status) }}</span></td>
+                  <td><button type="button" class="secondary-button" [disabled]="!canManage(user.role) || quote.selected" (click)="selectQuote(quote)">{{ quote.selected ? 'Selected' : 'Select' }}</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <ng-template #noQuotes><div class="inline-empty"><strong>No quotations yet</strong><span>Record the first vendor quotation below.</span></div></ng-template>
+        </article>
+
+        <article class="project-card record-quote-card">
+          <div class="section-heading"><div><p class="eyebrow">New revision</p><h2>Record a quotation</h2></div></div>
+          <form class="quote-form" [formGroup]="quoteForm" (ngSubmit)="createQuote()">
+            <label>Vendor
+              <select formControlName="projectVendorId">
+                <option value="">Select assigned vendor</option>
+                <option *ngFor="let vendor of vendors" [value]="vendor.id">{{ vendor.vendorName }}</option>
               </select>
             </label>
-            <label class="vendor-edit-notes">Notes<textarea rows="2" formControlName="notes" maxlength="4000"></textarea></label>
-            <div class="vendor-edit-actions">
-              <button type="submit">Save</button>
-              <button type="button" (click)="cancelEdit()">Cancel</button>
-            </div>
+            <label>Amount<input type="number" min="0" step="0.01" formControlName="amount"></label>
+            <label>Currency<input maxlength="3" formControlName="currencyCode"></label>
+            <label>Received<input type="date" formControlName="receivedDate"></label>
+            <label>Valid until<input type="date" formControlName="validUntil"></label>
+            <label class="quote-notes">Notes<textarea rows="3" maxlength="4000" formControlName="notes"></textarea></label>
+            <button type="submit" [disabled]="!quoteForm.controls.projectVendorId.value || quoteForm.controls.amount.value === null">Record quotation</button>
           </form>
-          <span class="status" [class]="'status ' + vendor.status.toLowerCase()">{{ outreachLabel(vendor.status) }}</span>
-          <span *ngIf="vendor.nextFollowUpDate" [class.overdue]="isOverdue(vendor)">Follow-up {{ vendor.nextFollowUpDate }}</span>
-          <button type="button" (click)="beginEdit(vendor)">Edit</button>
-          <button *ngIf="canManage(user.role)" type="button" class="danger-action" (click)="removeVendor(vendor)">Remove</button>
-          <div class="quote-list">
-            <div class="quote-row" *ngFor="let quote of quotesFor(vendor.id)">
-              <span><strong>{{ quote.amount | number:'1.0-2' }} {{ quote.currencyCode }}</strong> - revision {{ quote.revisionNumber }}</span>
-              <span class="project-muted">{{ quoteStatusLabel(quote.status) }}</span>
-              <button *ngIf="currentUser$ | async as user" type="button" [disabled]="!canManage(user.role) || quote.selected" (click)="selectQuote(quote)">{{ quote.selected ? 'Selected' : 'Select quote' }}</button>
-            </div>
-          </div>
-        </div>
-      </div>
+        </article>
       </ng-container>
-      <ng-template #noVendors><p class="project-muted">No vendors assigned yet.</p></ng-template>
-    </article>
+    </section>
 
-    <article class="project-card project-quotes-card">
-      <div class="section-heading">
-        <div><p class="eyebrow">Commercial review</p><h2>Record a quotation</h2></div>
-      </div>
-      <p *ngIf="quoteError" class="project-error">{{ quoteError }}</p>
-      <form class="quote-form" [formGroup]="quoteForm" (ngSubmit)="createQuote()">
-        <label>Vendor
-          <select formControlName="projectVendorId">
-            <option value="">Select assigned vendor</option>
-            <option *ngFor="let vendor of vendors" [value]="vendor.id">{{ vendor.vendorName }}</option>
-          </select>
-        </label>
-        <label>Amount<input type="number" min="0" step="0.01" formControlName="amount"></label>
-        <label>Currency<input maxlength="3" formControlName="currencyCode"></label>
-        <label>Received<input type="date" formControlName="receivedDate"></label>
-        <label>Valid until<input type="date" formControlName="validUntil"></label>
-        <label>Notes<input type="text" maxlength="4000" formControlName="notes"></label>
-        <button type="submit" [disabled]="!quoteForm.controls.projectVendorId.value || quoteForm.controls.amount.value === null">Record quotation</button>
-      </form>
-    </article>
-      <article class="project-card project-documents-card">
-      <div class="section-heading">
-        <div><p class="eyebrow">Files</p><h2>Project documents</h2></div>
-        <span class="project-muted">{{ documents.length }} files</span>
-      </div>
-      <p *ngIf="documentError" class="project-error">{{ documentError }}</p>
-      <form class="document-form" (submit)="$event.preventDefault(); uploadDocument()">
-        <input type="file" accept=".pdf,.png,.jpg,.jpeg,.txt,.docx" (change)="selectDocument($event)">
-        <button type="submit" [disabled]="!selectedFile">Upload document</button>
-      </form>
-      <div class="document-list" *ngIf="documents.length; else noDocuments">
-        <button type="button" class="document-row" *ngFor="let item of documents" (click)="downloadDocument(item)">
-          <span><strong>{{ item.originalFilename }}</strong><small>{{ item.contentType }} - {{ item.fileSize | number }} bytes</small></span>
-          <span class="project-muted">{{ item.uploadedAt | date:'mediumDate' }}</span>
-        </button>
-      </div>
-      <ng-template #noDocuments><p class="project-muted">No project documents uploaded.</p></ng-template>
-    </article>
+    <section class="tab-panel" [hidden]="activeTab !== 'activities'">
+      <article class="project-card activity-card">
+        <app-interaction-timeline parent="projects" [recordId]="item.id"></app-interaction-timeline>
+      </article>
+    </section>
 
-    <article class="project-card project-activity-card">
-      <app-interaction-timeline parent="projects" [recordId]="item.id"></app-interaction-timeline>
-    </article>
-  </section>
+    <section class="tab-panel" [hidden]="activeTab !== 'documents'">
+      <article class="project-card">
+        <div class="section-heading">
+          <div><p class="eyebrow">Files</p><h2>Project documents</h2></div>
+          <span class="project-muted">{{ documents.length }} files</span>
+        </div>
+        <p *ngIf="documentError" class="project-error">{{ documentError }}</p>
+        <form class="document-form" (submit)="$event.preventDefault(); uploadDocument()">
+          <label class="file-upload">
+            <span>{{ selectedFile?.name || 'Choose a PDF, image, text, or DOCX file' }}</span>
+            <input type="file" accept=".pdf,.png,.jpg,.jpeg,.txt,.docx" (change)="selectDocument($event)">
+          </label>
+          <button type="submit" [disabled]="!selectedFile">Upload document</button>
+        </form>
+        <div class="document-list" *ngIf="documents.length; else noDocuments">
+          <button type="button" class="document-row" *ngFor="let document of documents" (click)="downloadDocument(document)">
+            <span class="document-icon" aria-hidden="true">DOC</span>
+            <span><strong>{{ document.originalFilename }}</strong><small>{{ document.contentType }} · {{ document.fileSize | number }} bytes</small></span>
+            <span class="project-muted">{{ document.uploadedAt | date:'mediumDate' }}</span>
+          </button>
+        </div>
+        <ng-template #noDocuments><div class="inline-empty"><strong>No project documents</strong><span>Upload a scope of work or supporting project file.</span></div></ng-template>
+      </article>
+    </section>
+  </ng-container>
 </section>
