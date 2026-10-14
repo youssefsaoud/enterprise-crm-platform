@@ -7,3 +7,24 @@
 ul { list-style: none; padding: 0; margin: 0; display: grid; gap: .75rem; }
 li { border: 1px solid #dde3ea; border-radius: 8px; padding: .85rem; display: grid; gap: .35rem; }
 small, .muted { color: #64748b; }
+
+/* Allow activity controls and long notes to shrink with the enclosing card. */
+.timeline-panel,
+.timeline-header,
+.interaction-form,
+.interaction-form label,
+.interaction-form input,
+.interaction-form select,
+.interaction-form textarea,
+.timeline-panel li {
+  min-width: 0;
+}
+.interaction-form input,
+.interaction-form select,
+.interaction-form textarea {
+  box-sizing: border-box;
+  max-width: 100%;
+}
+.timeline-panel li {
+  overflow-wrap: anywhere;
+}
