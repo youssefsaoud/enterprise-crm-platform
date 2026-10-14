@@ -202,13 +202,6 @@ export class ProjectDetailPageComponent implements OnInit {
       error: error => this.vendorError = apiErrorMessage(error, 'Vendor details could not be updated.')
     });
   }
-  updateStatus(vendor: ProjectVendor, status: OutreachStatus): void {
-    this.projectVendorService.update(vendor.id, { status }).subscribe({
-      next: updated => vendor.status = updated.status,
-      error: error => this.vendorError = apiErrorMessage(error, 'Vendor status could not be updated.')
-    });
-  }
-
   removeVendor(vendor: ProjectVendor): void {
     if (!confirm(`Remove ${vendor.vendorName} from this project?`)) return;
     this.projectVendorService.remove(vendor.id).subscribe({

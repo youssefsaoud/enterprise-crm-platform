@@ -97,9 +97,6 @@
               <button type="button" (click)="cancelEdit()">Cancel</button>
             </div>
           </form>
-          <select [value]="vendor.status" (change)="updateStatus(vendor, $any($event.target).value)">
-            <option *ngFor="let status of statuses" [value]="status">{{ outreachLabel(status) }}</option>
-          </select>
           <span class="status" [class]="'status ' + vendor.status.toLowerCase()">{{ outreachLabel(vendor.status) }}</span>
           <span *ngIf="vendor.nextFollowUpDate" [class.overdue]="isOverdue(vendor)">Follow-up {{ vendor.nextFollowUpDate }}</span>
           <button type="button" (click)="beginEdit(vendor)">Edit</button>
