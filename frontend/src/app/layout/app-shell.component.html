@@ -1,1 +1,70 @@
-<div class="app-shell"><aside class="sidebar" aria-label="Primary navigation"><a class="brand" routerLink="/dashboard"><span class="brand-mark">PV</span><span>Project &amp; Vendor<br />Platform</span></a><nav><a *ngFor="let item of navItems" [routerLink]="item.route" routerLinkActive="active" [routerLinkActiveOptions]="{exact:item.route==='/dashboard'}">{{item.label}}</a></nav></aside><div class="workspace"><header class="topbar"><div><strong>Project &amp; Vendor Platform</strong><span>Universal B2B delivery workspace</span></div><ng-container *ngIf="currentUser$|async as user;else anonymous"><div class="user-menu"><span>{{user.fullName}} · {{user.role==='SALES_REP'?'Associate':user.role}}</span><button type="button" (click)="logout()">Logout</button></div></ng-container><ng-template #anonymous><a class="login-link" routerLink="/login">Login</a></ng-template></header><main class="content"><ng-content></ng-content></main></div></div>
+<a class="skip-link" href="#main-content">Skip to content</a>
+<div class="app-shell">
+  <button *ngIf="mobileOpen" class="sidebar-backdrop" type="button" aria-label="Close navigation" (click)="closeNavigation()"></button>
+  <aside class="sidebar" [class.open]="mobileOpen" aria-label="Primary navigation">
+    <a class="brand" routerLink="/dashboard" (click)="closeNavigation()">
+      <span class="brand-mark" aria-hidden="true">PV</span>
+      <span class="brand-copy"><strong>Project &amp; Vendor</strong><small>Platform</small></span>
+    </a>
+
+    <nav>
+      <section class="nav-group" *ngFor="let group of navGroups">
+        <button
+          *ngIf="group.collapsible; else groupLabel"
+          class="nav-group-toggle"
+          type="button"
+          [attr.aria-expanded]="legacyOpen"
+          (click)="legacyOpen = !legacyOpen">
+          <span>{{ group.label }}</span>
+          <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"></path></svg>
+        </button>
+        <ng-template #groupLabel><p class="nav-group-label">{{ group.label }}</p></ng-template>
+
+        <div class="nav-items" *ngIf="!group.collapsible || legacyOpen">
+          <a
+            *ngFor="let item of group.items"
+            [routerLink]="item.route"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: item.route === '/dashboard' }"
+            (click)="closeNavigation()">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path [attr.d]="item.icon"></path></svg>
+            <span>{{ item.label }}</span>
+          </a>
+        </div>
+      </section>
+    </nav>
+
+    <div class="sidebar-footer">
+      <span class="security-dot" aria-hidden="true"></span>
+      <span>Secure workspace</span>
+    </div>
+  </aside>
+
+  <div class="workspace">
+    <header class="topbar">
+      <div class="topbar-brand">
+        <button class="menu-button" type="button" aria-label="Open navigation" (click)="mobileOpen = true">
+          <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
+        </button>
+        <div>
+          <strong>Project &amp; Vendor Platform</strong>
+          <span>Delivery operations workspace</span>
+        </div>
+      </div>
+
+      <ng-container *ngIf="currentUser$ | async as user; else anonymous">
+        <div class="user-menu">
+          <span class="avatar" aria-hidden="true">{{ initials(user.fullName) }}</span>
+          <span class="user-copy"><strong>{{ user.fullName }}</strong><small>{{ roleLabel(user.role) }}</small></span>
+          <button class="logout-button" type="button" (click)="logout()">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"></path></svg>
+            <span>Sign out</span>
+          </button>
+        </div>
+      </ng-container>
+      <ng-template #anonymous><a class="login-link" routerLink="/login">Sign in</a></ng-template>
+    </header>
+
+    <main id="main-content" class="content" tabindex="-1"><ng-content></ng-content></main>
+  </div>
+</div>
