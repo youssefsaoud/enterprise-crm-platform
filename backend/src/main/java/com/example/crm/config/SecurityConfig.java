@@ -24,6 +24,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.GET, "/api/v1/health").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/v1/invitations/validate", "/api/v1/invitations/accept").permitAll()
                 .requestMatchers(HttpMethod.OPTIONS, "/api/v1/**").permitAll()
                 .requestMatchers("/error").permitAll()
                 .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
