@@ -1,6 +1,6 @@
 import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 import { AuthService } from '../core/auth/auth.service';
 
@@ -19,7 +19,7 @@ interface NavGroup {
 @Component({
   selector: 'app-shell',
   standalone: true,
-  imports: [AsyncPipe, NgFor, NgIf, RouterLink, RouterLinkActive],
+  imports: [AsyncPipe, NgFor, NgIf, RouterLink, RouterLinkActive, RouterOutlet],
   templateUrl: './app-shell.component.html',
   styleUrls: ['./app-shell.component.css']
 })

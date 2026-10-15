@@ -1,14 +1,67 @@
 import { Routes } from '@angular/router';
-import { ActivitiesPageComponent } from './features/activities/activities-page.component'; import { CompaniesPageComponent } from './features/companies/companies-page.component'; import { CompanyDetailPageComponent } from './features/companies/company-detail-page.component'; import { CompanyFormPageComponent } from './features/companies/company-form-page.component'; import { ContactsPageComponent } from './features/contacts/contacts-page.component'; import { ContactDetailPageComponent } from './features/contacts/contact-detail-page.component'; import { ContactFormPageComponent } from './features/contacts/contact-form-page.component'; import { LeadsPageComponent } from './features/leads/leads-page.component'; import { LeadFormPageComponent } from './features/leads/lead-form-page.component'; import { LeadDetailPageComponent } from './features/leads/lead-detail-page.component'; import { OpportunitiesPageComponent } from './features/opportunities/opportunities-page.component'; import { OpportunityFormPageComponent } from './features/opportunities/opportunity-form-page.component'; import { OpportunityDetailPageComponent } from './features/opportunities/opportunity-detail-page.component'; import { ProjectDetailPageComponent } from './features/projects/project-detail-page.component'; import { ProjectFormPageComponent } from './features/projects/project-form-page.component'; import { ProjectsPageComponent } from './features/projects/projects-page.component'; import { StatusPageComponent } from './features/status/status-page.component'; import { authGuard } from './core/guards/auth.guard';
-import { roleGuard } from './core/guards/auth.guard';
+
+import { authGuard, guestGuard, roleGuard } from './core/guards/auth.guard';
+import { ActivitiesPageComponent } from './features/activities/activities-page.component';
+import { CompaniesPageComponent } from './features/companies/companies-page.component';
+import { CompanyDetailPageComponent } from './features/companies/company-detail-page.component';
+import { CompanyFormPageComponent } from './features/companies/company-form-page.component';
+import { ContactDetailPageComponent } from './features/contacts/contact-detail-page.component';
+import { ContactFormPageComponent } from './features/contacts/contact-form-page.component';
+import { ContactsPageComponent } from './features/contacts/contacts-page.component';
+import { LeadDetailPageComponent } from './features/leads/lead-detail-page.component';
+import { LeadFormPageComponent } from './features/leads/lead-form-page.component';
+import { LeadsPageComponent } from './features/leads/leads-page.component';
+import { OpportunitiesPageComponent } from './features/opportunities/opportunities-page.component';
+import { OpportunityDetailPageComponent } from './features/opportunities/opportunity-detail-page.component';
+import { OpportunityFormPageComponent } from './features/opportunities/opportunity-form-page.component';
+import { ProjectDetailPageComponent } from './features/projects/project-detail-page.component';
+import { ProjectFormPageComponent } from './features/projects/project-form-page.component';
+import { ProjectsPageComponent } from './features/projects/projects-page.component';
+import { StatusPageComponent } from './features/status/status-page.component';
+import { AppShellComponent } from './layout/app-shell.component';
 
 const productTitle = 'Orqestra | Project & Vendor Platform';
+
 export const routes: Routes = [
-{path:'',pathMatch:'full',redirectTo:'dashboard'},{path:'dashboard',loadComponent:()=>import('./features/dashboard/dashboard-page.component').then(module=>module.DashboardPageComponent),title:productTitle,canActivate:[authGuard]},
-{path:'projects',component:ProjectsPageComponent,title:productTitle,canActivate:[authGuard]},{path:'projects/new',component:ProjectFormPageComponent,title:productTitle,canActivate:[authGuard,roleGuard(['ADMIN','MANAGER'])]},{path:'projects/:id/edit',component:ProjectFormPageComponent,title:productTitle,canActivate:[authGuard,roleGuard(['ADMIN','MANAGER'])]},{path:'projects/:id',component:ProjectDetailPageComponent,title:productTitle,canActivate:[authGuard]},
-{path:'clients',component:CompaniesPageComponent,data:{role:'CLIENT'},title:productTitle,canActivate:[authGuard]},{path:'vendors',component:CompaniesPageComponent,data:{role:'VENDOR'},title:productTitle,canActivate:[authGuard]},
-{path:'companies',component:CompaniesPageComponent,title:productTitle,canActivate:[authGuard]},{path:'companies/new',component:CompanyFormPageComponent,title:productTitle,canActivate:[authGuard]},{path:'companies/:id',component:CompanyDetailPageComponent,title:productTitle,canActivate:[authGuard]},{path:'companies/:id/edit',component:CompanyFormPageComponent,title:productTitle,canActivate:[authGuard]},
-{path:'contacts',component:ContactsPageComponent,title:productTitle,canActivate:[authGuard]},{path:'contacts/new',component:ContactFormPageComponent,title:productTitle,canActivate:[authGuard]},{path:'contacts/:id',component:ContactDetailPageComponent,title:productTitle,canActivate:[authGuard]},{path:'contacts/:id/edit',component:ContactFormPageComponent,title:productTitle,canActivate:[authGuard]},
-{path:'leads',component:LeadsPageComponent,title:productTitle,canActivate:[authGuard]},{path:'leads/new',component:LeadFormPageComponent,title:productTitle,canActivate:[authGuard]},{path:'leads/:id/edit',component:LeadFormPageComponent,title:productTitle,canActivate:[authGuard]},{path:'leads/:id',component:LeadDetailPageComponent,title:productTitle,canActivate:[authGuard]},
-{path:'opportunities',component:OpportunitiesPageComponent,title:productTitle,canActivate:[authGuard]},{path:'opportunities/new',component:OpportunityFormPageComponent,title:productTitle,canActivate:[authGuard]},{path:'opportunities/:id/edit',component:OpportunityFormPageComponent,title:productTitle,canActivate:[authGuard]},{path:'opportunities/:id',component:OpportunityDetailPageComponent,title:productTitle,canActivate:[authGuard]},
-{path:'activities',component:ActivitiesPageComponent,title:productTitle,canActivate:[authGuard]},{path:'status',component:StatusPageComponent,title:productTitle,canActivate:[authGuard]},{path:'login',title:productTitle,loadComponent:()=>import('./features/auth/login-page.component').then(module=>module.LoginPageComponent)},{path:'**',redirectTo:'dashboard'}];
+  {
+    path: 'login',
+    title: productTitle,
+    canActivate: [guestGuard],
+    loadComponent: () => import('./features/auth/login-page.component').then(module => module.LoginPageComponent)
+  },
+  {
+    path: '',
+    component: AppShellComponent,
+    canActivate: [authGuard],
+    canActivateChild: [authGuard],
+    children: [
+      { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
+      { path: 'dashboard', loadComponent: () => import('./features/dashboard/dashboard-page.component').then(module => module.DashboardPageComponent), title: productTitle },
+      { path: 'projects', component: ProjectsPageComponent, title: productTitle },
+      { path: 'projects/new', component: ProjectFormPageComponent, title: productTitle, canActivate: [roleGuard(['ADMIN', 'MANAGER'])] },
+      { path: 'projects/:id/edit', component: ProjectFormPageComponent, title: productTitle, canActivate: [roleGuard(['ADMIN', 'MANAGER'])] },
+      { path: 'projects/:id', component: ProjectDetailPageComponent, title: productTitle },
+      { path: 'clients', component: CompaniesPageComponent, data: { role: 'CLIENT' }, title: productTitle },
+      { path: 'vendors', component: CompaniesPageComponent, data: { role: 'VENDOR' }, title: productTitle },
+      { path: 'companies', component: CompaniesPageComponent, title: productTitle },
+      { path: 'companies/new', component: CompanyFormPageComponent, title: productTitle },
+      { path: 'companies/:id', component: CompanyDetailPageComponent, title: productTitle },
+      { path: 'companies/:id/edit', component: CompanyFormPageComponent, title: productTitle },
+      { path: 'contacts', component: ContactsPageComponent, title: productTitle },
+      { path: 'contacts/new', component: ContactFormPageComponent, title: productTitle },
+      { path: 'contacts/:id', component: ContactDetailPageComponent, title: productTitle },
+      { path: 'contacts/:id/edit', component: ContactFormPageComponent, title: productTitle },
+      { path: 'leads', component: LeadsPageComponent, title: productTitle },
+      { path: 'leads/new', component: LeadFormPageComponent, title: productTitle },
+      { path: 'leads/:id/edit', component: LeadFormPageComponent, title: productTitle },
+      { path: 'leads/:id', component: LeadDetailPageComponent, title: productTitle },
+      { path: 'opportunities', component: OpportunitiesPageComponent, title: productTitle },
+      { path: 'opportunities/new', component: OpportunityFormPageComponent, title: productTitle },
+      { path: 'opportunities/:id/edit', component: OpportunityFormPageComponent, title: productTitle },
+      { path: 'opportunities/:id', component: OpportunityDetailPageComponent, title: productTitle },
+      { path: 'activities', component: ActivitiesPageComponent, title: productTitle },
+      { path: 'status', component: StatusPageComponent, title: productTitle }
+    ]
+  },
+  { path: '**', redirectTo: 'dashboard' }
+];
