@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 
 public interface InteractionRepository extends JpaRepository<Interaction, UUID> {
+    boolean existsByProjectIdAndSubjectAndDeletedAtIsNull(UUID projectId, String subject);
+
     @EntityGraph(attributePaths = {"author", "company", "contact", "lead", "opportunity", "project", "projectVendor", "quotation"})
     @Query(value = """
         select i from Interaction i

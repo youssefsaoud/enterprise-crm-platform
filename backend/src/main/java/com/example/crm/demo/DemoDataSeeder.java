@@ -37,6 +37,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -79,6 +80,7 @@ public class DemoDataSeeder {
     }
 
     @Bean
+    @Order(10)
     CommandLineRunner seedDemoData() {
         return args -> seed();
     }

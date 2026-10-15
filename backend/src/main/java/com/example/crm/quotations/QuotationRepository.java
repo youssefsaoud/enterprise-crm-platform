@@ -19,6 +19,8 @@ public interface QuotationRepository extends JpaRepository<Quotation, UUID> {
     @Query("select coalesce(max(q.revisionNumber), 0) from Quotation q where q.projectVendor.id = :projectVendorId")
     int maxRevision(@Param("projectVendorId") UUID projectVendorId);
 
+    boolean existsByProjectVendorProjectIdAndSelectedTrue(UUID projectId);
+
     @Modifying
     @Query("update Quotation q set q.selected = false, q.status = case when q.status = com.example.crm.quotations.QuotationStatus.SELECTED then com.example.crm.quotations.QuotationStatus.UNDER_REVIEW else q.status end where q.projectVendor.project.id = :projectId")
     int clearSelectionForProject(@Param("projectId") UUID projectId);
