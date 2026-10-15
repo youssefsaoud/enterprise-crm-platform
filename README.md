@@ -8,7 +8,17 @@
 
 A full-stack B2B workspace for coordinating client projects, vendor outreach, quotations, documents, and employee responsibilities. Built with Spring Boot, Angular, and PostgreSQL, with server-side authorization throughout the project workflow.
 
+### Interactive Login Experience
+
+![Orqestra login with an animated Three.js background and cursor-reactive glass form glow](assets/screenshots/login-animation.gif)
+
+An immersive login experience featuring a Three.js animated background, responsive parallax, and interactive glass effects.
+
+### Operations Dashboard
+
 ![Orqestra dashboard with operational KPIs, project status, vendor outreach, quotation trends, and associate workload](assets/screenshots/dashboard.webp)
+
+Real-time operational insights into projects, vendor outreach, quotations, and team workloads, with role-based access controls.
 
 ## Overview
 
@@ -42,10 +52,6 @@ Captured from the running application using existing synthetic development recor
 | Vendors | Team Management |
 | --- | --- |
 | ![Vendor directory with shared organization roles and contact information](assets/screenshots/vendors.webp) | ![Admin Team Management with demo employees, roles, active status, and invitation counters](assets/screenshots/team.webp) |
-
-### Interactive Login Experience
-
-![Orqestra login with an animated Three.js background and cursor-reactive glass form glow](assets/screenshots/login-animation.gif)
 
 ## Tech Stack
 
