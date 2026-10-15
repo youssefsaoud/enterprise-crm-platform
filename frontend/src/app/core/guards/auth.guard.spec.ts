@@ -5,7 +5,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 
 import { AppComponent } from '../../app.component';
 import { AuthService } from '../auth/auth.service';
-import { authGuard, guestGuard } from './auth.guard';
+import { authGuard, guestGuard, roleGuard } from './auth.guard';
 
 @Component({ standalone: true, template: '<span>Login page</span>' })
 class LoginStubComponent {}
@@ -23,7 +23,10 @@ const testRoutes: Routes = [
     component: ShellStubComponent,
     canActivate: [authGuard],
     canActivateChild: [authGuard],
-    children: [{ path: 'dashboard', component: DashboardStubComponent }]
+    children: [
+      { path: 'dashboard', component: DashboardStubComponent },
+      { path: 'team', component: DashboardStubComponent, canActivate: [roleGuard(['ADMIN'])] }
+    ]
   },
   { path: '**', redirectTo: 'dashboard' }
 ];
@@ -34,7 +37,7 @@ describe('authentication routing', () => {
   let authService: jasmine.SpyObj<AuthService>;
 
   beforeEach(async () => {
-    authService = jasmine.createSpyObj<AuthService>('AuthService', ['isAuthenticated']);
+    authService = jasmine.createSpyObj<AuthService>('AuthService', ['isAuthenticated', 'currentUser']);
     await TestBed.configureTestingModule({
       imports: [AppComponent, RouterTestingModule.withRoutes(testRoutes)],
       providers: [{ provide: AuthService, useValue: authService }]
@@ -45,6 +48,20 @@ describe('authentication routing', () => {
   });
 
   afterEach(() => fixture.destroy());
+
+  it('blocks direct Team navigation for Associates', async () => {
+    authService.isAuthenticated.and.returnValue(true);
+    authService.currentUser.and.returnValue({ id: 'associate', fullName: 'Associate', email: 'associate@example.test', role: 'SALES_REP' });
+    await router.navigateByUrl('/team');
+    expect(router.url).toBe('/dashboard');
+  });
+
+  it('allows direct Team navigation for Admins', async () => {
+    authService.isAuthenticated.and.returnValue(true);
+    authService.currentUser.and.returnValue({ id: 'admin', fullName: 'Admin', email: 'admin@example.test', role: 'ADMIN' });
+    await router.navigateByUrl('/team');
+    expect(router.url).toBe('/team');
+  });
 
   it('redirects an unauthenticated protected navigation to the standalone login page', async () => {
     authService.isAuthenticated.and.returnValue(false);

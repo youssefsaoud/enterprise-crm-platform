@@ -22,7 +22,7 @@
 
         <div class="nav-items" *ngIf="!group.collapsible || legacyOpen">
           <a
-            *ngFor="let item of group.items"
+            *ngFor="let item of visibleItems(group.items)"
             [routerLink]="item.route"
             routerLinkActive="active"
             [routerLinkActiveOptions]="{ exact: item.route === '/dashboard' }"

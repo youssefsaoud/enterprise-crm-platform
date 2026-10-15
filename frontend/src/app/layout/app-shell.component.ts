@@ -8,6 +8,7 @@ interface NavItem {
   label: string;
   route: string;
   icon: string;
+  adminOnly?: boolean;
 }
 
 interface NavGroup {
@@ -48,6 +49,7 @@ export class AppShellComponent {
     {
       label: 'System',
       items: [
+        { label: 'Team', route: '/team', icon: 'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8M20 8v6M17 11h6', adminOnly: true },
         { label: 'API status', route: '/status', icon: 'M4 12h3l2-5 4 10 2-5h5M3 3h18v18H3z' }
       ]
     }
@@ -67,6 +69,10 @@ export class AppShellComponent {
 
   closeNavigation(): void {
     this.mobileOpen = false;
+  }
+
+  visibleItems(items: NavItem[]): NavItem[] {
+    return items.filter(item => !item.adminOnly || this.authService.currentUser()?.role === 'ADMIN');
   }
 
   roleLabel(role: string): string {

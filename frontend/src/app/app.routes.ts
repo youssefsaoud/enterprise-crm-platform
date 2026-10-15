@@ -24,6 +24,11 @@ const productTitle = 'Orqestra | Project & Vendor Platform';
 
 export const routes: Routes = [
   {
+    path: 'activate-account',
+    title: productTitle,
+    loadComponent: () => import('./features/auth/activation-page.component').then(module => module.ActivationPageComponent)
+  },
+  {
     path: 'login',
     title: productTitle,
     canActivate: [guestGuard],
@@ -35,6 +40,7 @@ export const routes: Routes = [
     canActivate: [authGuard],
     canActivateChild: [authGuard],
     children: [
+      { path: 'team', title: productTitle, canActivate: [roleGuard(['ADMIN'])], loadComponent: () => import('./features/team/team-page.component').then(module => module.TeamPageComponent) },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
       { path: 'dashboard', loadComponent: () => import('./features/dashboard/dashboard-page.component').then(module => module.DashboardPageComponent), title: productTitle },
       { path: 'projects', component: ProjectsPageComponent, title: productTitle },

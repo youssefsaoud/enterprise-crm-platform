@@ -1,0 +1,46 @@
+<header class="page-header">
+  <div><p>Administration</p><h1>Team</h1><span>Manage employees and invitation access to Orqestra.</span></div>
+  <button type="button" (click)="openInvite()">Invite employee</button>
+</header>
+
+<p *ngIf="error" class="error-message" role="alert">{{ error }}</p>
+<p *ngIf="message" class="feedback" role="status">{{ message }}</p>
+<div class="team-summary" aria-label="Team summary">
+  <div><strong>{{ activeCount }}</strong><span>Active employees</span></div>
+  <div><strong>{{ pendingCount }}</strong><span>Pending invitations</span></div>
+  <div><strong>{{ expiredCount }}</strong><span>Expired invitations</span></div>
+</div>
+<section class="toolbar" aria-label="Team filters">
+  <label>Search<input type="search" [(ngModel)]="search" placeholder="Name or email" /></label>
+  <label>Status<select [(ngModel)]="status"><option value="">All statuses</option><option value="ACTIVE">Active</option><option value="INACTIVE">Inactive</option><option value="PENDING">Pending invitation</option><option value="EXPIRED">Expired</option><option value="REVOKED">Revoked</option></select></label>
+  <button class="secondary-button" type="button" [disabled]="loading" (click)="load()">Refresh</button>
+</section>
+<p *ngIf="loading" class="muted" role="status">Loading team...</p>
+<div *ngIf="!loading" class="table-shell" tabindex="0" aria-label="Employees and invitations">
+  <table><thead><tr><th>Employee</th><th>Role</th><th>Status</th><th>Invitation sent</th><th>Actions</th></tr></thead>
+    <tbody><tr *ngFor="let row of rows">
+      <td><strong>{{ row.fullName }}</strong><small class="email">{{ row.email }}</small></td>
+      <td>{{ roleLabel(row.role) }}</td>
+      <td><span class="status" [class.completed]="row.status === 'ACTIVE'">{{ statusLabel(row.status) }}</span><small class="delivery" *ngIf="row.invitation">{{ deliveryLabel(row.invitation.deliveryStatus) }}</small></td>
+      <td>{{ row.sentAt ? (row.sentAt | date:'medium') : 'Not applicable' }}</td>
+      <td><div class="row-actions" *ngIf="row.status === 'PENDING' || row.status === 'EXPIRED'">
+        <button type="button" class="secondary-button" [disabled]="!!busyId" (click)="resend(row.id)">{{ busyId === row.id ? 'Processing...' : 'Resend' }}</button>
+        <button type="button" class="danger-action" [disabled]="!!busyId" (click)="revoke(row.id)">Revoke</button>
+      </div></td>
+    </tr><tr *ngIf="!rows.length"><td colspan="5" class="empty-cell">No team members or invitations match these filters.</td></tr></tbody>
+  </table>
+</div>
+
+<dialog #inviteDialog aria-labelledby="invite-title" (cancel)="saving ? $event.preventDefault() : null">
+  <form [formGroup]="form" (ngSubmit)="invite()">
+    <div class="dialog-heading"><h2 id="invite-title">Invite employee</h2><button type="button" class="secondary-button" aria-label="Close invitation dialog" [disabled]="saving" (click)="closeInvite()">&times;</button></div>
+    <p class="muted">Send a secure invitation to join your workspace.</p>
+    <p *ngIf="dialogError" class="error-message" role="alert">{{ dialogError }}</p>
+    <label>Full name<input formControlName="fullName" required maxlength="120" autocomplete="name" autofocus />
+      <small class="field-error" *ngIf="form.controls.fullName.touched && form.controls.fullName.invalid">Enter the employee's name.</small></label>
+    <label>Work email<input type="email" formControlName="email" required maxlength="180" autocomplete="email" />
+      <small class="field-error" *ngIf="form.controls.email.touched && form.controls.email.invalid">Enter a valid work email.</small></label>
+    <label>Role<select formControlName="role"><option value="SALES_REP">Associate</option><option value="MANAGER">Manager</option></select></label>
+    <div class="dialog-actions"><button type="button" class="secondary-button" [disabled]="saving" (click)="closeInvite()">Cancel</button><button type="submit" [disabled]="saving">{{ saving ? 'Sending invitation...' : 'Send invitation' }}</button></div>
+  </form>
+</dialog>

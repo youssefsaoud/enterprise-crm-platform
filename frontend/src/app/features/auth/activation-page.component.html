@@ -1,0 +1,26 @@
+<main class="activation-layout">
+  <a class="activation-brand" routerLink="/login"><img src="assets/brand/orqestra-symbol.png" width="44" height="44" alt="" /><span><strong>Orqestra</strong><small>Project &amp; Vendor Platform</small></span></a>
+  <section class="activation-panel" aria-labelledby="activation-title" [attr.aria-busy]="state === 'loading' || saving">
+    <p class="eyebrow">Every project, in harmony.</p>
+    <ng-container [ngSwitch]="state">
+      <ng-container *ngSwitchCase="'loading'"><h1 id="activation-title">Checking your invitation</h1><p role="status">Please wait while we verify your access.</p></ng-container>
+      <ng-container *ngSwitchCase="'valid'">
+        <h1 id="activation-title">Welcome, {{ welcome?.fullName }}</h1>
+        <p>Join Orqestra as {{ roleLabel(welcome!.role) }}. Choose a password to activate your account.</p>
+        <form [formGroup]="form" (ngSubmit)="activate()">
+          <p *ngIf="error" class="error-message" role="alert">{{ error }}</p>
+          <label>Password<input [type]="showPassword ? 'text' : 'password'" formControlName="password" autocomplete="new-password" minlength="12" maxlength="64" required aria-describedby="password-rules" /></label>
+          <p id="password-rules" class="password-rules">12-64 characters, including uppercase, lowercase, and a number.</p>
+          <small class="field-error" *ngIf="form.controls.password.touched && form.controls.password.invalid">Your password must meet these requirements.</small>
+          <label>Confirm password<input [type]="showPassword ? 'text' : 'password'" formControlName="confirmPassword" autocomplete="new-password" required /></label>
+          <small class="field-error" *ngIf="form.controls.confirmPassword.touched && form.hasError('passwordMismatch')">Passwords must match.</small>
+          <button class="password-toggle secondary-button" type="button" [attr.aria-pressed]="showPassword" (click)="showPassword = !showPassword">{{ showPassword ? 'Hide passwords' : 'Show passwords' }}</button>
+          <button type="submit" [disabled]="saving">{{ saving ? 'Activating...' : 'Activate account' }}</button>
+        </form>
+      </ng-container>
+      <ng-container *ngSwitchCase="'expired'"><h1 id="activation-title">Your invitation has expired</h1><p>Contact your Admin to request a new invitation.</p><a routerLink="/login">Go to sign in</a></ng-container>
+      <ng-container *ngSwitchCase="'invalid'"><h1 id="activation-title">Invitation unavailable</h1><p>This link is invalid or no longer available. Contact your Admin for help.</p><a routerLink="/login">Go to sign in</a></ng-container>
+      <ng-container *ngSwitchCase="'success'"><h1 id="activation-title">You're ready to join</h1><p role="status">Your account is active. Sign in with your work email and new password.</p><a class="primary-link" routerLink="/login">Go to sign in</a></ng-container>
+    </ng-container>
+  </section>
+</main>
