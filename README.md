@@ -43,12 +43,9 @@ Captured from the running application using existing synthetic development recor
 | --- | --- |
 | ![Vendor directory with shared organization roles and contact information](assets/screenshots/vendors.webp) | ![Admin Team Management with demo employees, roles, active status, and invitation counters](assets/screenshots/team.webp) |
 
-<details>
-<summary>Interactive login experience</summary>
+### Interactive Login Experience
 
-![Standalone Orqestra login with the rendered blue Three.js background](assets/screenshots/login.webp)
-
-</details>
+![Orqestra login with an animated Three.js background and cursor-reactive glass form glow](assets/screenshots/login-animation.gif)
 
 ## Tech Stack
 
