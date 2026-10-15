@@ -29,6 +29,13 @@ describe('DashboardService', () => {
     request.flush({ totalProjects: 4 });
   });
 
+  it('loads filtered role-scoped project analytics', () => {
+    service.projectAnalytics('THIS_YEAR', 'associate-1').subscribe(summary => expect(summary.activeProjects).toBe(3));
+    const request = httpMock.expectOne('/api/v1/project-dashboard/analytics?range=THIS_YEAR&associateId=associate-1');
+    expect(request.request.method).toBe('GET');
+    request.flush({ activeProjects: 3 });
+  });
+
   it('loads recent activities with a bounded limit parameter', () => {
     service.recentActivities(7).subscribe(activities => expect(activities.length).toBe(1));
     const request = httpMock.expectOne('/api/v1/dashboard/recent-activities?limit=7');

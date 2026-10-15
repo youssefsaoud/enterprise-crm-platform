@@ -1,14 +1,21 @@
 <section class="page-header dashboard-header">
   <div>
     <p>Operations overview</p>
-    <h1>Dashboard</h1>
-    <span>Projects, vendor outreach, quotations, and follow-ups at a glance.</span>
+    <h1>{{ isAssociate ? 'My dashboard' : 'Dashboard' }}</h1>
+    <span>{{ scopeLabel }} · project delivery, vendor outreach, and quotation activity.</span>
   </div>
   <div class="header-actions">
-    <div class="currency-filter" aria-label="Dashboard currency">
-      <button type="button" [class.active]="selectedCurrency === 'ALL'" (click)="selectCurrency('ALL')">All</button>
-      <button *ngFor="let currency of availableCurrencies" type="button" [class.active]="selectedCurrency === currency" (click)="selectCurrency(currency)">{{ currency }}</button>
-    </div>
+    <label class="compact-filter">Trend period
+      <select [value]="selectedDateRange" (change)="selectDateRange($any($event.target).value)">
+        <option *ngFor="let range of dateRanges" [value]="range.value">{{ range.label }}</option>
+      </select>
+    </label>
+    <label class="compact-filter" *ngIf="canFilterAssociates">Associate
+      <select [value]="selectedAssociateId" (change)="selectAssociate($any($event.target).value)">
+        <option value="">All associates</option>
+        <option *ngFor="let associate of associates" [value]="associate.id">{{ associate.fullName }}</option>
+      </select>
+    </label>
     <button class="refresh-button" type="button" (click)="load()" [disabled]="loading" aria-label="Refresh dashboard">
       <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0 2 5M20 4v7h-7"></path></svg>
       <span>Refresh</span>
@@ -17,94 +24,122 @@
 </section>
 
 <p *ngIf="error" class="error-message">{{ error }}</p>
-<p *ngIf="loading" class="loading-state" aria-live="polite"><span></span> Loading dashboard</p>
 
-<section class="project-dashboard" *ngIf="projectSummary as projectData">
+<section class="dashboard-skeleton" *ngIf="loading && !analytics" aria-label="Loading dashboard" aria-live="polite">
+  <span *ngFor="let item of [1,2,3,4,5,6]"></span>
+</section>
+
+<section class="analytics-workspace" *ngIf="analytics as data">
+  <div class="scope-bar">
+    <span><strong>{{ data.totalProjects | number }}</strong> projects in scope · <strong>{{ data.completedProjects | number }}</strong> completed</span>
+    <span>Trend charts: {{ data.trendStartDate | date:'mediumDate' }}–{{ data.trendEndDate | date:'mediumDate' }}</span>
+  </div>
+
   <div class="kpi-grid" aria-label="Project operations metrics">
     <a class="kpi-card" routerLink="/projects">
-      <span>Total projects</span>
-      <strong>{{ projectData.totalProjects | number }}</strong>
-      <small>All authorized projects</small>
+      <span>{{ isAssociate ? 'My active projects' : 'Active projects' }}</span>
+      <strong>{{ data.activeProjects | number }}</strong>
+      <small>Planned, in progress, or on hold</small>
     </a>
     <a class="kpi-card" routerLink="/projects">
-      <span>Active projects</span>
-      <strong>{{ projectData.activeProjects | number }}</strong>
-      <small>{{ projectData.nearingDeadlineProjects }} near deadline</small>
+      <span>Near deadline</span>
+      <strong>{{ data.nearingDeadlineProjects | number }}</strong>
+      <small>Due within 14 days</small>
     </a>
     <a class="kpi-card" routerLink="/projects">
-      <span>Awaiting vendors</span>
-      <strong>{{ projectData.vendorsAwaitingResponse | number }}</strong>
-      <small>{{ projectData.vendorsContacted }} vendors contacted</small>
+      <span>Overdue projects</span>
+      <strong [class.critical]="data.overdueProjects > 0">{{ data.overdueProjects | number }}</strong>
+      <small>Active work past deadline</small>
     </a>
     <a class="kpi-card" routerLink="/projects">
-      <span>Quotes received</span>
-      <strong>{{ projectData.quotationsReceived | number }}</strong>
-      <small>{{ projectData.quotationsPending }} pending review</small>
+      <span>Pending vendor responses</span>
+      <strong>{{ data.vendorsAwaitingResponse | number }}</strong>
+      <small>SOW sent or quote in process</small>
     </a>
     <a class="kpi-card" routerLink="/projects">
-      <span>Overdue follow-ups</span>
-      <strong [class.critical]="projectData.overdueFollowUps > 0">{{ projectData.overdueFollowUps | number }}</strong>
-      <small>{{ projectData.upcomingFollowUps }} upcoming</small>
+      <span>Quotation submissions</span>
+      <strong>{{ data.quotationsReceived | number }}</strong>
+      <small>Revisions count separately</small>
     </a>
     <a class="kpi-card" routerLink="/activities">
-      <span>Recent activity</span>
-      <strong>{{ projectData.recentActivities.length | number }}</strong>
-      <small>Latest project updates</small>
+      <span>Overdue follow-ups</span>
+      <strong [class.critical]="data.overdueFollowUps > 0">{{ data.overdueFollowUps | number }}</strong>
+      <small>{{ data.followUpsDueToday }} due today · {{ data.upcomingFollowUps }} upcoming</small>
     </a>
   </div>
 
-  <div class="operations-grid">
-    <article class="surface status-panel">
-      <div class="panel-header">
-        <div><p>Portfolio</p><h2>Projects by status</h2></div>
-        <a routerLink="/projects">View all</a>
-      </div>
-      <ul class="status-list">
-        <li *ngFor="let item of projectData.projectsByStatus">
-          <span>{{ statusLabel(item.status) }}</span>
-          <strong>{{ item.count | number }}</strong>
-        </li>
-      </ul>
+  <div class="analytics-grid">
+    <article class="chart-panel status-chart">
+      <header class="panel-header">
+        <div><p>Portfolio</p><h2>Project status distribution</h2><span>Click a segment to open matching projects.</span></div>
+        <strong>{{ data.totalProjects | number }}</strong>
+      </header>
+      <app-dashboard-chart *ngIf="data.totalProjects > 0; else noProjects" [option]="projectStatusOption" ariaLabel="Project distribution by status" (pointSelected)="onProjectStatusSelected($event)"></app-dashboard-chart>
+      <ng-template #noProjects><div class="chart-empty"><strong>No projects in scope</strong><span>Status distribution will appear when projects are assigned.</span></div></ng-template>
     </article>
 
-    <article class="surface quote-panel">
-      <div class="panel-header">
-        <div><p>Commercial health</p><h2>Quotation response</h2></div>
-        <span class="response-rate">{{ projectData.quoteResponseRate | number:'1.0-1' }}%</span>
-      </div>
-      <div class="quote-summary">
-        <div><span>Active quote value</span><strong>{{ displayTotals(projectData.quotationValueByCurrency) }}</strong></div>
-        <div><span>Pending review</span><strong>{{ projectData.quotationsPending | number }}</strong></div>
-        <div><span>Overdue projects</span><strong [class.critical]="projectData.overdueProjects > 0">{{ projectData.overdueProjects | number }}</strong></div>
-      </div>
+    <article class="chart-panel outreach-chart">
+      <header class="panel-header">
+        <div><p>Vendor outreach</p><h2>Outreach status</h2><span>Counts active project-vendor assignments.</span></div>
+        <strong>{{ data.totalVendorAssignments | number }}</strong>
+      </header>
+      <app-dashboard-chart *ngIf="data.totalVendorAssignments > 0; else noVendors" [option]="vendorOutreachOption" ariaLabel="Vendor outreach assignments by status"></app-dashboard-chart>
+      <ng-template #noVendors><div class="chart-empty"><strong>No vendors assigned</strong><span>Outreach distribution will appear after vendor assignment.</span></div></ng-template>
     </article>
 
-    <article class="surface activity-panel">
-      <div class="panel-header">
-        <div><p>Latest updates</p><h2>Project activity</h2></div>
-        <a routerLink="/activities">All activity</a>
-      </div>
-      <ul class="activity-feed" *ngIf="projectData.recentActivities.length > 0; else noProjectActivity">
-        <li *ngFor="let activity of projectData.recentActivities | slice:0:6">
-          <span class="activity-marker" aria-hidden="true"></span>
-          <div>
-            <a [routerLink]="projectActivityLink(activity)">{{ activity.subject }}</a>
-            <span>{{ statusLabel(activity.type) }} · {{ activity.authorName }} · {{ activity.occurredAt | date:'mediumDate' }}</span>
-          </div>
-          <small>{{ activity.vendorName || activity.projectName }}</small>
-        </li>
-      </ul>
-      <ng-template #noProjectActivity><p class="empty-copy">No project activity has been logged yet.</p></ng-template>
+    <article class="chart-panel trend-chart">
+      <header class="panel-header">
+        <div><p>Quotation activity</p><h2>Quotation submissions</h2><span>Received quotations over time; every revision counts as one submission.</span></div>
+        <span class="panel-stat">{{ data.quotationsReceived | number }} total</span>
+      </header>
+      <app-dashboard-chart *ngIf="hasTrendData; else noTrend" [option]="quotationTrendOption" ariaLabel="Quotation submissions over the selected date range"></app-dashboard-chart>
+      <ng-template #noTrend><div class="chart-empty"><strong>No quotations in this period</strong><span>Choose a wider range or record a quotation to begin the trend.</span></div></ng-template>
+    </article>
+
+    <article class="chart-panel workload-chart">
+      <header class="panel-header">
+        <div><p>{{ isAssociate ? 'Personal operations' : 'Team operations' }}</p><h2>{{ isAssociate ? 'My workload' : 'Associate workload' }}</h2><span>Active projects compared with follow-ups due or overdue.</span></div>
+      </header>
+      <app-dashboard-chart *ngIf="hasWorkloadData; else noWorkload" [option]="workloadOption" [ariaLabel]="isAssociate ? 'My active projects and follow-ups' : 'Associate workload comparison'" (pointSelected)="onAssociateSelected($event)"></app-dashboard-chart>
+      <ng-template #noWorkload><div class="chart-empty"><strong>No pending workload</strong><span>Active assignments and due follow-ups will appear here.</span></div></ng-template>
     </article>
   </div>
+
+  <article class="commercial-strip">
+    <div>
+      <span>Quotation response rate</span>
+      <strong>{{ data.quoteResponseRate | number:'1.0-1' }}%</strong>
+      <small>{{ data.vendorAssignmentsWithQuotes }} of {{ data.totalVendorAssignments }} vendor assignments have at least one quotation.</small>
+    </div>
+    <div>
+      <span>Active quotation value</span>
+      <strong>{{ displayTotals(data.quotationValueByCurrency) }}</strong>
+      <small>Different currencies are never combined.</small>
+    </div>
+    <div class="currency-filter" aria-label="Quotation currency">
+      <button type="button" [class.active]="selectedCurrency === 'ALL'" (click)="selectCurrency('ALL')">All</button>
+      <button *ngFor="let currency of availableCurrencies" type="button" [class.active]="selectedCurrency === currency" (click)="selectCurrency(currency)">{{ currency }}</button>
+    </div>
+  </article>
+
+  <article class="activity-panel" *ngIf="projectSummary as projectData">
+    <div class="panel-header">
+      <div><p>Latest updates</p><h2>{{ isAssociate ? 'My recent project activity' : 'Recent project activity' }}</h2></div>
+      <a routerLink="/activities">All activity</a>
+    </div>
+    <ul class="activity-feed" *ngIf="projectData.recentActivities.length > 0; else noProjectActivity">
+      <li *ngFor="let activity of projectData.recentActivities | slice:0:6">
+        <span class="activity-marker" aria-hidden="true"></span>
+        <div><a [routerLink]="projectActivityLink(activity)">{{ activity.subject }}</a><span>{{ statusLabel(activity.type) }} · {{ activity.authorName }} · {{ activity.occurredAt | date:'mediumDate' }}</span></div>
+        <small>{{ activity.vendorName || activity.projectName }}</small>
+      </li>
+    </ul>
+    <ng-template #noProjectActivity><p class="empty-copy">No project activity has been logged yet.</p></ng-template>
+  </article>
 </section>
 
 <details class="legacy-dashboard" *ngIf="summary as data">
-  <summary>
-    <span><small>Sales CRM</small><strong>Leads and opportunity pipeline</strong></span>
-    <span class="summary-hint">Open analytics</span>
-  </summary>
-
+  <summary><span><small>Sales CRM</small><strong>Leads and opportunity pipeline</strong></span><span class="summary-hint">Open analytics</span></summary>
   <div class="legacy-content">
     <div class="legacy-kpis">
       <a routerLink="/leads"><span>Total leads</span><strong>{{ data.totalLeads | number }}</strong></a>
@@ -112,38 +147,10 @@
       <a routerLink="/opportunities"><span>Open pipeline</span><strong>{{ displayTotals(data.openPipelineValue) }}</strong></a>
       <a routerLink="/activities"><span>Recent interactions</span><strong>{{ data.recentInteractionCount | number }}</strong></a>
     </div>
-
     <div class="legacy-grid">
-      <article class="surface">
-        <div class="panel-header"><h2>Lead status</h2><a routerLink="/leads">Open</a></div>
-        <ul class="status-list" *ngIf="data.leadsByStatus.length > 0; else emptyLeads">
-          <li *ngFor="let item of data.leadsByStatus"><span>{{ statusLabel(item.status) }}</span><strong>{{ item.count | number }}</strong></li>
-        </ul>
-        <ng-template #emptyLeads><p class="empty-copy">No lead data yet.</p></ng-template>
-      </article>
-
-      <article class="surface pipeline-panel">
-        <div class="panel-header"><h2>Pipeline by stage</h2><a routerLink="/opportunities">Open</a></div>
-        <div class="pipeline-list" *ngIf="groupedPipeline.length > 0; else emptyPipeline">
-          <div class="pipeline-row" *ngFor="let item of groupedPipeline">
-            <div><strong>{{ statusLabel(item.stage) }}</strong><span>{{ item.count }} opportunities</span></div>
-            <span>{{ displayTotals(item.totals) }}</span>
-          </div>
-        </div>
-        <ng-template #emptyPipeline><p class="empty-copy">No opportunities for this currency.</p></ng-template>
-      </article>
+      <article class="legacy-panel"><div class="panel-header"><h2>Lead status</h2><a routerLink="/leads">Open</a></div><ul class="status-list" *ngIf="data.leadsByStatus.length > 0; else emptyLeads"><li *ngFor="let item of data.leadsByStatus"><span>{{ statusLabel(item.status) }}</span><strong>{{ item.count | number }}</strong></li></ul><ng-template #emptyLeads><p class="empty-copy">No lead data yet.</p></ng-template></article>
+      <article class="legacy-panel"><div class="panel-header"><h2>Pipeline by stage</h2><a routerLink="/opportunities">Open</a></div><div class="pipeline-list" *ngIf="groupedPipeline.length > 0; else emptyPipeline"><div class="pipeline-row" *ngFor="let item of groupedPipeline"><div><strong>{{ statusLabel(item.stage) }}</strong><span>{{ item.count }} opportunities</span></div><span>{{ displayTotals(item.totals) }}</span></div></div><ng-template #emptyPipeline><p class="empty-copy">No opportunities for this currency.</p></ng-template></article>
     </div>
-
-    <article class="surface">
-      <div class="panel-header"><h2>Recent CRM activity</h2><a routerLink="/activities">All activity</a></div>
-      <ul class="activity-feed" *ngIf="activities.length > 0; else emptyActivity">
-        <li *ngFor="let activity of activities | slice:0:6">
-          <span class="activity-marker" aria-hidden="true"></span>
-          <div><a [routerLink]="activityLink(activity)">{{ activity.subject }}</a><span>{{ statusLabel(activity.type) }} · {{ activity.authorName }} · {{ activity.occurredAt | date:'short' }}</span></div>
-          <small>{{ activityTarget(activity) }}</small>
-        </li>
-      </ul>
-      <ng-template #emptyActivity><p class="empty-copy">No activity has been logged yet.</p></ng-template>
-    </article>
+    <article class="legacy-panel"><div class="panel-header"><h2>Recent CRM activity</h2><a routerLink="/activities">All activity</a></div><ul class="activity-feed" *ngIf="activities.length > 0; else emptyActivity"><li *ngFor="let activity of activities | slice:0:6"><span class="activity-marker" aria-hidden="true"></span><div><a [routerLink]="activityLink(activity)">{{ activity.subject }}</a><span>{{ statusLabel(activity.type) }} · {{ activity.authorName }} · {{ activity.occurredAt | date:'short' }}</span></div><small>{{ activityTarget(activity) }}</small></li></ul><ng-template #emptyActivity><p class="empty-copy">No activity has been logged yet.</p></ng-template></article>
   </div>
 </details>

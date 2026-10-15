@@ -17,7 +17,7 @@
 .brand-lockup strong{font-size:1.08rem;font-weight:650}
 .brand-lockup small{margin-top:.18rem;color:#a1a1aa;font-size:.76rem}
 .visual-copy{align-self:center;max-width:min(50rem,88%);padding:clamp(4rem,11vh,8rem) 0 3rem}
-.visual-copy h1{margin:0;max-width:11ch;font-size:clamp(3.5rem,7.1vw,7.6rem);font-weight:520;line-height:.91;letter-spacing:0;text-wrap:balance;text-shadow:0 1.4rem 3.5rem rgba(0,0,0,.38)}
+.visual-copy h1{margin:0;max-width:11ch;font-family:var(--font-display);font-size:clamp(3.5rem,7.1vw,7.6rem);font-weight:520;line-height:.91;letter-spacing:0;text-wrap:balance;text-shadow:0 1.4rem 3.5rem rgba(0,0,0,.38)}
 .visual-copy h1 span{color:#dcecff}
 .visual-copy p{max-width:34rem;margin:2rem 0 0;color:rgba(235,241,250,.74);font-size:clamp(1rem,1.3vw,1.25rem);line-height:1.65;text-wrap:pretty}
 .visual-footnote{align-self:end;margin:0;color:rgba(205,218,237,.56);font-size:.78rem;letter-spacing:.04em}

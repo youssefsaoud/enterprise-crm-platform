@@ -72,3 +72,50 @@ export interface ProjectDashboardSummary {
   quotationValueByCurrency: DashboardCurrencyTotal[];
   recentActivities: ProjectDashboardActivity[];
 }
+
+export type DashboardDateRange = 'LAST_30_DAYS' | 'LAST_90_DAYS' | 'THIS_YEAR' | 'ALL_TIME';
+
+export interface OutreachStatusCount {
+  status: string;
+  count: number;
+}
+
+export interface QuotationTrendPoint {
+  periodStart: string;
+  quotationCount: number;
+}
+
+export interface AssociateWorkload {
+  associateId: string;
+  associateName: string;
+  activeProjects: number;
+  dueFollowUps: number;
+}
+
+export interface ProjectDashboardAnalytics {
+  role: 'ADMIN' | 'MANAGER' | 'SALES_REP';
+  dateRange: DashboardDateRange;
+  trendStartDate: string;
+  trendEndDate: string;
+  trendGranularity: 'DAY' | 'MONTH';
+  selectedAssociateId?: string | null;
+  selectedAssociateName?: string | null;
+  totalProjects: number;
+  activeProjects: number;
+  completedProjects: number;
+  nearingDeadlineProjects: number;
+  overdueProjects: number;
+  totalVendorAssignments: number;
+  vendorsAwaitingResponse: number;
+  quotationsReceived: number;
+  vendorAssignmentsWithQuotes: number;
+  quoteResponseRate: number;
+  followUpsDueToday: number;
+  overdueFollowUps: number;
+  upcomingFollowUps: number;
+  projectsByStatus: ProjectStatusCount[];
+  vendorOutreachByStatus: OutreachStatusCount[];
+  quotationTrends: QuotationTrendPoint[];
+  associateWorkloads: AssociateWorkload[];
+  quotationValueByCurrency: DashboardCurrencyTotal[];
+}
