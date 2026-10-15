@@ -2,8 +2,8 @@
 .app-shell{min-height:100vh;display:grid;grid-template-columns:15.5rem minmax(0,1fr);background:var(--color-bg);color:var(--color-text)}
 .sidebar{position:sticky;top:0;height:100vh;z-index:30;display:flex;flex-direction:column;min-width:0;padding:1rem .75rem;background:var(--color-sidebar);border-right:1px solid var(--color-border)}
 .brand{display:flex;align-items:center;gap:.75rem;min-height:3.25rem;margin:0 .35rem 1.5rem;color:var(--color-text);text-decoration:none}
-.brand:hover{color:var(--color-text)}.brand-mark{width:2rem;height:2rem;flex:0 0 auto;display:grid;place-items:center;border-radius:var(--radius-md);background:var(--color-accent);color:#fff;font-size:.72rem;font-weight:800}
-.brand-copy{display:grid;line-height:1.2}.brand-copy strong{font-size:.92rem;font-weight:650}.brand-copy small{font-size:.74rem;color:var(--color-text-tertiary)!important}
+.brand:hover{color:var(--color-text)}.brand-symbol{width:2.25rem;height:2.25rem;flex:0 0 auto;display:block;object-fit:contain}
+.brand-copy{display:grid;line-height:1.2}.brand-copy strong{font-size:1rem;font-weight:650}.brand-copy small{font-size:.7rem;color:var(--color-text-tertiary)!important}
 nav{display:grid;gap:1rem;overflow-y:auto;scrollbar-width:thin}.nav-group{display:grid;gap:.3rem}.nav-group-label,.nav-group-toggle{margin:0;padding:.35rem .7rem;color:var(--color-text-tertiary);font-size:.68rem;font-weight:700;letter-spacing:0;text-transform:uppercase}
 .nav-group-toggle{min-height:0;width:100%;display:flex;justify-content:space-between;background:transparent;border:0}.nav-group-toggle:hover{background:transparent!important;color:var(--color-text-secondary);transform:none!important}
 .nav-group-toggle svg{width:1rem;height:1rem;transition:transform var(--transition-fast)}.nav-group-toggle[aria-expanded="true"] svg{transform:rotate(90deg)}

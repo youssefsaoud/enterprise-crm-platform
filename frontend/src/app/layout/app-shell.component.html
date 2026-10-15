@@ -3,8 +3,8 @@
   <button *ngIf="mobileOpen" class="sidebar-backdrop" type="button" aria-label="Close navigation" (click)="closeNavigation()"></button>
   <aside class="sidebar" [class.open]="mobileOpen" aria-label="Primary navigation">
     <a class="brand" routerLink="/dashboard" (click)="closeNavigation()">
-      <span class="brand-mark" aria-hidden="true">PV</span>
-      <span class="brand-copy"><strong>Project &amp; Vendor</strong><small>Platform</small></span>
+      <img class="brand-symbol" src="assets/brand/orqestra-symbol.png" alt="" width="36" height="36" />
+      <span class="brand-copy"><strong>Orqestra</strong><small>Project &amp; Vendor Platform</small></span>
     </a>
 
     <nav>
@@ -47,8 +47,8 @@
           <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
         </button>
         <div>
-          <strong>Project &amp; Vendor Platform</strong>
-          <span>Delivery operations workspace</span>
+          <strong>Orqestra</strong>
+          <span>Project &amp; Vendor Platform</span>
         </div>
       </div>
 

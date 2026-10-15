@@ -11,14 +11,14 @@ import { AuthService } from '../../core/auth/auth.service';
   template: `
     <section class="auth-page">
       <header class="auth-brand">
-        <span class="brand-mark" aria-hidden="true">PV</span>
-        <span><strong>Project &amp; Vendor</strong><small>Platform</small></span>
+        <img class="brand-symbol" src="assets/brand/orqestra-symbol.png" alt="" width="42" height="42" />
+        <span><strong>Orqestra</strong><small>Project &amp; Vendor Platform</small></span>
       </header>
 
       <div class="auth-content">
         <div class="auth-intro">
-          <p>Operations workspace</p>
-          <h1>Welcome back.</h1>
+          <p>Project &amp; Vendor Platform</p>
+          <h1>Every project, in harmony.</h1>
           <span>Sign in to continue managing projects, vendors, and delivery activity.</span>
         </div>
 
@@ -58,23 +58,18 @@ import { AuthService } from '../../core/auth/auth.service';
       align-items: center;
       gap: .75rem;
     }
-    .brand-mark {
-      width: 2.25rem;
-      height: 2.25rem;
-      display: grid;
-      place-items: center;
-      border-radius: var(--radius-md);
-      background: var(--color-accent);
-      color: #fff;
-      font-size: .72rem;
-      font-weight: 800;
+    .brand-symbol {
+      width: 2.65rem;
+      height: 2.65rem;
+      display: block;
+      object-fit: contain;
     }
     .auth-brand > span:last-child {
       display: grid;
       line-height: 1.15;
     }
     .auth-brand strong {
-      font-size: .9rem;
+      font-size: 1rem;
       font-weight: 650;
     }
     .auth-brand small {
@@ -100,7 +95,7 @@ import { AuthService } from '../../core/auth/auth.service';
       text-transform: uppercase;
     }
     .auth-intro h1 {
-      max-width: 12ch;
+      max-width: 13ch;
       margin: 0 0 1rem;
       font-size: clamp(2.6rem, 6vw, 5rem);
       font-weight: 520;
