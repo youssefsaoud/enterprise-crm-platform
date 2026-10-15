@@ -1,0 +1,71 @@
+<section class="login-page">
+  <aside #visualPanel class="visual-panel" aria-labelledby="login-brand-title">
+    <canvas #sceneCanvas class="orchestration-canvas" aria-hidden="true"></canvas>
+    <div class="aurora-fallback" aria-hidden="true"><span></span><span></span><span></span></div>
+    <div class="visual-shade" aria-hidden="true"></div>
+
+    <header class="brand-lockup">
+      <img src="assets/brand/orqestra-symbol.png" width="56" height="56" alt="" />
+      <span><strong>Orqestra</strong><small>Project &amp; Vendor Platform</small></span>
+    </header>
+
+    <div class="visual-copy">
+      <h1 id="login-brand-title">Every project,<br /><span>in harmony.</span></h1>
+      <p>Coordinate clients, vendors, quotations, and delivery from one composed workspace.</p>
+    </div>
+
+    <p class="visual-footnote">A clearer rhythm for complex work.</p>
+  </aside>
+
+  <main class="login-panel">
+    <section class="login-content" aria-labelledby="login-heading">
+      <div class="login-heading">
+        <img src="assets/brand/orqestra-symbol.png" width="44" height="44" alt="" />
+        <p>Welcome back</p>
+        <h2 id="login-heading">Sign in to Orqestra</h2>
+        <span>Use your work account to continue.</span>
+      </div>
+
+      <form
+        #loginCard
+        class="login-card"
+        [formGroup]="form"
+        (ngSubmit)="submit()"
+        aria-label="Login form"
+        novalidate
+      >
+        <label>
+          Work email
+          <input
+            type="email"
+            formControlName="email"
+            autocomplete="email"
+            placeholder="name@company.com"
+            [attr.aria-invalid]="form.controls.email.invalid && form.controls.email.touched"
+          />
+        </label>
+        <p class="field-error" *ngIf="form.controls.email.invalid && form.controls.email.touched">Enter a valid work email.</p>
+
+        <label>
+          Password
+          <input
+            type="password"
+            formControlName="password"
+            autocomplete="current-password"
+            placeholder="Enter your password"
+            [attr.aria-invalid]="form.controls.password.invalid && form.controls.password.touched"
+          />
+        </label>
+        <p class="field-error" *ngIf="form.controls.password.invalid && form.controls.password.touched">Enter your password.</p>
+
+        <p class="form-error" aria-live="polite">{{ errorMessage }}</p>
+        <button type="submit" [disabled]="form.invalid || loading">
+          <span>{{ loading ? 'Signing in...' : 'Sign in' }}</span>
+          <svg *ngIf="!loading" aria-hidden="true" viewBox="0 0 20 20"><path d="M4 10h11m-4-4 4 4-4 4"></path></svg>
+        </button>
+      </form>
+
+      <p class="access-note">Access is limited to authorized team members.</p>
+    </section>
+  </main>
+</section>
