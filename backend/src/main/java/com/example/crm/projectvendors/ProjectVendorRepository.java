@@ -46,4 +46,14 @@ public interface ProjectVendorRepository extends JpaRepository<ProjectVendor, UU
 
     @Query("select count(pv) from ProjectVendor pv where pv.deletedAt is null and (:canSeeAll = true or pv.project.assignedAssociate.id = :userId) and pv.status in :statuses")
     long countVisibleByStatusIn(@Param("userId") UUID userId, @Param("canSeeAll") boolean canSeeAll, @Param("statuses") java.util.Set<OutreachStatus> statuses);
+
+    @EntityGraph(attributePaths = {"project", "project.assignedAssociate", "vendor", "responsibleAssociate"})
+    @Query("""
+        select pv from ProjectVendor pv
+        where pv.deletedAt is null
+          and pv.project.deletedAt is null
+          and (:canSeeAll = true or pv.project.assignedAssociate.id = :userId)
+          and (:associateId is null or pv.project.assignedAssociate.id = :associateId)
+        """)
+    List<ProjectVendor> findVisibleForDashboard(@Param("userId") UUID userId, @Param("canSeeAll") boolean canSeeAll, @Param("associateId") UUID associateId);
 }

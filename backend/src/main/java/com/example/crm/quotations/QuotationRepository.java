@@ -31,4 +31,14 @@ public interface QuotationRepository extends JpaRepository<Quotation, UUID> {
     @EntityGraph(attributePaths = {"projectVendor", "projectVendor.project", "projectVendor.vendor"})
     @Query("select q from Quotation q where q.projectVendor.deletedAt is null and (:canSeeAll = true or q.projectVendor.project.assignedAssociate.id = :userId)")
     java.util.List<Quotation> findVisible(@Param("userId") UUID userId, @Param("canSeeAll") boolean canSeeAll);
+
+    @EntityGraph(attributePaths = {"projectVendor", "projectVendor.project", "projectVendor.project.assignedAssociate"})
+    @Query("""
+        select q from Quotation q
+        where q.projectVendor.deletedAt is null
+          and q.projectVendor.project.deletedAt is null
+          and (:canSeeAll = true or q.projectVendor.project.assignedAssociate.id = :userId)
+          and (:associateId is null or q.projectVendor.project.assignedAssociate.id = :associateId)
+        """)
+    List<Quotation> findVisibleForDashboard(@Param("userId") UUID userId, @Param("canSeeAll") boolean canSeeAll, @Param("associateId") UUID associateId);
 }

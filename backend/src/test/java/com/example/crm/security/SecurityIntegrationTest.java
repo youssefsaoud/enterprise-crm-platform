@@ -40,6 +40,8 @@ class SecurityIntegrationTest {
 
         mockMvc.perform(get("/api/v1/dashboard/summary").header(HttpHeaders.AUTHORIZATION, bearer))
             .andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/project-dashboard/analytics").param("range", "LAST_90_DAYS").header(HttpHeaders.AUTHORIZATION, bearer))
+            .andExpect(status().isOk());
         mockMvc.perform(get("/api/v1/contacts").header(HttpHeaders.AUTHORIZATION, bearer))
             .andExpect(status().isOk());
         mockMvc.perform(get("/api/v1/companies").header(HttpHeaders.AUTHORIZATION, bearer))
@@ -68,6 +70,12 @@ class SecurityIntegrationTest {
     void authenticatedMissingEndpointReturnsNotFoundInsteadOfForbidden() throws Exception {
         mockMvc.perform(get("/api/v1/missing-route").header(HttpHeaders.AUTHORIZATION, bearerToken()))
             .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void projectAnalyticsRequireAuthentication() throws Exception {
+        mockMvc.perform(get("/api/v1/project-dashboard/analytics"))
+            .andExpect(status().isForbidden());
     }
 
     private String bearerToken() throws Exception {

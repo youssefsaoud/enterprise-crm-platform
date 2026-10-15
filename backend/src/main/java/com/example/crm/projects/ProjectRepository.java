@@ -1,6 +1,7 @@
 package com.example.crm.projects;
 
 import java.util.Optional;
+import java.util.List;
 import java.util.UUID;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.repository.*;
@@ -40,4 +41,13 @@ public interface ProjectRepository extends JpaRepository<Project, UUID> {
 
     @Query("select count(p) from Project p where p.deletedAt is null and (:canSeeAll = true or p.assignedAssociate.id = :userId) and p.deadline < :beforeDate")
     long countVisibleWithDeadlineBefore(@Param("userId") UUID userId, @Param("canSeeAll") boolean canSeeAll, @Param("beforeDate") java.time.LocalDate beforeDate);
+
+    @EntityGraph(attributePaths = {"assignedAssociate"})
+    @Query("""
+        select p from Project p
+        where p.deletedAt is null
+          and (:canSeeAll = true or p.assignedAssociate.id = :userId)
+          and (:associateId is null or p.assignedAssociate.id = :associateId)
+        """)
+    List<Project> findVisibleForDashboard(@Param("userId") UUID userId, @Param("canSeeAll") boolean canSeeAll, @Param("associateId") UUID associateId);
 }
