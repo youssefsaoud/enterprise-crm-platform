@@ -1,1 +1,85 @@
-<section class="page-header"><p>Organization record</p><h1>{{ companyId ? 'Edit organization' : 'New organization' }}</h1></section><p *ngIf="loading" class="muted">Loading organization...</p><p *ngIf="error" class="error-message">{{ error }}</p><form class="entity-form" [formGroup]="form" (ngSubmit)="save()" *ngIf="!loading"><label>Name<input formControlName="name" maxlength="180" required /><small *ngIf="form.controls.name.touched&&form.controls.name.invalid">Name is required.</small></label><fieldset><legend>Organization roles</legend><label class="check-label"><input type="checkbox" [checked]="hasRole('CLIENT')" (change)="toggleRole('CLIENT',$any($event.target).checked)" /> Client</label><label class="check-label"><input type="checkbox" [checked]="hasRole('VENDOR')" (change)="toggleRole('VENDOR',$any($event.target).checked)" /> Vendor</label></fieldset><label>Industry<input formControlName="industry" maxlength="120" /></label><label>Website<input formControlName="website" maxlength="255" placeholder="https://example.com" /></label><label>Phone<input formControlName="phone" maxlength="60" /></label><label>Email<input type="email" formControlName="email" maxlength="180" /></label><label>Address<input formControlName="address" maxlength="255" /></label><div class="form-actions"><button type="submit" [disabled]="saving">{{ saving?'Saving...':'Save organization' }}</button><a routerLink="/companies">Cancel</a></div></form>
+<section class="organization-form-page">
+  <header class="organization-form-header">
+    <p class="eyebrow">Organization record</p>
+    <h1>{{ pageTitle }}</h1>
+    <p class="page-description">{{ pageDescription }}</p>
+  </header>
+
+  <p *ngIf="loading" class="muted">Loading organization...</p>
+  <p *ngIf="error" class="error-message" role="alert">{{ error }}</p>
+
+  <form class="entity-form" [formGroup]="form" (ngSubmit)="save()" *ngIf="!loading">
+    <div class="form-grid">
+      <label class="field-wide">
+        Name
+        <input formControlName="name" maxlength="180" required autocomplete="organization" />
+        <small class="field-error" *ngIf="form.controls.name.touched && form.controls.name.invalid">
+          Name is required.
+        </small>
+      </label>
+
+      <fieldset class="role-fieldset field-wide">
+        <legend>Organization roles</legend>
+        <p>Select one or both roles for this organization.</p>
+        <div class="role-options">
+          <label class="role-option" [class.selected]="hasRole('CLIENT')">
+            <input
+              type="checkbox"
+              [checked]="hasRole('CLIENT')"
+              (change)="toggleRole('CLIENT', $any($event.target).checked)"
+            />
+            <span>
+              <strong>Client</strong>
+              <small>Receives projects and services.</small>
+            </span>
+          </label>
+
+          <label class="role-option" [class.selected]="hasRole('VENDOR')">
+            <input
+              type="checkbox"
+              [checked]="hasRole('VENDOR')"
+              (change)="toggleRole('VENDOR', $any($event.target).checked)"
+            />
+            <span>
+              <strong>Vendor</strong>
+              <small>Supplies services or quotations.</small>
+            </span>
+          </label>
+        </div>
+      </fieldset>
+
+      <label>
+        Industry
+        <input formControlName="industry" maxlength="120" autocomplete="organization-title" />
+      </label>
+
+      <label>
+        Website
+        <input formControlName="website" maxlength="255" placeholder="https://example.com" inputmode="url" />
+      </label>
+
+      <label>
+        Phone
+        <input formControlName="phone" maxlength="60" autocomplete="tel" inputmode="tel" />
+      </label>
+
+      <label>
+        Email
+        <input type="email" formControlName="email" maxlength="180" autocomplete="email" />
+        <small class="field-error" *ngIf="form.controls.email.touched && form.controls.email.invalid">
+          Enter a valid email address.
+        </small>
+      </label>
+
+      <label class="field-wide">
+        Address
+        <input formControlName="address" maxlength="255" autocomplete="street-address" />
+      </label>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" [disabled]="saving">{{ saving ? 'Saving...' : 'Save organization' }}</button>
+      <a routerLink="/companies">Cancel</a>
+    </div>
+  </form>
+</section>
