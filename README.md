@@ -57,7 +57,7 @@ Captured from the running application using existing synthetic development recor
 
 | Layer | Technologies |
 | --- | --- |
-| Backend | Java 17, Spring Boot 3.3.5, Spring Security, Spring Data JPA / Hibernate, Jakarta Validation |
+| Backend | Java 21, Spring Boot 3.3.5, Spring Security, Spring Data JPA / Hibernate, Jakarta Validation |
 | Persistence | PostgreSQL, Flyway migrations V1-V13 |
 | Frontend | Angular 16.2.12, TypeScript 5.1.6, Angular Router, Reactive Forms, RxJS |
 | Visualization | ECharts 6.1.0, Three.js 0.186.1 |
@@ -130,7 +130,7 @@ Authorization is enforced in backend services and the Spring Security filter cha
 
 ### Prerequisites
 
-- JDK 17 and Maven 3.9+
+- JDK 21 and Maven 3.9+ (`JAVA_HOME` must point to JDK 21)
 - Node.js 18.x or 20.x and pnpm; the package declares Node `>=16.14.0 <21.0.0`
 - PostgreSQL, with version 16 matching the included Compose database image
 
