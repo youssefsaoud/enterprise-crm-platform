@@ -1,6 +1,7 @@
 package com.example.crm.documents;
 
 import com.example.crm.security.CrmUserPrincipal;
+import io.swagger.v3.oas.annotations.Operation;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.core.io.Resource;
@@ -19,9 +20,11 @@ public class ProjectDocumentController {
     List<ProjectDocumentResponse> list(@PathVariable UUID projectId, @AuthenticationPrincipal CrmUserPrincipal principal) { return service.list(projectId, principal); }
 
     @PostMapping(value = "/projects/{projectId}/documents", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "Upload a project document", description = "Multipart upload with a required file and optional quotationId. Existing project authorization and file validation apply.")
     ProjectDocumentResponse upload(@PathVariable UUID projectId, @RequestParam(required = false) UUID quotationId, @RequestPart("file") MultipartFile file, @AuthenticationPrincipal CrmUserPrincipal principal) { return service.upload(projectId, quotationId, file, principal); }
 
     @GetMapping("/documents/{id}/download")
+    @Operation(summary = "Download an authorized document", description = "Returns file bytes with the stored media type and a Content-Disposition attachment filename. Existing project authorization applies.")
     ResponseEntity<Resource> download(@PathVariable UUID id, @AuthenticationPrincipal CrmUserPrincipal principal) {
         ProjectDocumentService.StoredDocument document = service.download(id, principal);
         return ResponseEntity.ok().contentType(MediaType.parseMediaType(document.contentType())).header(HttpHeaders.CONTENT_DISPOSITION, ContentDisposition.attachment().filename(document.filename()).build().toString()).body(document.resource());

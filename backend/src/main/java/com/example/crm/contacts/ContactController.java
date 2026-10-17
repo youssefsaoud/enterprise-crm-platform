@@ -29,7 +29,7 @@ public class ContactController {
     Page<ContactResponse> search(
         @RequestParam(required = false) String search,
         @RequestParam(required = false) UUID companyId,
-        Pageable pageable
+        @org.springdoc.core.annotations.ParameterObject Pageable pageable
     ) {
         return contactService.search(search, companyId, pageable);
     }
@@ -40,7 +40,7 @@ public class ContactController {
     }
 
     @GetMapping("/companies/{companyId}/contacts")
-    Page<ContactResponse> forCompany(@PathVariable UUID companyId, Pageable pageable) {
+    Page<ContactResponse> forCompany(@PathVariable UUID companyId, @org.springdoc.core.annotations.ParameterObject Pageable pageable) {
         return contactService.forCompany(companyId, pageable);
     }
 

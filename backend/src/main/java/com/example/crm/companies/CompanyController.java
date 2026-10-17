@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CompanyController {
     private final CompanyService companyService;
     public CompanyController(CompanyService companyService) { this.companyService = companyService; }
-    @GetMapping Page<CompanyResponse> search(@RequestParam(required = false) String search, @RequestParam(required = false) String industry, @RequestParam(required = false) CompanyRole role, Pageable pageable) { return companyService.search(search, industry, role, pageable); }
+    @GetMapping Page<CompanyResponse> search(@RequestParam(required = false) String search, @RequestParam(required = false) String industry, @RequestParam(required = false) CompanyRole role, @org.springdoc.core.annotations.ParameterObject Pageable pageable) { return companyService.search(search, industry, role, pageable); }
     @GetMapping("/{id}") CompanyResponse get(@PathVariable UUID id) { return companyService.get(id); }
     @PostMapping ResponseEntity<CompanyResponse> create(@Valid @RequestBody CompanyCreateRequest request) { CompanyResponse response = companyService.create(request); return ResponseEntity.created(URI.create("/api/v1/companies/" + response.id())).body(response); }
     @PutMapping("/{id}") CompanyResponse update(@PathVariable UUID id, @Valid @RequestBody CompanyUpdateRequest request) { return companyService.update(id, request); }

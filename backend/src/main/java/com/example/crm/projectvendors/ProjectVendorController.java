@@ -26,7 +26,7 @@ public class ProjectVendorController {
     public ProjectVendorController(ProjectVendorService service) { this.service = service; }
 
     @GetMapping("/projects/{projectId}/vendors")
-    Page<ProjectVendorResponse> search(@PathVariable UUID projectId, @RequestParam(required = false) OutreachStatus status, @RequestParam(required = false) String search, Pageable pageable, @AuthenticationPrincipal CrmUserPrincipal principal) { return service.search(projectId, status, search, pageable, principal); }
+    Page<ProjectVendorResponse> search(@PathVariable UUID projectId, @RequestParam(required = false) OutreachStatus status, @RequestParam(required = false) String search, @org.springdoc.core.annotations.ParameterObject Pageable pageable, @AuthenticationPrincipal CrmUserPrincipal principal) { return service.search(projectId, status, search, pageable, principal); }
 
     @PostMapping("/projects/{projectId}/vendors")
     ResponseEntity<ProjectVendorResponse> add(@PathVariable UUID projectId, @Valid @RequestBody ProjectVendorCreateRequest request, @AuthenticationPrincipal CrmUserPrincipal principal) { ProjectVendorResponse response = service.add(projectId, request, principal); return ResponseEntity.created(URI.create("/api/v1/project-vendors/" + response.id())).body(response); }

@@ -1,6 +1,7 @@
 package com.example.crm.quotations;
 
 import com.example.crm.security.CrmUserPrincipal;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
@@ -25,5 +26,6 @@ public class QuotationController {
     QuotationResponse update(@PathVariable UUID id, @Valid @RequestBody QuotationUpdateRequest request, @AuthenticationPrincipal CrmUserPrincipal principal) { return service.update(id, request, principal); }
 
     @PostMapping("/quotations/{id}/select")
+    @Operation(summary = "Select the winning project quotation", description = "Selects this quotation transactionally and replaces any previous selection. Existing role and project-ownership checks apply.")
     QuotationResponse select(@PathVariable UUID id, @AuthenticationPrincipal CrmUserPrincipal principal) { return service.select(id, principal); }
 }

@@ -28,6 +28,18 @@ spring:
     enabled: true
     locations: classpath:db/migration
 
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+    persist-authorization: false
+    doc-expansion: none
+    tags-sorter: alpha
+    supported-submit-methods: [get, post, put, patch, delete]
+  paths-to-match: /api/v1/**
+  override-with-generic-response: false
+
 server:
   port: ${SERVER_PORT:8080}
 

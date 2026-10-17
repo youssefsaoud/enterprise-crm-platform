@@ -36,7 +36,7 @@ public class LeadController {
         @RequestParam(required = false) UUID assigneeId,
         @RequestParam(required = false) UUID companyId,
         @RequestParam(required = false) String keyword,
-        Pageable pageable
+        @org.springdoc.core.annotations.ParameterObject Pageable pageable
     ) {
         return leadService.search(principal, status, source, assigneeId, companyId, keyword, pageable);
     }
@@ -74,7 +74,7 @@ public class LeadController {
     }
 
     @GetMapping("/{id}/history")
-    Page<LeadEventResponse> history(@PathVariable UUID id, @AuthenticationPrincipal CrmUserPrincipal principal, Pageable pageable) {
+    Page<LeadEventResponse> history(@PathVariable UUID id, @AuthenticationPrincipal CrmUserPrincipal principal, @org.springdoc.core.annotations.ParameterObject Pageable pageable) {
         return leadService.history(id, principal, pageable);
     }
 }

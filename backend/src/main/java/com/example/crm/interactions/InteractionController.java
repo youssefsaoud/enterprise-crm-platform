@@ -24,7 +24,7 @@ public class InteractionController {
     InteractionResponse get(@PathVariable UUID id, @AuthenticationPrincipal CrmUserPrincipal principal) { return interactionService.get(id, principal); }
 
     @GetMapping("/interactions")
-    Page<InteractionResponse> search(@AuthenticationPrincipal CrmUserPrincipal principal, @RequestParam(required = false) InteractionType type, @RequestParam(required = false) UUID creatorId, @RequestParam(required = false) UUID companyId, @RequestParam(required = false) UUID contactId, @RequestParam(required = false) UUID leadId, @RequestParam(required = false) UUID opportunityId, @RequestParam(required = false) UUID projectId, @RequestParam(required = false) UUID projectVendorId, @RequestParam(required = false) OffsetDateTime fromDate, @RequestParam(required = false) OffsetDateTime toDate, Pageable pageable) {
+    Page<InteractionResponse> search(@AuthenticationPrincipal CrmUserPrincipal principal, @RequestParam(required = false) InteractionType type, @RequestParam(required = false) UUID creatorId, @RequestParam(required = false) UUID companyId, @RequestParam(required = false) UUID contactId, @RequestParam(required = false) UUID leadId, @RequestParam(required = false) UUID opportunityId, @RequestParam(required = false) UUID projectId, @RequestParam(required = false) UUID projectVendorId, @RequestParam(required = false) OffsetDateTime fromDate, @RequestParam(required = false) OffsetDateTime toDate, @org.springdoc.core.annotations.ParameterObject Pageable pageable) {
         return interactionService.search(principal, type, creatorId, companyId, contactId, leadId, opportunityId, projectId, projectVendorId, fromDate, toDate, pageable);
     }
 
@@ -34,15 +34,15 @@ public class InteractionController {
     ResponseEntity<Void> delete(@PathVariable UUID id, @AuthenticationPrincipal CrmUserPrincipal principal) { interactionService.delete(id, principal); return ResponseEntity.noContent().build(); }
 
     @GetMapping("/leads/{id}/interactions")
-    Page<InteractionResponse> leadTimeline(@PathVariable UUID id, @AuthenticationPrincipal CrmUserPrincipal principal, Pageable pageable) { return interactionService.search(principal, null, null, null, null, id, null, null, null, null, null, pageable); }
+    Page<InteractionResponse> leadTimeline(@PathVariable UUID id, @AuthenticationPrincipal CrmUserPrincipal principal, @org.springdoc.core.annotations.ParameterObject Pageable pageable) { return interactionService.search(principal, null, null, null, null, id, null, null, null, null, null, pageable); }
     @GetMapping("/companies/{id}/interactions")
-    Page<InteractionResponse> companyTimeline(@PathVariable UUID id, @AuthenticationPrincipal CrmUserPrincipal principal, Pageable pageable) { return interactionService.search(principal, null, null, id, null, null, null, null, null, pageable); }
+    Page<InteractionResponse> companyTimeline(@PathVariable UUID id, @AuthenticationPrincipal CrmUserPrincipal principal, @org.springdoc.core.annotations.ParameterObject Pageable pageable) { return interactionService.search(principal, null, null, id, null, null, null, null, null, pageable); }
     @GetMapping("/contacts/{id}/interactions")
-    Page<InteractionResponse> contactTimeline(@PathVariable UUID id, @AuthenticationPrincipal CrmUserPrincipal principal, Pageable pageable) { return interactionService.search(principal, null, null, null, id, null, null, null, null, pageable); }
+    Page<InteractionResponse> contactTimeline(@PathVariable UUID id, @AuthenticationPrincipal CrmUserPrincipal principal, @org.springdoc.core.annotations.ParameterObject Pageable pageable) { return interactionService.search(principal, null, null, null, id, null, null, null, null, pageable); }
     @GetMapping("/opportunities/{id}/interactions")
-    Page<InteractionResponse> opportunityTimeline(@PathVariable UUID id, @AuthenticationPrincipal CrmUserPrincipal principal, Pageable pageable) { return interactionService.search(principal, null, null, null, null, id, null, null, null, pageable); }
+    Page<InteractionResponse> opportunityTimeline(@PathVariable UUID id, @AuthenticationPrincipal CrmUserPrincipal principal, @org.springdoc.core.annotations.ParameterObject Pageable pageable) { return interactionService.search(principal, null, null, null, null, id, null, null, null, pageable); }
     @GetMapping("/projects/{id}/interactions")
-    Page<InteractionResponse> projectTimeline(@PathVariable UUID id, @AuthenticationPrincipal CrmUserPrincipal principal, Pageable pageable) { return interactionService.search(principal, null, null, null, null, null, null, id, null, null, null, pageable); }
+    Page<InteractionResponse> projectTimeline(@PathVariable UUID id, @AuthenticationPrincipal CrmUserPrincipal principal, @org.springdoc.core.annotations.ParameterObject Pageable pageable) { return interactionService.search(principal, null, null, null, null, null, null, id, null, null, null, pageable); }
     @GetMapping("/project-vendors/{id}/interactions")
-    Page<InteractionResponse> projectVendorTimeline(@PathVariable UUID id, @AuthenticationPrincipal CrmUserPrincipal principal, Pageable pageable) { return interactionService.search(principal, null, null, null, null, null, null, null, id, null, null, pageable); }
+    Page<InteractionResponse> projectVendorTimeline(@PathVariable UUID id, @AuthenticationPrincipal CrmUserPrincipal principal, @org.springdoc.core.annotations.ParameterObject Pageable pageable) { return interactionService.search(principal, null, null, null, null, null, null, null, id, null, null, pageable); }
 }

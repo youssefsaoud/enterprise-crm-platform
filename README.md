@@ -221,6 +221,14 @@ Set `SMTP_USERNAME` to your dedicated Gmail sender and `SMTP_PASSWORD` to its Go
 
 Keep `.env.local` and credentials out of Git. Invitation endpoints use request limits, and PostgreSQL stores token hashes rather than plaintext tokens.
 
+### Local API Documentation
+
+With the `dev` profile, open [Swagger UI](http://localhost:8080/swagger-ui/index.html). The OpenAPI JSON is available at [`/v3/api-docs`](http://localhost:8080/v3/api-docs).
+
+Use **Authentication > POST /api/v1/auth/login** with your local account, then paste the returned `accessToken` into **Authorize** without the `Bearer` prefix. Secured operations send the JWT automatically; existing role and ownership rules still apply. Try read-only requests first: writes affect the configured database. Do not share tokens or credentials.
+
+Documentation is disabled outside development, and documentation routes are denied outside the `dev` profile. Authorization is not persisted by Swagger UI. Invitation previews are excluded from the API catalog.
+
 ### Container Assets
 
 The repository also includes Dockerfiles, an nginx frontend configuration, and `docker-compose.yml` for PostgreSQL, API, and frontend services. The local setup above is the primary development path. Compose activates the `prod` profile and does not currently forward SMTP variables or mount document storage; configure those explicitly before using invitation or persistent-file workflows in containers.

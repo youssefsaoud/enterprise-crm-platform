@@ -31,7 +31,7 @@ public class OpportunityController {
     }
 
     @GetMapping
-    Page<OpportunityResponse> search(@AuthenticationPrincipal CrmUserPrincipal principal, @RequestParam(required = false) String search, @RequestParam(required = false) OpportunityStage stage, @RequestParam(required = false) UUID ownerId, @RequestParam(required = false) UUID companyId, @RequestParam(required = false) LocalDate closeDateFrom, @RequestParam(required = false) LocalDate closeDateTo, Pageable pageable) {
+    Page<OpportunityResponse> search(@AuthenticationPrincipal CrmUserPrincipal principal, @RequestParam(required = false) String search, @RequestParam(required = false) OpportunityStage stage, @RequestParam(required = false) UUID ownerId, @RequestParam(required = false) UUID companyId, @RequestParam(required = false) LocalDate closeDateFrom, @RequestParam(required = false) LocalDate closeDateTo, @org.springdoc.core.annotations.ParameterObject Pageable pageable) {
         return opportunityService.search(principal, search, stage, ownerId, companyId, closeDateFrom, closeDateTo, pageable);
     }
 
