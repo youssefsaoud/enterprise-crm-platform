@@ -43,7 +43,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.transaction.support.TransactionTemplate;
 
 @Configuration
-@Profile("dev")
+@Profile("dev & !prod & !docker-demo")
 @ConditionalOnProperty(prefix = "crm.demo.seed", name = "enabled", havingValue = "true")
 public class ProjectDemoDataSeeder {
     static final String MARKER = "orqestra project demo";
@@ -118,6 +118,10 @@ public class ProjectDemoDataSeeder {
         vendors.forEach(company -> company.getRoles().add(CompanyRole.VENDOR));
         companyRepository.saveAll(vendors);
 
+        seedBusinessData(clients, vendors, associates, false);
+    }
+
+    void seedBusinessData(List<Company> clients, List<Company> vendors, List<User> associates, boolean recruiter) {
         LocalDate today = LocalDate.now();
         OffsetDateTime now = OffsetDateTime.now();
         int createdProjects = 0;
@@ -129,17 +133,21 @@ public class ProjectDemoDataSeeder {
         for (int projectIndex = 0; projectIndex < seeds.size(); projectIndex++) {
             ProjectSeed seed = seeds.get(projectIndex);
             Project project = projectRepository.findByReference(seed.reference()).orElse(null);
+            if (project != null && project.getDeletedAt() != null) continue;
             if (project == null) {
                 project = createProject(seed, clients.get(seed.clientIndex() % clients.size()), associates.get(projectIndex % associates.size()), today);
                 createdProjects++;
             }
 
             List<ProjectVendor> assignments = new ArrayList<>();
+            final Project seededProject = project;
             List<List<Quotation>> projectQuotations = new ArrayList<>();
             boolean projectHasSelection = quotationRepository.existsByProjectVendorProjectIdAndSelectedTrue(project.getId());
             for (int vendorIndex = 0; vendorIndex < ASSIGNMENTS_PER_PROJECT; vendorIndex++) {
                 Company vendor = vendors.get((projectIndex * 3 + vendorIndex * 7) % vendors.size());
-                ProjectVendor assignment = projectVendorRepository
+                ProjectVendor assignment = recruiter ? projectVendorRepository.findAll().stream()
+                    .filter(pv -> pv.getProject().getId().equals(seededProject.getId()) && pv.getVendor().getId().equals(vendor.getId()))
+                    .findFirst().orElse(null) : projectVendorRepository
                     .findByProjectIdAndVendorIdAndDeletedAtIsNull(project.getId(), vendor.getId())
                     .orElse(null);
                 if (assignment == null) {
@@ -149,7 +157,7 @@ public class ProjectDemoDataSeeder {
                 assignments.add(assignment);
 
                 List<Quotation> quotations = new ArrayList<>();
-                if (vendorIndex < 2) {
+                if (vendorIndex < 2 && assignment.getDeletedAt() == null && assignment.getStatus() == OutreachStatus.QUOTE_RECEIVED) {
                     Map<Integer, Quotation> existing = quotationRepository
                         .findByProjectVendorIdOrderByRevisionNumberDesc(assignment.getId())
                         .stream()
@@ -177,7 +185,10 @@ public class ProjectDemoDataSeeder {
 
             for (int activityIndex = 0; activityIndex < ACTIVITY_SEEDS.size(); activityIndex++) {
                 ActivitySeed activitySeed = ACTIVITY_SEEDS.get(activityIndex);
-                if (interactionRepository.existsByProjectIdAndSubjectAndDeletedAtIsNull(project.getId(), activitySeed.subject())) continue;
+                final Project currentProject = project;
+                if (recruiter ? interactionRepository.findAll().stream().anyMatch(activity -> activity.getProject() != null
+                    && activity.getProject().getId().equals(currentProject.getId()) && activity.getSubject().equals(activitySeed.subject()))
+                    : interactionRepository.existsByProjectIdAndSubjectAndDeletedAtIsNull(project.getId(), activitySeed.subject())) continue;
                 ProjectVendor assignment = activityIndex >= 2 ? assignments.get((activityIndex - 2) % assignments.size()) : null;
                 Quotation quotation = activityIndex == 4 && !projectQuotations.get(0).isEmpty()
                     ? projectQuotations.get(0).get(projectQuotations.get(0).size() - 1)

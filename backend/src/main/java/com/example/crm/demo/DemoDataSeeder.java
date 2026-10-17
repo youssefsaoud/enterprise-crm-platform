@@ -42,7 +42,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 @Configuration
-@Profile("dev")
+@Profile("dev & !prod & !docker-demo")
 @ConditionalOnProperty(prefix = "crm.demo.seed", name = "enabled", havingValue = "true")
 public class DemoDataSeeder {
     private static final Logger log = LoggerFactory.getLogger(DemoDataSeeder.class);
@@ -139,7 +139,23 @@ public class DemoDataSeeder {
     }
 
     private List<Company> createCompanies(List<User> staff) {
-        String[][] rows = {
+        String[][] rows = companyRows();
+        List<Company> companies = new ArrayList<>();
+        for (int i = 0; i < rows.length; i++) {
+            String slug = slug(rows[i][0]);
+            Company company = new Company(rows[i][0], staff.get((i + 1) % staff.size()));
+            company.setIndustry(rows[i][1]);
+            company.setAddress(rows[i][2]);
+            company.setWebsite("https://" + slug + "." + DEMO_DOMAIN);
+            company.setEmail("hello@" + slug + "." + DEMO_DOMAIN);
+            company.setPhone(phone(i));
+            companies.add(company);
+        }
+        return companyRepository.saveAll(companies);
+    }
+
+    static String[][] companyRows() {
+        return new String[][] {
             {"Atlas Cloud Services", "Cloud Infrastructure", "Casablanca, Morocco"},
             {"Marrakech Retail Group", "Retail", "Marrakech, Morocco"},
             {"Tanger Freight Network", "Logistics", "Tangier, Morocco"},
@@ -171,18 +187,6 @@ public class DemoDataSeeder {
             {"Maghreb Market Hub", "Marketplace", "Casablanca, Morocco"},
             {"Orion Office Systems", "Office Technology", "Stockholm, Sweden"}
         };
-        List<Company> companies = new ArrayList<>();
-        for (int i = 0; i < rows.length; i++) {
-            String slug = slug(rows[i][0]);
-            Company company = new Company(rows[i][0], staff.get((i + 1) % staff.size()));
-            company.setIndustry(rows[i][1]);
-            company.setAddress(rows[i][2]);
-            company.setWebsite("https://" + slug + "." + DEMO_DOMAIN);
-            company.setEmail("hello@" + slug + "." + DEMO_DOMAIN);
-            company.setPhone(phone(i));
-            companies.add(company);
-        }
-        return companyRepository.saveAll(companies);
     }
 
     private List<Contact> createContacts(List<Company> companies) {

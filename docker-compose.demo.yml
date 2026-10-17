@@ -1,0 +1,50 @@
+name: orqestra-demo
+
+services:
+  postgres:
+    extends:
+      file: docker-compose.yml
+      service: postgres
+    environment:
+      POSTGRES_DB: orqestra_demo
+      POSTGRES_USER: orqestra_demo
+      POSTGRES_PASSWORD: LocalDemoDatabase2026!
+    volumes:
+      - demo_postgres_data:/var/lib/postgresql/data
+
+  backend:
+    extends:
+      file: docker-compose.yml
+      service: backend
+    environment:
+      SPRING_PROFILES_ACTIVE: dev,docker-demo
+      CRM_RECRUITER_DEMO_ENABLED: "true"
+      CRM_DB_URL: jdbc:postgresql://postgres:5432/orqestra_demo
+      CRM_DB_USERNAME: orqestra_demo
+      CRM_DB_PASSWORD: LocalDemoDatabase2026!
+      CRM_JWT_SECRET: ""
+      CRM_BOOTSTRAP_ADMIN_ENABLED: "false"
+      CRM_BOOTSTRAP_ADMIN_EMAIL: ""
+      CRM_BOOTSTRAP_ADMIN_PASSWORD: ""
+      CRM_DEMO_SEED_ENABLED: "false"
+      SMTP_USERNAME: ""
+      SMTP_PASSWORD: ""
+      SPRING_MAIL_HOST: 127.0.0.1
+      INVITATION_DELIVERY_MODE: preview
+      INVITATION_PREVIEW_ENABLED: "true"
+    volumes:
+      - demo_uploads:/app/uploads
+
+  frontend:
+    extends:
+      file: docker-compose.yml
+      service: frontend
+
+volumes:
+  demo_postgres_data:
+  demo_uploads:
+
+networks:
+  crm_internal:
+    internal: true
+  crm_edge:

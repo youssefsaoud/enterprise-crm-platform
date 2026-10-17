@@ -2,6 +2,7 @@
 .env
 .env.*
 !.env.example
+!.env.demo
 
 # Java and Spring Boot
 backend/target/

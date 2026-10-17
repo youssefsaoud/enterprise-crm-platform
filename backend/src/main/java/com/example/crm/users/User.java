@@ -45,6 +45,11 @@ public class User extends AuditSupport {
         this.role = role;
     }
 
+    public User(String fullName, String email, String passwordHash, Role role, boolean active) {
+        this(fullName, email, passwordHash, role);
+        this.active = active;
+    }
+
     @Override
     protected void assignIdIfNecessary() {
         if (id == null) {
