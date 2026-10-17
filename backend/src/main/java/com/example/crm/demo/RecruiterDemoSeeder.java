@@ -38,9 +38,10 @@ public class RecruiterDemoSeeder {
 
             User admin = account(users, passwords, "Admin", "admin", Role.ADMIN, true);
             account(users, passwords, "Manager", "manager", Role.MANAGER, true);
-            List<User> associates = List.of(account(users, passwords, "Associate", "associate", Role.SALES_REP, true),
-                account(users, passwords, "Nadia Benali (display only)", "nadia", Role.SALES_REP, false),
-                account(users, passwords, "Karim Idrissi (display only)", "karim", Role.SALES_REP, false));
+            User associate = account(users, passwords, "Associate", "associate", Role.SALES_REP, true);
+            User salma = staffAccount(users, passwords, "Salma El Amrani", "salma");
+            User ilyas = staffAccount(users, passwords, "Ilyas Mansouri", "ilyas");
+            List<User> associates = List.of(associate, salma, associate, ilyas, salma, associate, ilyas);
             List<Company> vendorCompanies = new ArrayList<>();
             List<Company> clients = new ArrayList<>();
             String[][] rows = DemoDataSeeder.companyRows();
@@ -93,6 +94,12 @@ public class RecruiterDemoSeeder {
         String email = local + "@orqestra.demo";
         return users.findByNormalizedEmail(email).orElseGet(() -> users.save(new User(name, email,
             passwords.encode(active ? PUBLIC_PASSWORD : UUID.randomUUID().toString()), role, active)));
+    }
+
+    static User staffAccount(UserRepository users, PasswordEncoder passwords, String name, String local) {
+        String email = local + "@orqestra.demo";
+        return users.findByNormalizedEmail(email).orElseGet(() -> users.save(new User(name, email,
+            passwords.encode(UUID.randomUUID().toString()), Role.SALES_REP, true)));
     }
 
     private static Company company(CompanyRepository companies, User owner, String key, String name, String industry, String address, Set<CompanyRole> roles) {

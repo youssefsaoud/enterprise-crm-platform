@@ -129,7 +129,7 @@ public class ProjectDemoDataSeeder {
         int createdQuotations = 0;
         int createdActivities = 0;
 
-        List<ProjectSeed> seeds = projectSeeds();
+        List<ProjectSeed> seeds = recruiter ? recruiterProjectSeeds() : projectSeeds();
         for (int projectIndex = 0; projectIndex < seeds.size(); projectIndex++) {
             ProjectSeed seed = seeds.get(projectIndex);
             Project project = projectRepository.findByReference(seed.reference()).orElse(null);
@@ -304,6 +304,15 @@ public class ProjectDemoDataSeeder {
             case QUOTE_RECEIVED -> "Commercial response received for review.";
             case QUOTE_DECLINED -> "Vendor declined because of schedule constraints.";
         };
+    }
+
+    static List<ProjectSeed> recruiterProjectSeeds() {
+        List<ProjectSeed> seeds = new ArrayList<>(projectSeeds());
+        seeds.add(seed("ORQ-2026-021", "Campus cybersecurity assessment", "Cybersecurity", "Rabat, Morocco", 74000, "USD", ProjectStatus.IN_PROGRESS, 4, 6, "Assess identity, endpoint, and network controls across the campus.", "Review controls, prioritize findings, and agree a remediation roadmap."));
+        seeds.add(seed("ORQ-2026-022", "Distribution center camera installation", "Physical Security", "Tangier, Morocco", 480000, "MAD", ProjectStatus.IN_PROGRESS, -2, 8, "Extend security camera coverage in loading and storage areas.", "Survey blind spots, install cameras, configure recording, and validate access policies."));
+        seeds.add(seed("ORQ-2026-023", "Customer support software rollout", "Software Implementation", "Casablanca, Morocco", 69000, "EUR", ProjectStatus.PLANNED, 19, 10, "Deploy a unified service desk for regional operations.", "Configure workflows, migrate cases, integrate identity, and train support teams."));
+        seeds.add(seed("ORQ-2026-024", "Regional backup recovery exercise", "IT Infrastructure", "Fes, Morocco", 52000, "USD", ProjectStatus.ON_HOLD, 42, 12, "Validate recovery of critical systems across regional offices.", "Review backups, restore isolated workloads, measure recovery, and record corrective actions."));
+        return List.copyOf(seeds);
     }
 
     static List<ProjectSeed> projectSeeds() {

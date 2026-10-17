@@ -65,6 +65,22 @@ class RecruiterDemoTest {
         assertThat(encoder.matches(RecruiterDemoSeeder.PUBLIC_PASSWORD, staff.getPasswordHash())).isFalse();
     }
 
+    @Test void activeChartStaffHaveUnknownPasswordsAndPreserveExistingState() {
+        var users = mock(UserRepository.class); var encoder = new BCryptPasswordEncoder();
+        when(users.findByNormalizedEmail(anyString())).thenReturn(Optional.empty());
+        when(users.save(any())).thenAnswer(call -> call.getArgument(0));
+        User staff = RecruiterDemoSeeder.staffAccount(users, encoder, "Salma", "salma");
+        assertThat(staff.isActive()).isTrue();
+        assertThat(staff.getRole()).isEqualTo(Role.SALES_REP);
+        assertThat(encoder.matches(RecruiterDemoSeeder.PUBLIC_PASSWORD, staff.getPasswordHash())).isFalse();
+        when(users.findByNormalizedEmail(staff.getEmail())).thenReturn(Optional.of(staff));
+        clearInvocations(users);
+        assertThat(RecruiterDemoSeeder.staffAccount(users, encoder, "Other name", "salma")).isSameAs(staff);
+        verify(users, never()).save(any());
+        assertThat(ProjectDemoDataSeeder.recruiterProjectSeeds()).hasSize(24)
+            .extracting(ProjectDemoDataSeeder.ProjectSeed::reference).doesNotHaveDuplicates();
+    }
+
     @Test void ordinaryAuthenticationRejectsPublicDemoAccountsWithoutQueryingDatabase() {
         var users = mock(UserRepository.class); var env = new MockEnvironment(); env.setActiveProfiles("prod");
         var details = new CrmUserDetailsService(users, env);
