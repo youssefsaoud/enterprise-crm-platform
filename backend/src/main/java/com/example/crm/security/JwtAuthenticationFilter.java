@@ -24,6 +24,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             try {
                 String subject = jwtService.subject(header.substring(7));
                 UserDetails user = userDetailsService.loadUserByUsername(subject);
+                if (!user.isEnabled() || !user.isAccountNonLocked() || !user.isAccountNonExpired() || !user.isCredentialsNonExpired()) {
+                    throw new org.springframework.security.authentication.BadCredentialsException("Account is not available");
+                }
                 UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                 auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(auth);
