@@ -137,8 +137,8 @@ Authorization is enforced in backend services and the Spring Security filter cha
 ### 1. Clone and Configure PostgreSQL
 
 ```bash
-git clone https://github.com/youssefsaoud/enterprise-crm-platform.git
-cd enterprise-crm-platform
+git clone https://github.com/youssefsaoud/orqestra.git
+cd orqestra
 ```
 
 Run as a PostgreSQL administrator on a fresh local installation, choosing your own password:
@@ -164,7 +164,7 @@ if (!(Test-Path .env.local)) { Copy-Item .env.example .env.local }
 cp -n .env.example .env.local
 ```
 
-Set each key once, removing duplicate definitions if copied from the example:
+Configure these keys once in `.env.local`:
 
 | Key | Local configuration |
 | --- | --- |
@@ -229,9 +229,55 @@ Use **Authentication > POST /api/v1/auth/login** with your local account, then p
 
 Documentation is disabled outside development, and documentation routes are denied outside the `dev` profile. Authorization is not persisted by Swagger UI. Invitation previews are excluded from the API catalog.
 
-### Container Assets
+### Docker Compose
 
-The repository also includes Dockerfiles, an nginx frontend configuration, and `docker-compose.yml` for PostgreSQL, API, and frontend services. The local setup above is the primary development path. Compose activates the `prod` profile and does not currently forward SMTP variables or mount document storage; configure those explicitly before using invitation or persistent-file workflows in containers.
+Requires Docker Desktop running Linux containers with Docker Compose v2.24+ (or a compatible Docker Engine/Compose installation). Host Java, Maven, Node, and PostgreSQL are not required for this route.
+
+From a fresh clone, create `.env.local` using the guarded copy command above. Set a private `CRM_DB_PASSWORD`, a random `CRM_JWT_SECRET` of at least 32 characters, and your own `CRM_BOOTSTRAP_ADMIN_EMAIL` and `CRM_BOOTSTRAP_ADMIN_PASSWORD` (at least 12 characters). Set `CRM_BOOTSTRAP_ADMIN_ENABLED=true` for the first startup of the empty container database. The container rejects short JWT secrets or incomplete/short bootstrap credentials. Never use the example placeholders as passwords or publish this file.
+
+```bash
+docker compose --env-file .env.local config --quiet
+docker compose --env-file .env.local up --build -d --wait
+docker compose --env-file .env.local ps
+```
+
+For the shorter `docker compose up --build` form, first set `COMPOSE_ENV_FILES=.env.local` in your shell (`$env:COMPOSE_ENV_FILES='.env.local'` in PowerShell, or `export COMPOSE_ENV_FILES=.env.local` in bash). Compose does not automatically read `.env.local` without this setting or `--env-file`.
+
+| Service | Local address | Container port |
+| --- | --- | --- |
+| Angular / nginx | http://localhost:4201 | 80 |
+| Spring Boot API | http://localhost:8081/api/v1 | 8080 |
+| API health | http://localhost:8081/api/v1/health | 8080 |
+| Swagger UI | http://localhost:8081/swagger-ui/index.html | 8080 |
+| PostgreSQL | Internal Compose network only | 5432 |
+
+Published ports bind only to `127.0.0.1`. Change `ORQ_FRONTEND_PORT` or `ORQ_BACKEND_PORT` if needed. nginx forwards same-origin `/api` requests to the backend, so no frontend secrets or build-time API credentials are needed. Compose sets CORS and invitation activation URLs to its frontend port, overriding native-development URLs in `.env.local`.
+
+PostgreSQL must become healthy before the backend starts; the frontend waits for backend health. Flyway applies migrations V1-V13 on an empty container database and validates them on later starts. Hibernate validates the resulting schema. Compose uses the `dev` profile with demo seeding disabled; Swagger is local-only through the loopback binding. It does not connect to or reset your native `crm_dev` database.
+
+Sign in with the private Admin account chosen above. After it exists, set `CRM_BOOTSTRAP_ADMIN_ENABLED=false` in your local configuration and rerun `up -d --wait`. Bootstrap does not overwrite an existing Admin or reset its password.
+
+Email is optional for startup. Leave `SMTP_USERNAME` and `SMTP_PASSWORD` empty until invitations are needed, then configure the dedicated Gmail sender and app password described above. Compose forwards these only to the backend at runtime. Invitation delivery requires working SMTP, or explicitly enabled development preview mode; no email is sent on startup.
+
+| Named volume (default project `orqestra`) | Purpose | Container path |
+| --- | --- | --- |
+| `orqestra_crm_postgres_data` | PostgreSQL records and Flyway history | `/var/lib/postgresql/data` |
+| `orqestra_crm_uploads` | Uploaded project documents and quotation attachments | `/app/uploads` |
+
+Compose sets `CRM_DOCUMENTS_STORAGE_PATH=/app/uploads` to match the upload volume. Changing database passwords in `.env.local` does not change credentials in an already-initialized PostgreSQL volume. Keep the original values, or rotate them deliberately inside PostgreSQL. Back up the database and upload volume together.
+
+```bash
+# Stop containers without removing them or their data
+docker compose --env-file .env.local stop
+
+# Start again, preserving records and uploaded files
+docker compose --env-file .env.local up -d --wait
+
+# Remove this project's containers and networks; retain named volumes
+docker compose --env-file .env.local down
+```
+
+Do not remove the named volumes when you need to retain data. This is a local-development setup, not a public deployment configuration.
 
 ## Testing
 
