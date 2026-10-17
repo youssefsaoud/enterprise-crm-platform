@@ -22,12 +22,12 @@
 
   <ng-container *ngIf="project as item">
     <nav class="project-tabs" aria-label="Project sections">
-      <button type="button" [class.active]="activeTab === 'overview'" [attr.aria-selected]="activeTab === 'overview'" (click)="setTab('overview')">Overview</button>
-      <button type="button" [class.active]="activeTab === 'scope'" [attr.aria-selected]="activeTab === 'scope'" (click)="setTab('scope')">Scope of work</button>
-      <button type="button" [class.active]="activeTab === 'vendors'" [attr.aria-selected]="activeTab === 'vendors'" (click)="setTab('vendors')">Vendors <span>{{ vendors.length }}</span></button>
-      <button type="button" [class.active]="activeTab === 'quotations'" [attr.aria-selected]="activeTab === 'quotations'" (click)="setTab('quotations')">Quotations <span>{{ allQuotations.length }}</span></button>
-      <button type="button" [class.active]="activeTab === 'activities'" [attr.aria-selected]="activeTab === 'activities'" (click)="setTab('activities')">Activities</button>
-      <button type="button" [class.active]="activeTab === 'documents'" [attr.aria-selected]="activeTab === 'documents'" (click)="setTab('documents')">Documents <span>{{ documents.length }}</span></button>
+      <button type="button" [class.active]="activeTab === 'overview'" [attr.aria-pressed]="activeTab === 'overview'" (click)="setTab('overview')">Overview</button>
+      <button type="button" [class.active]="activeTab === 'scope'" [attr.aria-pressed]="activeTab === 'scope'" (click)="setTab('scope')">Scope of work</button>
+      <button type="button" [class.active]="activeTab === 'vendors'" [attr.aria-pressed]="activeTab === 'vendors'" (click)="setTab('vendors')">Vendors <span>{{ vendors.length }}</span></button>
+      <button type="button" [class.active]="activeTab === 'quotations'" [attr.aria-pressed]="activeTab === 'quotations'" (click)="setTab('quotations')">Quotations <span>{{ allQuotations.length }}</span></button>
+      <button type="button" [class.active]="activeTab === 'activities'" [attr.aria-pressed]="activeTab === 'activities'" (click)="setTab('activities')">Activities</button>
+      <button type="button" [class.active]="activeTab === 'documents'" [attr.aria-pressed]="activeTab === 'documents'" (click)="setTab('documents')">Documents <span>{{ documents.length }}</span></button>
     </nav>
 
     <section class="tab-panel" [hidden]="activeTab !== 'overview'">
@@ -42,7 +42,7 @@
             <div><dt>Category</dt><dd>{{ item.category || 'Not specified' }}</dd></div>
             <div><dt>Location</dt><dd>{{ item.location || 'Not specified' }}</dd></div>
             <div><dt>Deadline</dt><dd>{{ item.deadline ? (item.deadline | date:'mediumDate') : 'No deadline' }}</dd></div>
-            <div><dt>Estimated budget</dt><dd>{{ item.estimatedBudget === null || item.estimatedBudget === undefined ? 'Not specified' : (item.estimatedBudget | number:'1.0-2') + ' ' + item.currencyCode }}</dd></div>
+            <div><dt>Estimated budget</dt><dd><app-money [amount]="item.estimatedBudget" [code]="item.currencyCode" empty="Not specified"></app-money></dd></div>
             <div><dt>Assigned associate</dt><dd>{{ item.assignedAssociateName || 'Unassigned' }}</dd></div>
           </dl>
         </article>
@@ -57,6 +57,11 @@
           </div>
         </article>
       </div>
+    </section>
+
+    <section class="project-history" aria-label="Project timestamps" *ngIf="activeTab === 'overview'">
+      <div><span>Created</span><time [attr.datetime]="item.createdAt">{{ item.createdAt | date:'medium' }}</time></div>
+      <div><span>Last updated</span><time [attr.datetime]="item.updatedAt">{{ item.updatedAt | date:'medium' }}</time></div>
     </section>
 
     <section class="tab-panel" [hidden]="activeTab !== 'scope'">
@@ -166,7 +171,7 @@
           <div class="selected-quote" *ngIf="selectedQuotation as selected">
             <span>Selected quotation</span>
             <strong>{{ selected.vendorName }}</strong>
-            <b>{{ selected.amount | number:'1.0-2' }} {{ selected.currencyCode }}</b>
+            <b><app-money [amount]="selected.amount" [code]="selected.currencyCode"></app-money></b>
             <small>Revision {{ selected.revisionNumber }} · received {{ selected.receivedDate | date:'mediumDate' }}</small>
           </div>
 
@@ -177,7 +182,7 @@
               <tbody>
                 <tr *ngFor="let quote of allQuotations" [class.selected-row]="quote.selected">
                   <td><strong>{{ quote.vendorName }}</strong><small>Revision {{ quote.revisionNumber }}</small></td>
-                  <td>{{ quote.amount | number:'1.0-2' }} {{ quote.currencyCode }}</td>
+                  <td><app-money [amount]="quote.amount" [code]="quote.currencyCode"></app-money></td>
                   <td>{{ quote.receivedDate | date:'mediumDate' }}</td>
                   <td>{{ quote.validUntil ? (quote.validUntil | date:'mediumDate') : 'Not set' }}</td>
                   <td><span class="status" [class.selected]="quote.selected">{{ quoteStatusLabel(quote.status) }}</span></td>

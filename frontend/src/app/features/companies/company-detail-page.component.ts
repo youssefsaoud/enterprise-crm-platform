@@ -1,3 +1,4 @@
+import { OrganizationRelationships, OrganizationRelationshipsComponent } from './organization-relationships.component';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -13,7 +14,7 @@ import { CompanyService } from './company.service';
 @Component({
   selector: 'app-company-detail-page',
   standalone: true,
-  imports: [CommonModule, RouterLink, InteractionTimelineComponent],
+  imports: [CommonModule, RouterLink, InteractionTimelineComponent, OrganizationRelationshipsComponent],
   templateUrl: './company-detail-page.component.html',
   styleUrls: ['./company-detail-page.component.css']
 })
@@ -21,6 +22,7 @@ export class CompanyDetailPageComponent implements OnInit {
   readonly currentUser$ = this.authService.currentUser$;
   company: Company | null = null;
   contacts: Contact[] = [];
+  relationships?: OrganizationRelationships;
   loading = false;
   error = '';
 
@@ -42,6 +44,7 @@ export class CompanyDetailPageComponent implements OnInit {
     this.companyService.get(id).subscribe({
       next: (company) => {
         this.company = company;
+        this.companyService.relationships([company.id]).subscribe({ next: rows => this.relationships = rows[0], error: () => this.relationships = undefined });
         this.loadContacts(company.id);
         this.loading = false;
       },

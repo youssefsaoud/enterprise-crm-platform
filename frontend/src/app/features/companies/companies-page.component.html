@@ -21,7 +21,7 @@
     <tbody>
       <tr *ngFor="let company of companies">
         <td><a class="company-name" [routerLink]="['/companies', company.id]"><strong>{{ company.name }}</strong><small>{{ company.address || 'Address not specified' }}</small></a></td>
-        <td><span class="role-list"><span class="role-badge" *ngFor="let companyRole of company.roles">{{ roleLabel(companyRole) }}</span></span></td>
+        <td><app-organization-relationships [roles]="company.roles" [relationships]="relationships.get(company.id)"></app-organization-relationships></td>
         <td>{{ company.industry || 'Not specified' }}</td>
         <td><a *ngIf="company.email; else noEmail" [href]="'mailto:' + company.email">{{ company.email }}</a><ng-template #noEmail><span class="muted">Not provided</span></ng-template></td>
         <td>{{ company.phone || 'Not provided' }}</td>

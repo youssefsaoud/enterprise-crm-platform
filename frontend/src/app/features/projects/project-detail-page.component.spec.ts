@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { of } from 'rxjs';
 
 import { AuthService } from '../../core/auth/auth.service';
@@ -15,7 +16,7 @@ import { QuotationService } from './quotation.service';
 describe('ProjectDetailPageComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ProjectDetailPageComponent, RouterTestingModule],
+      imports: [ProjectDetailPageComponent, RouterTestingModule, HttpClientTestingModule],
       providers: [
         { provide: AuthService, useValue: { currentUser$: of({ id: 'user-1', fullName: 'Admin', role: 'ADMIN' }), currentUser: () => ({ role: 'ADMIN' }) } },
         { provide: UserService, useValue: {} },
@@ -41,5 +42,25 @@ describe('ProjectDetailPageComponent', () => {
     expect(component.activeTab).toBe('vendors');
     expect(component.filteredVendors.map(vendor => vendor.id)).toEqual(['vendor-2']);
     expect(component.vendors.length).toBe(2);
+  });
+
+  it('opens each summary destination with native buttons and shows only recorded timestamps', () => {
+    spyOn(ProjectDetailPageComponent.prototype, 'ngOnInit').and.stub();
+    const fixture = TestBed.createComponent(ProjectDetailPageComponent);
+    const component = fixture.componentInstance;
+    component.project = { id: 'project', name: 'Demo project', reference: 'DEMO', clientId: 'client', clientName: 'Client', status: 'PLANNED', currencyCode: 'EUR', createdAt: '2026-10-01T09:00:00Z', updatedAt: '2026-10-16T15:30:00Z' };
+    component.quoteForm.controls.notes.setValue('Unsaved quotation note');
+    fixture.detectChanges();
+    const times = fixture.nativeElement.querySelectorAll('.project-history time');
+    expect(times.length).toBe(2);
+    expect(times[0].getAttribute('datetime')).toBe(component.project.createdAt);
+    expect(times[1].getAttribute('datetime')).toBe(component.project.updatedAt);
+    for (const [index, tab] of ['vendors', 'quotations', 'documents'].entries()) {
+      component.setTab('overview'); fixture.detectChanges();
+      const button: HTMLButtonElement = fixture.nativeElement.querySelectorAll('.overview-stats button')[index];
+      expect(button.type).toBe('button'); button.click(); fixture.detectChanges();
+      expect(component.activeTab).toBe(tab);
+      expect(component.quoteForm.controls.notes.value).toBe('Unsaved quotation note');
+    }
   });
 });

@@ -4,10 +4,12 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { PageResponse } from '../../core/api/page.model';
 import { Project, ProjectPayload, ProjectSearchParams } from './project.models';
+export interface ProjectStatusCounts { total: number; statuses: { status: import('./project.models').ProjectStatus; label: string; count: number }[]; }
 @Injectable({ providedIn: 'root' })
 export class ProjectService {
   private readonly baseUrl = `${environment.apiBaseUrl}/projects`;
   constructor(private readonly http: HttpClient) {}
+  statusCounts(params: ProjectSearchParams = {}): Observable<ProjectStatusCounts> { return this.http.get<ProjectStatusCounts>(`${this.baseUrl}/status-counts`, { params: this.toParams(params).delete('status').delete('page').delete('size').delete('sort') }); }
   search(params: ProjectSearchParams = {}): Observable<PageResponse<Project>> { return this.http.get<PageResponse<Project>>(this.baseUrl, { params: this.toParams(params) }); }
   get(id: string): Observable<Project> { return this.http.get<Project>(`${this.baseUrl}/${id}`); }
   create(payload: ProjectPayload): Observable<Project> { return this.http.post<Project>(this.baseUrl, this.clean(payload)); }

@@ -20,6 +20,18 @@ public class ProjectService {
     private final UserRepository userRepository;
     public ProjectService(ProjectRepository projectRepository, CompanyRepository companyRepository, UserRepository userRepository) { this.projectRepository = projectRepository; this.companyRepository = companyRepository; this.userRepository = userRepository; }
     @Transactional(readOnly = true) @PreAuthorize("hasAnyRole('ADMIN','MANAGER','SALES_REP')")
+    public ProjectStatusCounts statusCounts(CrmUserPrincipal principal, String search, UUID clientId, UUID associateId) {
+        boolean all = canSeeAll(principal);
+        Map<ProjectStatus, Long> counts = new EnumMap<>(ProjectStatus.class);
+        projectRepository.statusCounts(principal.id(), all, normalize(search), clientId, all ? associateId : principal.id())
+            .forEach(row -> counts.put(row.getStatus(), row.getCount()));
+        List<ProjectStatusSummary> statuses = Arrays.stream(ProjectStatus.values()).map(status -> {
+            String label = status.name().replace('_', ' ').toLowerCase(Locale.ROOT);
+            return new ProjectStatusSummary(status, Character.toUpperCase(label.charAt(0)) + label.substring(1), counts.getOrDefault(status, 0L));
+        }).toList();
+        return new ProjectStatusCounts(statuses.stream().mapToLong(ProjectStatusSummary::count).sum(), statuses);
+    }
+    @Transactional(readOnly = true) @PreAuthorize("hasAnyRole('ADMIN','MANAGER','SALES_REP')")
     public Page<ProjectResponse> search(CrmUserPrincipal principal, String search, ProjectStatus status, UUID clientId, UUID assignedAssociateId, Pageable pageable) { boolean all = canSeeAll(principal); UUID visibleAssociate = all ? assignedAssociateId : principal.id(); return projectRepository.searchVisible(principal.id(), all, normalize(search), status, clientId, visibleAssociate, pageable).map(ProjectResponse::from); }
     @Transactional(readOnly = true) @PreAuthorize("hasAnyRole('ADMIN','MANAGER','SALES_REP')")
     public ProjectResponse get(UUID id, CrmUserPrincipal principal) { return ProjectResponse.from(ensureVisible(findActive(id), principal)); }

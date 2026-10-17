@@ -11,6 +11,11 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController @RequestMapping("/api/v1/projects")
 public class ProjectController {
+    @GetMapping("/status-counts")
+    ProjectStatusCounts statusCounts(@AuthenticationPrincipal CrmUserPrincipal principal, @RequestParam(required = false) String search,
+        @RequestParam(required = false) UUID clientId, @RequestParam(required = false) UUID assignedAssociateId) {
+        return projectService.statusCounts(principal, search, clientId, assignedAssociateId);
+    }
     private final ProjectService projectService;
     public ProjectController(ProjectService projectService) { this.projectService = projectService; }
     @GetMapping Page<ProjectResponse> search(@AuthenticationPrincipal CrmUserPrincipal principal, @RequestParam(required = false) String search, @RequestParam(required = false) ProjectStatus status, @RequestParam(required = false) UUID clientId, @RequestParam(required = false) UUID assignedAssociateId, @org.springdoc.core.annotations.ParameterObject Pageable pageable) { return projectService.search(principal, search, status, clientId, assignedAssociateId, pageable); }

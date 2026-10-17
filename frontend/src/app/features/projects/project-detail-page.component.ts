@@ -1,3 +1,4 @@
+import { MoneyComponent } from '../../shared/money.component';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -23,7 +24,7 @@ type ProjectTab = 'overview' | 'scope' | 'vendors' | 'quotations' | 'activities'
 @Component({
   selector: 'app-project-detail-page',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, InteractionTimelineComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, InteractionTimelineComponent, MoneyComponent],
   templateUrl: './project-detail-page.component.html',
   styleUrls: ['./project-detail-page.component.css']
 })

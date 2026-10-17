@@ -8,6 +8,19 @@ import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 
 public interface ProjectRepository extends JpaRepository<Project, UUID> {
+    interface StatusCount { ProjectStatus getStatus(); long getCount(); }
+
+    @Query("""
+        select p.status as status, count(p) as count from Project p
+        where p.deletedAt is null
+          and (:canSeeAll = true or p.assignedAssociate.id = :userId)
+          and (:search is null or lower(p.name) like lower(concat('%', cast(:search as string), '%')) or lower(p.reference) like lower(concat('%', cast(:search as string), '%')))
+          and (:clientId is null or p.client.id = :clientId)
+          and (:associateId is null or p.assignedAssociate.id = :associateId)
+        group by p.status
+        """)
+    List<StatusCount> statusCounts(UUID userId, boolean canSeeAll, String search, UUID clientId, UUID associateId);
+
     @EntityGraph(attributePaths = {"client", "assignedAssociate"})
     @Query(value = """
         select p from Project p
