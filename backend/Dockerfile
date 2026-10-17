@@ -6,7 +6,13 @@ RUN mvn -B -DskipTests package
 
 FROM eclipse-temurin:21-jre
 WORKDIR /app
-ENV SPRING_PROFILES_ACTIVE=prod
+RUN command -v curl \
+    && useradd --system --uid 10001 --create-home orqestra \
+    && mkdir -p /app/uploads \
+    && chown orqestra:orqestra /app/uploads
 COPY --from=build /workspace/target/*.jar /app/crm-api.jar
+COPY docker-entrypoint.sh /app/docker-entrypoint.sh
+RUN sed -i 's/\r$//' /app/docker-entrypoint.sh
+USER orqestra
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "/app/crm-api.jar"]
+ENTRYPOINT ["sh", "/app/docker-entrypoint.sh"]

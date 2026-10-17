@@ -1,12 +1,14 @@
+name: orqestra
+
 services:
   postgres:
     image: postgres:16-alpine
     environment:
-      POSTGRES_DB: ${CRM_POSTGRES_DB:-crm_prod}
+      POSTGRES_DB: ${CRM_POSTGRES_DB:-crm_dev}
       POSTGRES_USER: ${CRM_DB_USERNAME:-crm_app}
       POSTGRES_PASSWORD: ${CRM_DB_PASSWORD:?CRM_DB_PASSWORD is required}
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${CRM_DB_USERNAME:-crm_app} -d ${CRM_POSTGRES_DB:-crm_prod}"]
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -22,18 +24,34 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      SPRING_PROFILES_ACTIVE: prod
-      CRM_DB_URL: jdbc:postgresql://postgres:5432/${CRM_POSTGRES_DB:-crm_prod}
+      SPRING_PROFILES_ACTIVE: dev
+      CRM_DB_URL: jdbc:postgresql://postgres:5432/${CRM_POSTGRES_DB:-crm_dev}
       CRM_DB_USERNAME: ${CRM_DB_USERNAME:-crm_app}
       CRM_DB_PASSWORD: ${CRM_DB_PASSWORD:?CRM_DB_PASSWORD is required}
-      CRM_CORS_ALLOWED_ORIGIN: ${CRM_CORS_ALLOWED_ORIGIN:-http://localhost:4200}
+      CRM_CORS_ALLOWED_ORIGIN: http://localhost:${ORQ_FRONTEND_PORT:-4201}
       CRM_JWT_SECRET: ${CRM_JWT_SECRET:?CRM_JWT_SECRET is required}
       CRM_JWT_ISSUER: ${CRM_JWT_ISSUER:-crm-api}
       CRM_BOOTSTRAP_ADMIN_ENABLED: ${CRM_BOOTSTRAP_ADMIN_ENABLED:-false}
-      CRM_BOOTSTRAP_ADMIN_EMAIL: ${CRM_BOOTSTRAP_ADMIN_EMAIL:-admin@example.com}
-      CRM_BOOTSTRAP_ADMIN_PASSWORD: ${CRM_BOOTSTRAP_ADMIN_PASSWORD:-change-me}
+      CRM_BOOTSTRAP_ADMIN_EMAIL: ${CRM_BOOTSTRAP_ADMIN_EMAIL:-}
+      CRM_BOOTSTRAP_ADMIN_PASSWORD: ${CRM_BOOTSTRAP_ADMIN_PASSWORD:-}
+      CRM_DEMO_SEED_ENABLED: "false"
+      CRM_DOCUMENTS_STORAGE_PATH: /app/uploads
+      SMTP_USERNAME: ${SMTP_USERNAME:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      FRONTEND_BASE_URL: http://localhost:${ORQ_FRONTEND_PORT:-4201}
+      INVITATION_TTL_HOURS: ${INVITATION_TTL_HOURS:-24}
+      INVITATION_DELIVERY_MODE: ${INVITATION_DELIVERY_MODE:-smtp}
+      INVITATION_PREVIEW_ENABLED: ${INVITATION_PREVIEW_ENABLED:-false}
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "http://localhost:8080/api/v1/health"]
+      interval: 10s
+      timeout: 5s
+      start_period: 60s
+      retries: 6
+    volumes:
+      - crm_uploads:/app/uploads
     ports:
-      - "8080:8080"
+      - "127.0.0.1:${ORQ_BACKEND_PORT:-8081}:8080"
     networks:
       - crm_internal
       - crm_edge
@@ -42,14 +60,21 @@ services:
     build:
       context: ./frontend
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--spider", "http://127.0.0.1/"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
     ports:
-      - "4200:80"
+      - "127.0.0.1:${ORQ_FRONTEND_PORT:-4201}:80"
     networks:
       - crm_edge
 
 volumes:
   crm_postgres_data:
+  crm_uploads:
 
 networks:
   crm_internal:
