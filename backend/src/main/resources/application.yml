@@ -45,6 +45,8 @@ springdoc:
   override-with-generic-response: false
 
 server:
+  tomcat:
+    max-swallow-size: 12MB
   port: ${SERVER_PORT:8080}
 
 management:
