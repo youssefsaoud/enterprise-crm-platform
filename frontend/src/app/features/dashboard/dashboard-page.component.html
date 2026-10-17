@@ -7,13 +7,13 @@
   <div class="header-actions">
     <label class="compact-filter">Trend period
       <select [value]="selectedDateRange" (change)="selectDateRange($any($event.target).value)">
-        <option *ngFor="let range of dateRanges" [value]="range.value">{{ range.label }}</option>
+        <option *ngFor="let range of dateRanges" [value]="range.value" [selected]="selectedDateRange === range.value">{{ range.label }}</option>
       </select>
     </label>
     <label class="compact-filter" *ngIf="canFilterAssociates">Associate
       <select [value]="selectedAssociateId" (change)="selectAssociate($any($event.target).value)">
-        <option value="">All associates</option>
-        <option *ngFor="let associate of associates" [value]="associate.id">{{ associate.fullName }}</option>
+        <option value="" [selected]="!selectedAssociateId">All associates</option>
+        <option *ngFor="let associate of associates" [value]="associate.id" [selected]="selectedAssociateId === associate.id">{{ associate.fullName }}</option>
       </select>
     </label>
     <button class="refresh-button" type="button" (click)="load()" [disabled]="loading" aria-label="Refresh dashboard">
@@ -113,7 +113,7 @@
     </div>
     <div>
       <span>Active quotation value</span>
-      <strong>{{ displayTotals(data.quotationValueByCurrency) }}</strong>
+      <strong class="financial-totals"><app-money *ngFor="let total of currencyTotals(data.quotationValueByCurrency)" [amount]="total.amount" [code]="total.currencyCode"></app-money><span *ngIf="!currencyTotals(data.quotationValueByCurrency).length">No recorded value</span></strong>
       <small>Different currencies are never combined.</small>
     </div>
     <div class="currency-filter" aria-label="Quotation currency">
@@ -144,12 +144,12 @@
     <div class="legacy-kpis">
       <a routerLink="/leads"><span>Total leads</span><strong>{{ data.totalLeads | number }}</strong></a>
       <a routerLink="/opportunities"><span>Open opportunities</span><strong>{{ data.openOpportunities | number }}</strong></a>
-      <a routerLink="/opportunities"><span>Open pipeline</span><strong>{{ displayTotals(data.openPipelineValue) }}</strong></a>
+      <a routerLink="/opportunities"><span>Open pipeline</span><strong class="financial-totals"><app-money *ngFor="let total of currencyTotals(data.openPipelineValue)" [amount]="total.amount" [code]="total.currencyCode"></app-money></strong></a>
       <a routerLink="/activities"><span>Recent interactions</span><strong>{{ data.recentInteractionCount | number }}</strong></a>
     </div>
     <div class="legacy-grid">
       <article class="legacy-panel"><div class="panel-header"><h2>Lead status</h2><a routerLink="/leads">Open</a></div><ul class="status-list" *ngIf="data.leadsByStatus.length > 0; else emptyLeads"><li *ngFor="let item of data.leadsByStatus"><span>{{ statusLabel(item.status) }}</span><strong>{{ item.count | number }}</strong></li></ul><ng-template #emptyLeads><p class="empty-copy">No lead data yet.</p></ng-template></article>
-      <article class="legacy-panel"><div class="panel-header"><h2>Pipeline by stage</h2><a routerLink="/opportunities">Open</a></div><div class="pipeline-list" *ngIf="groupedPipeline.length > 0; else emptyPipeline"><div class="pipeline-row" *ngFor="let item of groupedPipeline"><div><strong>{{ statusLabel(item.stage) }}</strong><span>{{ item.count }} opportunities</span></div><span>{{ displayTotals(item.totals) }}</span></div></div><ng-template #emptyPipeline><p class="empty-copy">No opportunities for this currency.</p></ng-template></article>
+      <article class="legacy-panel"><div class="panel-header"><h2>Pipeline by stage</h2><a routerLink="/opportunities">Open</a></div><div class="pipeline-list" *ngIf="groupedPipeline.length > 0; else emptyPipeline"><div class="pipeline-row" *ngFor="let item of groupedPipeline"><div><strong>{{ statusLabel(item.stage) }}</strong><span>{{ item.count }} opportunities</span></div><span class="financial-totals"><app-money *ngFor="let total of currencyTotals(item.totals)" [amount]="total.amount" [code]="total.currencyCode"></app-money></span></div></div><ng-template #emptyPipeline><p class="empty-copy">No opportunities for this currency.</p></ng-template></article>
     </div>
     <article class="legacy-panel"><div class="panel-header"><h2>Recent CRM activity</h2><a routerLink="/activities">All activity</a></div><ul class="activity-feed" *ngIf="activities.length > 0; else emptyActivity"><li *ngFor="let activity of activities | slice:0:6"><span class="activity-marker" aria-hidden="true"></span><div><a [routerLink]="activityLink(activity)">{{ activity.subject }}</a><span>{{ statusLabel(activity.type) }} · {{ activity.authorName }} · {{ activity.occurredAt | date:'short' }}</span></div><small>{{ activityTarget(activity) }}</small></li></ul><ng-template #emptyActivity><p class="empty-copy">No activity has been logged yet.</p></ng-template></article>
   </div>

@@ -1,3 +1,4 @@
+import { MoneyComponent } from '../../shared/money.component';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -9,7 +10,7 @@ import { Opportunity, OpportunityStage } from './opportunity.models';
 import { OpportunityService } from './opportunity.service';
 import { InteractionTimelineComponent } from '../interactions/interaction-timeline.component';
 
-@Component({ selector: 'app-opportunity-detail-page', standalone: true, imports: [CommonModule, ReactiveFormsModule, RouterLink, InteractionTimelineComponent], templateUrl: './opportunity-detail-page.component.html', styleUrls: ['./opportunity-detail-page.component.css'] })
+@Component({ selector: 'app-opportunity-detail-page', standalone: true, imports: [MoneyComponent, CommonModule, ReactiveFormsModule, RouterLink, InteractionTimelineComponent], templateUrl: './opportunity-detail-page.component.html', styleUrls: ['./opportunity-detail-page.component.css'] })
 export class OpportunityDetailPageComponent implements OnInit {
   readonly currentUser$ = this.authService.currentUser$;
   readonly stages: OpportunityStage[] = ['PROSPECTING', 'QUALIFICATION', 'PROPOSAL', 'NEGOTIATION', 'CLOSED_WON', 'CLOSED_LOST'];

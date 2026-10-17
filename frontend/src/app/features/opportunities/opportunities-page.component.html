@@ -9,7 +9,7 @@
 <section class="pipeline-board" aria-label="Pipeline summary">
   <article *ngFor="let stage of stages">
     <h2>{{ label(stage) }}</h2>
-    <p *ngFor="let item of totalFor(stage)">{{ item.count }} · {{ item.totalAmount | number:'1.0-2' }} {{ item.currencyCode }}</p>
+    <p *ngFor="let item of totalFor(stage)">{{ item.count }} · <app-money [amount]="item.totalAmount" [code]="item.currencyCode"></app-money></p>
     <p *ngIf="totalFor(stage).length === 0">0 opportunities</p>
   </article>
 </section>
@@ -50,7 +50,7 @@
         <td>{{ opportunity.companyName }}</td>
         <td><span class="pill">{{ label(opportunity.stage) }}</span></td>
         <td>{{ opportunity.ownerName || '-' }}</td>
-        <td>{{ opportunity.amount | number:'1.0-2' }} {{ opportunity.currencyCode }}</td>
+        <td><app-money [amount]="opportunity.amount" [code]="opportunity.currencyCode"></app-money></td>
         <td>{{ opportunity.expectedCloseDate || '-' }}</td>
         <td><a [routerLink]="['/opportunities', opportunity.id]">Open</a></td>
       </tr>

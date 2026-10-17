@@ -2,6 +2,8 @@
 @import '@fontsource-variable/geist/wght.css';
 
 :root {
+  --currency-eur-bg:rgba(35,131,255,.12);--currency-eur-text:#93c5fd;--currency-eur-border:#315680;
+  --currency-mad-bg:rgba(70,201,138,.1);--currency-mad-text:#83dfac;--currency-mad-border:#315e48;
   --color-bg:#0e0f12;--color-sidebar:#0b0c0f;--color-surface:#17191f;--color-surface-raised:#1d2027;--color-surface-hover:#22252d;
   --color-border:#2a2d35;--color-border-strong:#3a3e48;--color-text:#f5f5f7;--color-text-secondary:#a1a1aa;--color-text-tertiary:#71717a;
   --color-accent:#2383ff;--color-accent-hover:#4b9bff;--color-accent-soft:rgba(35,131,255,.14);--color-success:#46c98a;--color-success-soft:rgba(70,201,138,.12);
@@ -14,6 +16,7 @@
   --line:var(--color-border);--text:var(--color-text);--muted:var(--color-text-secondary);--accent:var(--color-accent);--accent-soft:#8bc2ff;
   --accent-hover:var(--color-accent-hover);--success:var(--color-success);--warning:var(--color-warning);--danger:var(--color-danger);--radius:var(--radius-lg)
 }
+.financial-totals{display:flex;flex-wrap:wrap;gap:.5rem 1rem;align-items:baseline;font-variant-numeric:tabular-nums}
 *,*::before,*::after{box-sizing:border-box}html{min-height:100%;background:var(--color-bg);color-scheme:dark}
 body{min-height:100%;margin:0;overflow-x:hidden;background:var(--color-bg);color:var(--color-text);font-family:var(--font-sans);font-size:var(--text-md);line-height:1.5;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased}
 button,input,select,textarea{font:inherit}button,a,input,select,textarea{-webkit-tap-highlight-color:transparent}

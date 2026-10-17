@@ -1,3 +1,4 @@
+import { MoneyComponent } from '../../shared/money.component';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -10,7 +11,7 @@ import { OpportunityService } from './opportunity.service';
 @Component({
   selector: 'app-opportunities-page',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [MoneyComponent, CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './opportunities-page.component.html',
   styleUrls: ['./opportunities-page.component.css']
 })

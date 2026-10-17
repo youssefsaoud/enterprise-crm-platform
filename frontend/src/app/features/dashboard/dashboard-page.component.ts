@@ -1,3 +1,4 @@
+import { MoneyComponent } from '../../shared/money.component';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
@@ -28,7 +29,7 @@ interface PipelineStageView {
 @Component({
   selector: 'app-dashboard-page',
   standalone: true,
-  imports: [CommonModule, RouterLink, DashboardChartComponent],
+  imports: [CommonModule, RouterLink, DashboardChartComponent, MoneyComponent],
   templateUrl: './dashboard-page.component.html',
   styleUrls: ['./dashboard-page.component.css']
 })
@@ -143,6 +144,11 @@ export class DashboardPageComponent implements OnInit {
 
   selectCurrency(currency: string): void {
     this.selectedCurrency = currency;
+  }
+
+  currencyTotals(values: DashboardCurrencyTotal[] | undefined): DashboardCurrencyTotal[] {
+    const totals = (values || []).filter(item => this.selectedCurrency === 'ALL' || item.currencyCode === this.selectedCurrency);
+    return totals.length ? totals : this.selectedCurrency === 'ALL' ? [] : [{ currencyCode: this.selectedCurrency, amount: 0 }];
   }
 
   displayTotals(values: DashboardCurrencyTotal[] | undefined): string {

@@ -55,6 +55,14 @@ describe('DashboardPageComponent', () => {
     expect(fixture.componentInstance.workloadOption.series).toBeDefined();
   });
 
+  it('displays the same initial trend period that is sent to the API', () => {
+    const fixture = createFixture();
+    const select: HTMLSelectElement = fixture.nativeElement.querySelector('.compact-filter select');
+    expect(select.value).toBe('LAST_90_DAYS');
+    expect(select.selectedOptions[0].textContent).toContain('Last 90 days');
+    expect(dashboardService.projectAnalytics).toHaveBeenCalledWith('LAST_90_DAYS', undefined);
+  });
+
   it('reloads role-scoped analytics when dashboard filters change', () => {
     const fixture = createFixture();
     dashboardService.projectAnalytics.calls.reset();
