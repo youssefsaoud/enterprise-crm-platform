@@ -5,7 +5,7 @@
   --currency-eur-bg:rgba(35,131,255,.12);--currency-eur-text:#93c5fd;--currency-eur-border:#315680;
   --currency-mad-bg:rgba(70,201,138,.1);--currency-mad-text:#83dfac;--currency-mad-border:#315e48;
   --color-bg:#0e0f12;--color-sidebar:#0b0c0f;--color-surface:#17191f;--color-surface-raised:#1d2027;--color-surface-hover:#22252d;
-  --color-border:#2a2d35;--color-border-strong:#3a3e48;--color-text:#f5f5f7;--color-text-secondary:#a1a1aa;--color-text-tertiary:#71717a;
+  --color-border:#2a2d35;--color-border-strong:#3a3e48;--color-text:#f5f5f7;--color-text-secondary:#a1a1aa;--color-text-tertiary:#9696a1;
   --color-accent:#2383ff;--color-accent-hover:#4b9bff;--color-accent-soft:rgba(35,131,255,.14);--color-success:#46c98a;--color-success-soft:rgba(70,201,138,.12);
   --color-warning:#e9b75f;--color-warning-soft:rgba(233,183,95,.12);--color-danger:#ff7285;--color-danger-soft:rgba(255,114,133,.12);
   --font-display:"Manrope Variable","Segoe UI Variable Display","Aptos Display","Segoe UI",sans-serif;--font-sans:"Geist Variable","Segoe UI Variable Text","Aptos","Segoe UI",sans-serif;--font-mono:"Cascadia Code","SFMono-Regular",Consolas,monospace;
@@ -68,3 +68,4 @@ tbody tr:last-child td{border-bottom:0!important}tbody tr{transition:background-
 @keyframes page-enter{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}.content>*{animation:page-enter var(--transition-base) both}
 @media(max-width:760px){.page-header,.entity-header,.project-header,.project-form-header,.project-detail-header{align-items:stretch;flex-direction:column;margin-bottom:var(--space-6)}.page-header button,.page-header .primary-link,.project-header .project-button{width:100%}.toolbar,.project-toolbar{align-items:stretch;flex-direction:column}.pager,.project-pager{align-items:stretch;flex-direction:column;text-align:center}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important}}
+@media(max-width:760px){.toolbar label,.project-toolbar label{flex:0 0 auto;width:100%;max-width:none}}

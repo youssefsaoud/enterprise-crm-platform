@@ -1,7 +1,7 @@
 <a class="skip-link" href="#main-content">Skip to content</a>
 <div class="app-shell">
   <button *ngIf="mobileOpen" class="sidebar-backdrop" type="button" aria-label="Close navigation" (click)="closeNavigation()"></button>
-  <aside class="sidebar" [class.open]="mobileOpen" aria-label="Primary navigation">
+  <aside #sidebar id="primary-navigation" class="sidebar" [class.open]="mobileOpen" aria-label="Primary navigation" (keydown)="navigationKeydown($event)">
     <a class="brand" routerLink="/dashboard" (click)="closeNavigation()">
       <img class="brand-symbol" src="assets/brand/orqestra-symbol.png" alt="" width="36" height="36" />
       <span class="brand-copy"><strong>Orqestra</strong><small>Project &amp; Vendor Platform</small></span>
@@ -43,7 +43,7 @@
   <div class="workspace">
     <header class="topbar">
       <div class="topbar-brand">
-        <button class="menu-button" type="button" aria-label="Open navigation" (click)="mobileOpen = true">
+        <button #menuButton class="menu-button" type="button" aria-label="Open navigation" aria-controls="primary-navigation" [attr.aria-expanded]="mobileOpen" (click)="openNavigation()">
           <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
         </button>
         <div>
@@ -56,7 +56,7 @@
         <div class="user-menu">
           <span class="avatar" aria-hidden="true">{{ initials(user.fullName) }}</span>
           <span class="user-copy"><strong>{{ user.fullName }}</strong><small>{{ roleLabel(user.role) }}</small></span>
-          <button class="logout-button" type="button" (click)="logout()">
+          <button class="logout-button" type="button" aria-label="Sign out" (click)="logout()">
             <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"></path></svg>
             <span>Sign out</span>
           </button>

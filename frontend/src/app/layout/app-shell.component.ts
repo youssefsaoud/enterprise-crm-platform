@@ -1,5 +1,5 @@
 import { AsyncPipe, NgFor, NgIf } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 import { AuthService } from '../core/auth/auth.service';
@@ -59,7 +59,27 @@ export class AppShellComponent {
   mobileOpen = false;
   legacyOpen = false;
 
-  constructor(private readonly authService: AuthService, private readonly router: Router) {}
+  @ViewChild('sidebar') private sidebar?: ElementRef<HTMLElement>;
+  @ViewChild('menuButton') private menuButton?: ElementRef<HTMLButtonElement>;
+  constructor(private readonly authService: AuthService, private readonly router: Router, private readonly changeDetector: ChangeDetectorRef) {}
+
+  openNavigation(): void {
+    this.mobileOpen = true;
+    this.changeDetector.detectChanges();
+    this.sidebar?.nativeElement.querySelector<HTMLElement>('a')?.focus();
+  }
+
+  @HostListener('document:keydown.escape')
+  escapeNavigation(): void { if (this.mobileOpen) this.closeNavigation(); }
+
+  navigationKeydown(event: KeyboardEvent): void {
+    if (!this.mobileOpen || event.key !== 'Tab' || !window.matchMedia('(max-width:900px)').matches) return;
+    const targets = this.sidebar?.nativeElement.querySelectorAll<HTMLElement>('a, button:not(:disabled)');
+    if (!targets?.length) return;
+    const first = targets[0]; const last = targets[targets.length - 1];
+    if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+    else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+  }
 
   logout(): void {
     this.authService.logout();
@@ -68,7 +88,9 @@ export class AppShellComponent {
   }
 
   closeNavigation(): void {
+    const wasOpen = this.mobileOpen;
     this.mobileOpen = false;
+    if (wasOpen) this.menuButton?.nativeElement.focus();
   }
 
   visibleItems(items: NavItem[]): NavItem[] {

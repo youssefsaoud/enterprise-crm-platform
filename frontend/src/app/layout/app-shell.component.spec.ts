@@ -14,6 +14,12 @@ describe('Team navigation permissions', () => {
       }] }).compileComponents();
       const fixture = TestBed.createComponent(AppShellComponent); fixture.detectChanges();
       expect(!!fixture.nativeElement.querySelector('a[href="/team"]')).toBe(role === 'ADMIN');
+      const menu: HTMLButtonElement = fixture.nativeElement.querySelector('.menu-button');
+      menu.click(); fixture.detectChanges();
+      expect(menu.getAttribute('aria-expanded')).toBe('true');
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' })); fixture.detectChanges();
+      expect(menu.getAttribute('aria-expanded')).toBe('false');
+      expect(fixture.nativeElement.querySelector('.logout-button').getAttribute('aria-label')).toBe('Sign out');
     });
   }
 });
