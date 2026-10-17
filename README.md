@@ -20,6 +20,44 @@ An immersive login experience featuring a Three.js animated background, responsi
 
 Real-time operational insights into projects, vendor outreach, quotations, and team workloads, with role-based access controls.
 
+## Try Orqestra Locally
+
+Only **Docker Desktop with Linux containers and Compose v2.24+** is required. No local Java, Node.js, PostgreSQL, or Gmail account is needed.
+
+```bash
+git clone https://github.com/youssefsaoud/orqestra.git
+cd orqestra
+docker compose --env-file .env.demo -f docker-compose.demo.yml up --build -d --wait
+```
+
+Open **http://localhost:4201**. The first build takes longer while images and dependencies download.
+
+| Role | Email | Password |
+| --- | --- | --- |
+| Admin | admin@orqestra.demo | OrqestraDemo2026! |
+| Manager | manager@orqestra.demo | OrqestraDemo2026! |
+| Associate | associate@orqestra.demo | OrqestraDemo2026! |
+
+Admin can explore all operational data and Team Management. Manager can manage projects, vendors, and quotations, but cannot administer invitations. Associate sees assigned projects and role-scoped analytics, documents, and follow-ups.
+
+Demo Mode creates an isolated synthetic dataset: 20 projects, 30 vendor organizations, 16 client organizations (four organizations have both roles), 80 vendor assignments, 60 quotation revisions, 120 activities, 42 contacts, and three downloadable sample documents. Two additional inactive staff records hold the remaining project assignments without additional login credentials; the existing workload chart lists active Associates only.
+
+The committed `.env.demo` contains only public local-demo settings. This command does not load `.env.local`, connect to native `crm_dev`, or reuse normal Docker database/upload volumes. SMTP is disabled; Admin invitation previews are available without sending email. These public credentials work only with the explicitly enabled demo configuration. **Never deploy Demo Mode publicly or use its credentials in production.** Published ports bind to `127.0.0.1`.
+
+```bash
+# Stop without deleting records or documents
+docker compose --env-file .env.demo -f docker-compose.demo.yml stop
+
+# Start again with the same persistent data
+docker compose --env-file .env.demo -f docker-compose.demo.yml up -d --wait
+```
+
+Restarts preserve account passwords and recruiter edits without duplicating seed records. The demo generates a fresh JWT signing key when the backend starts, so sign in again after a backend restart. Production/demo profile conflicts fail startup before database initialization.
+
+The default volumes are `orqestra-demo_demo_postgres_data` and `orqestra-demo_demo_uploads`. They are separate from `orqestra_crm_postgres_data` and `orqestra_crm_uploads`; do not delete volumes to restart the demo. Demo and normal Docker modes use the same default ports, so stop the other stack first or set `ORQ_FRONTEND_PORT` / `ORQ_BACKEND_PORT` in your shell to unused ports.
+
+Demo API health: http://localhost:8081/api/v1/health. Local Swagger UI: http://localhost:8081/swagger-ui/index.html. Flyway applies V1-V13 automatically. Analytics remain server-side role-scoped, and USD, EUR, and MAD totals are never added together without conversion.
+
 ## Overview
 
 Orqestra brings project delivery and supplier coordination into one workspace. Teams can connect a client request to a project, assign an associate, follow vendor responses, compare quotation revisions, and keep communication and supporting documents alongside the work.
@@ -229,9 +267,11 @@ Use **Authentication > POST /api/v1/auth/login** with your local account, then p
 
 Documentation is disabled outside development, and documentation routes are denied outside the `dev` profile. Authorization is not persisted by Swagger UI. Invitation previews are excluded from the API catalog.
 
-### Docker Compose
+### Docker Compose (Private Development)
 
 Requires Docker Desktop running Linux containers with Docker Compose v2.24+ (or a compatible Docker Engine/Compose installation). Host Java, Maven, Node, and PostgreSQL are not required for this route.
+
+For the ready-to-explore synthetic dataset and public demo accounts, use **Try Orqestra Locally** above instead. The following configuration is independent, uses private credentials, and does not enable recruiter demo seeding.
 
 From a fresh clone, create `.env.local` using the guarded copy command above. Set a private `CRM_DB_PASSWORD`, a random `CRM_JWT_SECRET` of at least 32 characters, and your own `CRM_BOOTSTRAP_ADMIN_EMAIL` and `CRM_BOOTSTRAP_ADMIN_PASSWORD` (at least 12 characters). Set `CRM_BOOTSTRAP_ADMIN_ENABLED=true` for the first startup of the empty container database. The container rejects short JWT secrets or incomplete/short bootstrap credentials. Never use the example placeholders as passwords or publish this file.
 
@@ -303,7 +343,7 @@ $env:CHROME_BIN = "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
 pnpm test -- --browsers=ChromeHeadless
 ```
 
-Frontend coverage includes authentication routing, Admin-only navigation, invitation forms, activation states, and existing CRM components. Backend coverage includes validation, ownership, quotation workflows, invitation expiry/revocation/reuse, concurrent acceptance, token rotation, and delivery failure handling.
+Frontend coverage includes authentication routing, Admin-only navigation, invitation forms, activation states, and existing CRM components. Backend coverage includes validation, ownership, quotation workflows, invitation expiry/revocation/reuse, concurrent acceptance, token rotation, delivery failure handling, demo configuration safety, BCrypt account creation, and preservation of existing demo passwords.
 
 ## Project Status
 
