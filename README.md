@@ -40,7 +40,7 @@ Open **http://localhost:4201**. The first build takes longer while images and de
 
 Admin can explore all operational data and Team Management. Manager can manage projects, vendors, and quotations, but cannot administer invitations. Associate sees assigned projects and role-scoped analytics, documents, and follow-ups.
 
-Demo Mode creates an isolated synthetic dataset: 20 projects, 30 vendor organizations, 16 client organizations (four organizations have both roles), 80 vendor assignments, 60 quotation revisions, 120 activities, 42 contacts, and three downloadable sample documents. Two additional inactive staff records hold the remaining project assignments without additional login credentials; the existing workload chart lists active Associates only.
+On a fresh database, Demo Mode creates 24 projects, 30 vendor organizations, 16 client organizations (four have both roles), 96 vendor assignments, 72 quotation revisions, 144 activities, 42 contacts, and three downloadable sample documents. Three active Associates have varied workloads. The two additional synthetic staff accounts receive unknown random passwords, not the public demo password, and have no documented shared login credentials. Existing demo databases retain employee edits and original assignments; the new staff and four additional projects are added without resetting records.
 
 The committed `.env.demo` contains only public local-demo settings. This command does not load `.env.local`, connect to native `crm_dev`, or reuse normal Docker database/upload volumes. SMTP is disabled; Admin invitation previews are available without sending email. These public credentials work only with the explicitly enabled demo configuration. **Never deploy Demo Mode publicly or use its credentials in production.** Published ports bind to `127.0.0.1`.
 
@@ -68,20 +68,22 @@ Clients and vendors share one organization model: a company can have either role
 
 | Area | Implemented capabilities |
 | --- | --- |
-| **Projects** | Create, search, filter, and paginate projects. Track reference, client, category, location, deadline, budget, currency, assigned associate, status, Scope of Work, and notes. |
-| **Vendors** | Search the vendor directory, associate vendors with projects, assign responsible associates, update outreach status, and track contact dates, follow-ups, and notes. |
+| **Projects** | Create, search, filter, and paginate projects. Server-side status counters follow the current search across all statuses and respect project visibility. Track reference, client, category, location, deadline, budget, currency, assigned associate, status, Scope of Work, and notes. Summary shortcuts open vendor, quotation, and document sections; project history shows the recorded creation and last-update timestamps, not a full audit trail. |
+| **Vendors** | Search the vendor directory, associate vendors with projects, assign responsible associates, update outreach status, and track contact dates, follow-ups, and notes. Organization lists and details show separate client/vendor project counts, restricted to distinct projects visible to the current user. |
 | **Quotations** | Record quotations from multiple vendors, retain numbered revisions, compare amounts and currencies, and select or replace the winning quotation transactionally. Quote updates can mark vendor outreach as Quote Received. |
 | **Activities** | Record notes, calls, emails, meetings, and follow-ups. View project communication timelines and upcoming or overdue vendor follow-ups. |
-| **Documents** | Upload project files and quotation attachments, list file metadata, and download through authorized API endpoints. Files use local filesystem storage; metadata is persisted in PostgreSQL. |
+| **Documents** | Upload project files and quotation attachments up to 10 MB, list file metadata, and download through authorized API endpoints. Files use local filesystem storage; metadata is persisted in PostgreSQL. |
 | **Analytics** | ECharts visualizations for project status, vendor outreach, quotation trends, and associate workload. Date-range, associate, and currency controls where applicable; unlike currencies are kept separate. |
 | **Authentication** | JWT login, BCrypt password hashing, protected Angular routes, and Spring Security authorization. Associates see assigned-project data and role-scoped analytics. |
 | **Employee onboarding** | Admin-only Team Management, Manager/Associate invitations, Gmail SMTP emails, password setup through single-use activation links, expiry, resend, revocation, and delivery failure tracking. |
 
 The interface uses a shared dark design system, Manrope headings, Geist inputs and body text, and a lazy-loaded Three.js login scene with reduced-motion and WebGL fallbacks.
 
+Financial values use two decimal places and tabular figures, with compact EUR (blue), MAD (green), and USD (neutral) badges. Other currencies use a neutral fallback. Quotation revisions remain individual submissions; amounts in different currencies are never combined without conversion. Relationship counts do not multiply when quotations have multiple revisions.
+
 ## Screenshots
 
-Captured from the running application using existing synthetic development records. The Team view is filtered to the demo email domain.
+Captured from the running application using synthetic development and isolated Docker demo records. No live customer data is shown.
 
 | Projects | Project Details |
 | --- | --- |
@@ -169,7 +171,7 @@ Authorization is enforced in backend services and the Spring Security filter cha
 ### Prerequisites
 
 - JDK 21 and Maven 3.9+ (`JAVA_HOME` must point to JDK 21)
-- Node.js 18.x or 20.x and pnpm; the package declares Node `>=16.14.0 <21.0.0`
+- Node.js 18.x or 20.x and pnpm 10 (Docker uses 10.28.2); the package declares Node `>=16.14.0 <21.0.0`
 - PostgreSQL, with version 16 matching the included Compose database image
 
 ### 1. Clone and Configure PostgreSQL
@@ -332,18 +334,18 @@ The suite includes Spring security tests and invitation lifecycle tests using re
 Run frontend tests and the production build from `frontend/`:
 
 ```bash
-pnpm test -- --browsers=ChromeHeadless
-pnpm build
+pnpm exec ng test --watch=false --browsers=ChromeHeadless
+pnpm exec ng build --configuration production
 ```
 
 Karma requires an installed Chromium browser. To use Microsoft Edge on Windows:
 
 ```powershell
 $env:CHROME_BIN = "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
-pnpm test -- --browsers=ChromeHeadless
+pnpm exec ng test --watch=false --browsers=ChromeHeadless
 ```
 
-Frontend coverage includes authentication routing, Admin-only navigation, invitation forms, activation states, and existing CRM components. Backend coverage includes validation, ownership, quotation workflows, invitation expiry/revocation/reuse, concurrent acceptance, token rotation, delivery failure handling, demo configuration safety, BCrypt account creation, and preservation of existing demo passwords.
+Frontend coverage includes authentication routing, Admin-only navigation, invitation forms, activation states, currency rendering, search-aware status counters, project-tab shortcuts, recorded timestamps, and organization relationship indicators. Backend coverage includes validation, ownership, quotation workflows, invitation expiry/revocation/reuse, concurrent acceptance, token rotation, delivery failure handling, demo configuration safety, BCrypt account creation, preservation of existing demo passwords, inactive-account JWT rejection, role-scoped aggregates, and upload storage validation.
 
 ## Project Status
 
